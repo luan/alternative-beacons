@@ -1,0 +1,22 @@
+{
+	"entity":
+	[
+	  ["small-beacon", "ab-focused-beacon"],
+	  ["big-beacon", "ab-hub-beacon"]
+	],
+	"item":
+	[
+	  ["small-beacon", "ab-focused-beacon"],
+	  ["big-beacon", "ab-hub-beacon"]
+	],
+	"recipe":
+	[
+	  ["small-beacon", "ab-focused-beacon"],
+	  ["big-beacon", "ab-hub-beacon"]
+	],
+	"mod-setting":
+	[
+	  ["ab-enable-small-beacons", "ab-enable-focused-beacons"],
+	  ["ab-enable-big-beacons", "ab-enable-hub-beacons"]
+	]
+  }

@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------------------------------
+Mods Referenced:
+    - FFF339 Beacon Graphics by Tedium_0xFF (currently uses these graphics as a placeholder for the hub and isolation beacons)
+    - Classic Beacon by Kirazy (currently uses these graphics as a placeholder for the focused and node beacons)
+    - Space Exploration by Earendel
+    - Krastario 2 by Raiguard
+    
+Other Sources Referenced:
+    - API Docs
+    - Wiki

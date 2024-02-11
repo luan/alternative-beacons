@@ -1,0 +1,63 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2024.02.10
+  Changes:
+    - Increased distribution and exclusion range of focused beacons by 1
+    - Increased module count of hub beacons by 1
+    - Flying text now appears above beacons when they get disabled/enabled
+    - Some minor adjustments to beacon recipes
+    - Some logic for simple beacons from other mods (for now, it justs sets their exclusion range to be the same as their distribution range)
+---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: 2024.02.10
+  Changes:
+    - Fixed a bug introduced in the previous update which prevented hub beacons from affecting other beacons properly
+---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2024.02.09
+  Changes:
+    - Updated graphic for isolation beacon
+    - Adjusted colors slightly for focused & node beacons
+    - Adjusted power requirements and module visualization for node beacons
+---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2024.02.09
+  Changes:
+    - Reduced module count of "node" beacon from 4 to 3 and also reduced its exclusion range to match its distribution range
+    - Corrected edge cases involving hub beacons - overlapping areas now only disable beacons if both beacons are in the same hub area
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2024.02.07
+  Changes:
+    - Added new "node" beacon with medium distribution area and slightly larger exclusion area - for bridging the size gap between standard and hub beacons; reaches relatively far while still interacting with smaller beacons in the usual way
+    - Added new "isolation" beacon with huge distribution/exclusion areas - for niches where it's desirable to keep the number of beacons to an absolute minimum
+    - Added startup settings to enable/disable each beacon
+    - Reduced module power of "hub" beacon from 6 to 4 (6->8 module slots, 1.0->0.5 efficiency)
+    - Increased distribution/exclusion ranges of "hub" beacon by 2 each
+    - All non-standard beacons now treat the distribution area of standard beacons as if it is an exclusion area too - this doesn't actually change functionality since no other beacons had an exclusion range below 3, but it does open up design space for the next change to "focused" beacons:
+    - Reduced exclusion range of "focused" beacon from 3 to 2
+    - Adjusted recipe amounts slightly for "focused" beacons
+    - Corrected behavior in some cases dealing with scripts from other mods
+    - Refactored internal names
+---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2024.02.04
+  Changes:
+    - Renamed new beacons from "small beacon" and "big beacon" to "focused beacon" and "hub beacon" respectively
+    - Increased efficiency of big (hub) beacons from 0.75 to 1.0 and reduced module slots from 8 to 6 (same overall module power)
+    - Increased max health of big (hub) beacons from 400 to 500
+    - Moved new beacons to the original vanilla technology (custom technology removed)
+    - Adjusted recipes of new beacons to use same types of ingredients as standard beacons
+    - Renamed internal recipe IDs to match vanilla standard
+    - Adjusted distribution/exclusion area visualizations to be uniform between different beacons
+---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2024.01.30
+  Changes:
+    - Updated placeholder graphics
+    - Recipes for new beacons are now adjacent to the standard beacon recipe instead of below it
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2024.01.29
+  Features:
+    - Prototype Release
