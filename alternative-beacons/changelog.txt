@@ -1,4 +1,44 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.7
+Date: 2024.02.28
+  Changes:
+    - Fixed a compatibility error between Space Exploration and Advanced Modules mods involving pure productivity beacons
+    - Initial balance pass for Advanced Modules mods
+    - KI beacons and related buildings from the 248k mod now have better descriptions to help clarify how the system works
+    - Alien beacons from Exotic Industries no longer disable or get disabled by other beacons
+---------------------------------------------------------------------------------------------------
+Version: 0.5.6
+Date: 2024.02.27
+  Changes:
+    - Added new startup setting to show/hide more details on beacon tooltips
+    - Fixed interactions with Power Crystals - they now get ignored by all other beacons as intended
+    - Fixed exclusion ranges for beacons from 248k mod improperly applying to cores
+---------------------------------------------------------------------------------------------------
+Version: 0.5.5
+Date: 2024.02.25
+  Changes:
+    - More balancing for various smaller mods
+    - Added a startup setting to enable/disable stat changes to beacons from other mods
+---------------------------------------------------------------------------------------------------
+Version: 0.5.4
+Date: 2024.02.25
+  Changes:
+    - Fixed some bugs that could occur when disabling beacons via the settings
+    - Fixed a potential incompatibility between Space Exploration and 5Dim's (and perhaps other beacon mods)
+    - Added initial support for Ultracube - still need to disable beacon overloading
+    - Added initial support for Power Crystals - they still get a warning icon stuck on them even though they aren't affected
+    - Adjusted balance for some smaller beacon-specific mods to be less cheaty
+---------------------------------------------------------------------------------------------------
+Version: 0.5.3
+Date: 2024.02.23
+  Changes:
+    - Added support for Pyanodons - AM:FM beacons have strict exclusion areas but don't disable each other
+    - Added support for 248k - linked beacons have strict exclusion areas but don't disable each other
+    - Added support for Bob's - tiered beacons don't disable standard beacons and vice versa
+    - Added support for 5Dim's - tiered beacons don't disable standard beacons and vice versa
+    - Added support for FactorioExtended Vanilla Plus - tiered beacons don't disable standard beacons and vice versa
+    - Improved generic support for ingredient matching and recipe ordering
+---------------------------------------------------------------------------------------------------
 Version: 0.5.2
 Date: 2024.02.21
   Changes:

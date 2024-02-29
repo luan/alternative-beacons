@@ -1,4 +1,5 @@
---data.lua
+--- data.lua
+--  available objects: data, mods, settings
 
 local beacon_focused = require("prototypes/focused-beacon")
 local beacon_node = require("prototypes/node-beacon")
@@ -158,7 +159,6 @@ if startup["ab-enable-isolation-beacons"].value then
 end
 
 -- adjusts "standard" vanilla beacons
-data.raw.beacon.beacon.module_specification.module_info_icon_shift = { 0, 0.5 }
 if data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
 if data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
 
@@ -172,3 +172,11 @@ data:extend({
     scale = 0.5
   }
 })
+
+-- fixes potential incompatibility between Space Exploration and other beacon mods such as 5Dim's and Advanced Modules
+if mods["space-exploration"] then
+  for i, beacon in pairs(data.raw.beacon) do
+    beacon.se_allow_in_space = true
+    if (beacon.allowed_effects and (beacon.allowed_effects == "productivity" or (#beacon.allowed_effects == 1 and beacon.allowed_effects[1] == "productivity"))) then beacon.allowed_effects = {"productivity", "consumption"} end -- Space Exploration only checks non-productivity effects when validating space entities so at least one of those is required in addition to productivity
+  end
+end

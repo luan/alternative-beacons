@@ -1,4 +1,4 @@
--- settings.lua
+--- settings.lua
 
 data:extend ({
     {
@@ -6,7 +6,6 @@ data:extend ({
         name = "ab-override-vanilla-beacons",
         setting_type = "startup",
         default_value = true,
-        hidden = false,
         order = "a"
     },
     {
@@ -49,8 +48,21 @@ data:extend ({
         name = "ab-update-recipes",
         setting_type = "startup",
         default_value = true,
-        hidden = false,
         order = "xa"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-balance-other-beacons",
+        setting_type = "startup",
+        default_value = true,
+        order = "xb"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-show-extended-stats",
+        setting_type = "startup",
+        default_value = true,
+        order = "xb"
     },
     {
         type = "int-setting",

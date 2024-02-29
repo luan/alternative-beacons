@@ -1,6 +1,6 @@
 {
 	"name": "alternative-beacons",
-	"version": "0.5.2",
+	"version": "0.5.7",
 	"title": "Alternative Beacons",
 	"author": "BetweenWalls",
 	"contact": "@between_walls on discord",
@@ -10,5 +10,5 @@
 		"! beacon-overhaul",
 		"! wret-beacon-rebalance-mod"
 	],
-	"description": "Adds new beacons with different niches and overhauls the beacon system using exclusion areas in addition to distribution areas. Mimics beacon overloading in some ways and improves on it in others. Works well with vanilla or other mods. All beacons can be enabled or disabled individually in the settings."
+	"description": "Overhauls the beacon system to use exclusion areas in addition to distribution areas; adds new beacons with different niches while preserving the original game's balance. Integrates beacons from other mods into a single system. Beacons can be enabled or disabled individually in the settings."
 }
