@@ -3,6 +3,21 @@
 data:extend ({
     {
         type = "bool-setting",
+        name = "ab-enable-exclusion-areas",
+        setting_type = "startup",
+        default_value = true,
+        hidden = true,
+        order = "1"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-balance-other-beacons",
+        setting_type = "startup",
+        default_value = true,
+        order = "9"
+    },
+    {
+        type = "bool-setting",
         name = "ab-override-vanilla-beacons",
         setting_type = "startup",
         default_value = true,
@@ -52,23 +67,25 @@ data:extend ({
     },
     {
         type = "bool-setting",
-        name = "ab-balance-other-beacons",
-        setting_type = "startup",
-        default_value = true,
-        order = "xb"
-    },
-    {
-        type = "bool-setting",
         name = "ab-show-extended-stats",
         setting_type = "startup",
         default_value = true,
-        order = "xb"
+        order = "xc"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-organize-groups",
+        setting_type = "startup",
+        default_value = true,
+        hidden = true,
+        order = "xd"
     },
     {
         type = "int-setting",
         name = "ab-update-rate",
         setting_type = "runtime-global",
-        default_value = -1,
+        default_value = 0,
+        minimum_value = 0,
         order = "z"
     },
 })

@@ -1,30 +1,52 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.0
+Date: 2024.03.03
+  Changes:
+    - Added short-duration alerts for disabled beacons
+    - Code rewritten to be more performant - UPS is no longer affected at all during normal gameplay and creating or destroying
+      beacons is also better optimized
+    - Removed less vital info from descriptions (dimensions for items, exclusion area if it's the same as distribution)
+      and also removed duplicate info (dimensions, stack size) when using the Extended Descriptions mod
+    - KI beacons from 248k are now "solo" style beacons if Space Exploration is also enabled
+    - Fixed "strict" beacons disabling themselves when they disabled other beacons in some cases
+    - Fixed interaction between standard beacons and singularity beacons from Krastorio 2
+    - Fixed a startup error when using Space Exploration and Exotic Industries together
+    - Fixed normalized distribution area alignment for KI beacons and Tarawind beacons
+    - Fixed item group icon size and name typo from Advanced Modules mods
+    - Fixed balancing values for Advanced Modules to not change based on other mods
+    - More balancing for some of the tiered beacons from Bob's, Elgskred's, and Tarawind mods
+    - The "balance other beacons" setting now lists which mods are affected
+---------------------------------------------------------------------------------------------------
 Version: 0.5.7
 Date: 2024.02.28
-  Changes:
+  Bugfixes:
     - Fixed a compatibility error between Space Exploration and Advanced Modules mods involving pure productivity beacons
+  Changes:
     - Initial balance pass for Advanced Modules mods
     - KI beacons and related buildings from the 248k mod now have better descriptions to help clarify how the system works
     - Alien beacons from Exotic Industries no longer disable or get disabled by other beacons
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.6
 Date: 2024.02.27
-  Changes:
+  Features:
     - Added new startup setting to show/hide more details on beacon tooltips
+  Bugfixes:
     - Fixed interactions with Power Crystals - they now get ignored by all other beacons as intended
     - Fixed exclusion ranges for beacons from 248k mod improperly applying to cores
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.5
 Date: 2024.02.25
+  Features:
+    - Added a startup setting to enable/disable stat changes to beacons from other mods
   Changes:
     - More balancing for various smaller mods
-    - Added a startup setting to enable/disable stat changes to beacons from other mods
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.4
 Date: 2024.02.25
-  Changes:
+  Bugfixes:
     - Fixed some bugs that could occur when disabling beacons via the settings
     - Fixed a potential incompatibility between Space Exploration and 5Dim's (and perhaps other beacon mods)
+  Changes:
     - Added initial support for Ultracube - still need to disable beacon overloading
     - Added initial support for Power Crystals - they still get a warning icon stuck on them even though they aren't affected
     - Adjusted balance for some smaller beacon-specific mods to be less cheaty
@@ -41,15 +63,17 @@ Date: 2024.02.23
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.2
 Date: 2024.02.21
-  Changes:
+  Bugfixes:
     - Corrected typo
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.1
 Date: 2024.02.21
-  Changes:
-    - Increased recipe costs for node, conflux, hub, and isolation beacons
+  Features:
     - Recipes will now match ingredients with the standard beacon or other introductory beacons if changed by other mods
     - Added a startup setting to override changes to the standard beacon from other mods (enabled by default)
+  Balancing:
+    - Increased recipe costs for node, conflux, hub, and isolation beacons
+  Changes:
     - New beacons from mods with "beacon overload" are given an exclusion range which mimics the overload effect, allowing them to
       function alongside the beacons from this mod with minimal differences if the overloading mechanic is disabled
     - Added initial support for Space Exploration - for now, disabling the overloading mechanic still requires manually commenting
@@ -61,59 +85,66 @@ Date: 2024.02.21
     - Added support for Nullius - small and large beacons don't disable each other
     - Added support for SeaBlock - beacon 1 & 2 don't disable standard beacons but they do disable each other
     - Adjusted recipe order for Industrial Revolution 3 (no other changes seem necessary)
+  Graphics:
     - Adjusted node/conflux sprites slightly
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.0
 Date: 2024.02.16
-  Changes:
+  Balancing:
     - Increased stack size of beacons from 10 to 20
     - Increased exclusion range of conflux beacon by 2
     - Increased distribution/exclusion range of node beacon by 1
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 2024.02.14
-  Changes:
+  Features:
     - Added new "conflux" beacon - for enabling a more decentralized style of building which can be comparable to hub beacons
     - A warning icon is now shown for disabled beacons to help distinguish them from active beacons
     - Beacons are no longer checked every X seconds by default (this is now an opt-in feature within the settings)
     - Added descriptions for each option within the settings
+  Balancing:
     - Some minor recipe adjustments
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 2024.02.10
-  Changes:
+  Features:
+    - Flying text now appears above beacons when they get disabled/enabled
+  Balancing:
     - Increased distribution and exclusion range of focused beacons by 1
     - Increased module count of hub beacons by 1 (8->9)
-    - Flying text now appears above beacons when they get disabled/enabled
     - Some minor adjustments to beacon recipes
+  Changes:
     - Some logic for beacons from other mods (for now, it just sets their exclusion range to be the same as their distribution range)
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.3
 Date: 2024.02.10
-  Changes:
+  Bugfixes:
     - Fixed a bug introduced in the previous update which prevented hub beacons from affecting other beacons properly
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2024.02.09
-  Changes:
+  Balancing:
+    - Adjusted power requirements for node beacons
+  Graphics:
     - Updated graphic for isolation beacon
-    - Adjusted colors slightly for focused & node beacons
-    - Adjusted power requirements and module visualization for node beacons
+    - Adjusted colors and module visualization slightly for focused & node beacons
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2024.02.09
-  Changes:
+  Balancing:
     - Reduced module count of "node" beacon from 4 to 3 and also reduced its exclusion range to match its distribution range
+  Bugfixes:
     - Corrected edge cases involving hub beacons - overlapping areas now only disable beacons if both beacons are in the same hub area
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2024.02.07
-  Changes:
+  Features:
     - Added new "node" beacon with medium distribution area and slightly larger exclusion area - for bridging the size gap between 
       standard and hub beacons; reaches relatively far while still interacting with smaller beacons in the usual way
     - Added new "isolation" beacon with huge distribution/exclusion areas - for niches where it's desirable to keep the number of 
       beacons to an absolute minimum
     - Added startup settings to enable/disable each beacon
+  Balancing:
     - Reduced module power of "hub" beacon from 6 to 4 (6->8 module slots, 1.0->0.5 efficiency)
     - Increased distribution/exclusion ranges of "hub" beacon by 2 each
     - All non-standard beacons now treat the distribution area of standard beacons as if it is an exclusion area too - this doesn't 
@@ -121,27 +152,32 @@ Date: 2024.02.07
       next change to "focused" beacons:
     - Reduced exclusion range of "focused" beacon from 3 to 2
     - Adjusted recipe amounts slightly for "focused" beacons
+  Bugfixes:
     - Corrected behavior in some cases dealing with scripts from other mods
+  Changes:
     - Refactored internal names
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2024.02.04
-  Changes:
+  Features:
+    - Adjusted distribution/exclusion area visualizations to be uniform between different beacons
+  Balancing:
     - Renamed new beacons from "small beacon" and "big beacon" to "focused beacon" and "hub beacon" respectively
     - Increased efficiency of big (hub) beacons from 0.75 to 1.0 and reduced module slots from 8 to 6 (same overall module power)
     - Increased max health of big (hub) beacons from 400 to 500
     - Moved new beacons to the original vanilla technology (custom technology removed)
     - Adjusted recipes of new beacons to use same types of ingredients as standard beacons
+  Changes:
     - Renamed internal recipe IDs to match vanilla standard
-    - Adjusted distribution/exclusion area visualizations to be uniform between different beacons
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2024.01.30
-  Changes:
+  Graphics:
     - Updated placeholder graphics
+  Changes:
     - Recipes for new beacons are now adjacent to the standard beacon recipe instead of below it
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2024.01.29
   Features:
-    - Prototype Release
+    - Initial Release

@@ -1,5 +1,5 @@
 --- data-final-fixes.lua
---  should only make changes which cannot be made earlier due to other mod changes; changes should be for specific mods or mod combinations
+--  should only make changes which cannot be made earlier due to other mod changes; changes should be for specific mods combinations or come with settings so they can be disabled
 
 local ingredient_multipliers = {
     ["ab-focused-beacon"] = 2,
@@ -7,9 +7,8 @@ local ingredient_multipliers = {
     ["ab-conflux-beacon"] = 10,
     ["ab-hub-beacon"] = 20,
     ["ab-isolation-beacon"] = 20,
-  }
-beacon_exclusion_ranges = {}
-
+}
+local exclusion_range_values = {}
 local startup = settings.startup
 local beacon = table.deepcopy(data.raw.beacon.beacon)
 
@@ -59,7 +58,7 @@ if data.raw.recipe.beacon ~= nil then
       common = "ei_copper-beacon"
       ingredient_multipliers["beacon"] = 1
     end
-    if mods["pypostprocessing"] then
+    if mods["pycoalprocessing"] then
       common = "beacon-mk01"
       ingredient_multipliers["ab-standard-beacon"] = 1
     end
@@ -85,7 +84,7 @@ end
 
 -- override stats of vanilla beacons (again) for specific mods
 if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
-  if mods["beacons"] then
+  if mods["beacons"] and not (mods["pycoalprocessing"] or mods["space-exploration"] or mods["Krastorio2"]) then
     data.raw.item.beacon.localised_name = {"item-name.override-beacon"}
     data.raw.beacon.beacon.localised_name = {"entity-name.override-beacon"}
   end
@@ -115,38 +114,44 @@ if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
     elseif mods["space-exploration"] then
       data.raw.item["beacon"].localised_description = {"item-description.se-standard-beacon-overload"}
       data.raw.beacon["beacon"].localised_description = {"entity-description.se-standard-beacon-overload"}
-      beacon_exclusion_ranges["beacon"] = 11
+      exclusion_range_values["beacon"] = 11
     end
   end
 end
+
+if mods["Krastorio2"] then data.raw.beacon["beacon"].localised_description = data.raw.item["beacon"].localised_description end -- TODO: This may not be necessary - find out what causes the two descriptions to be different
 
 -- adds extended stats to descriptions of standard beacons (again) for specific mods
 if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
   if mods["space-exploration"] or mods["exotic-industries"] then
     if startup["ab-show-extended-stats"] then
-      if beacon_exclusion_ranges[beacon.name] == nil then beacon_exclusion_ranges[beacon.name] = math.ceil(get_distribution_range(beacon)) end
+      local distribution_range = math.ceil(get_distribution_range(beacon))
+      if exclusion_range_values["beacon"] == nil then exclusion_range_values["beacon"] = distribution_range end
       if startup["ab-override-vanilla-beacons"].value == true then
         add_to_description("beacon", beacon, {"description.ab-module-slots", tostring(beacon.module_specification.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_specification.module_slots)/100)})
-        add_to_description("beacon", beacon, {"description.ab-distribution-range", tostring(math.ceil(get_distribution_range(beacon)))})
-        if beacon_exclusion_ranges[beacon.name] == 11 then
-          add_to_description("beacon", beacon, {"description.ab-exclusion-range-strict", tostring(beacon_exclusion_ranges[beacon.name])})
-        else
-          add_to_description("beacon", beacon, {"description.ab-exclusion-range", tostring(beacon_exclusion_ranges[beacon.name])})
+        add_to_description("beacon", beacon, {"description.ab-distribution-range", tostring(distribution_range)})
+        if exclusion_range_values["beacon"] ~= distribution_range then
+          if exclusion_range_values["beacon"] == 11 then
+            add_to_description("beacon", beacon, {"description.ab-exclusion-range-strict", tostring(exclusion_range_values["beacon"])})
+          else
+            add_to_description("beacon", beacon, {"description.ab-exclusion-range", tostring(exclusion_range_values["beacon"])})
+          end
         end
-        add_to_description("beacon", beacon, {"description.ab-dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1]))})
+        if not mods["extended-descriptions"] then add_to_description("beacon", beacon, {"description.ab-dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1])), tostring(math.ceil(beacon.selection_box[2][2] - beacon.selection_box[1][2]))}) end
       end
-      local item = data.raw.item[beacon.name]
+      local item = data.raw.item["beacon"]
       if item ~= nil then
         add_to_description("item", item, {"description.ab-module-slots", tostring(beacon.module_specification.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_specification.module_slots)/100)})
         add_to_description("item", item, {"description.ab-distribution-efficiency", tostring(beacon.distribution_effectivity)})
-        add_to_description("item", item, {"description.ab-distribution-range", tostring(math.ceil(get_distribution_range(beacon)))})
-        if beacon_exclusion_ranges[beacon.name] == 11 then
-          add_to_description("item", item, {"description.ab-exclusion-range-strict", tostring(beacon_exclusion_ranges[beacon.name])})
-        else
-          add_to_description("item", item, {"description.ab-exclusion-range", tostring(beacon_exclusion_ranges[beacon.name])})
+        add_to_description("item", item, {"description.ab-distribution-range", tostring(distribution_range)})
+        if exclusion_range_values["beacon"] ~= distribution_range then
+          if exclusion_range_values["beacon"] == 11 then
+            add_to_description("item", item, {"description.ab-exclusion-range-strict", tostring(exclusion_range_values["beacon"])})
+          else
+            add_to_description("item", item, {"description.ab-exclusion-range", tostring(exclusion_range_values["beacon"])})
+          end
         end
-        add_to_description("item", item, {"description.ab-dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1]))})
-        add_to_description("item", item, {"description.ab-stack-size", tostring(item.stack_size)})
+        if not mods["extended-descriptions"] then add_to_description("item", item, {"description.ab-stack-size", tostring(item.stack_size)}) end
       end
       data.raw.item.beacon.localised_description = item.localised_description
       data.raw.beacon.beacon.localised_description = beacon.localised_description

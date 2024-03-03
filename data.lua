@@ -161,8 +161,16 @@ end
 -- adjusts "standard" vanilla beacons
 if data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
 if data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
+if data.raw.recipe.beacon and data.raw.recipe.beacon.normal == nil then
+  data.raw.recipe.beacon.normal = {}
+  data.raw.recipe.beacon.normal.result = data.raw.recipe.beacon.result
+  data.raw.recipe.beacon.normal.enabled = data.raw.recipe.beacon.enabled
+  data.raw.recipe.beacon.normal.energy_required = data.raw.recipe.beacon.energy_required
+  data.raw.recipe.beacon.normal.ingredients = data.raw.recipe.beacon.ingredients
+end
 
--- warning sprite for disabled beacons
+
+-- warning/alert images for disabled beacons
 data:extend({
   {
     type = "sprite",
@@ -170,6 +178,12 @@ data:extend({
     filename = "__alternative-beacons__/graphics/beacon-offline.png",
     size = 64,
     scale = 0.5
+  },
+  {
+    type = "virtual-signal",
+    name = "ab-beacon-offline",
+    icon = "__alternative-beacons__/graphics/beacon-offline.png",
+    icon_size = 64,
   }
 })
 
@@ -177,6 +191,8 @@ data:extend({
 if mods["space-exploration"] then
   for i, beacon in pairs(data.raw.beacon) do
     beacon.se_allow_in_space = true
-    if (beacon.allowed_effects and (beacon.allowed_effects == "productivity" or (#beacon.allowed_effects == 1 and beacon.allowed_effects[1] == "productivity"))) then beacon.allowed_effects = {"productivity", "consumption"} end -- Space Exploration only checks non-productivity effects when validating space entities so at least one of those is required in addition to productivity
+    if (beacon.allowed_effects and (beacon.allowed_effects == "productivity" or (#beacon.allowed_effects == 1 and beacon.allowed_effects[1] == "productivity"))) then
+      beacon.allowed_effects = {"productivity", "consumption"}
+    end -- Space Exploration only checks non-productivity effects when validating space entities so at least one of those is required in addition to productivity
   end
 end
