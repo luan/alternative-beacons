@@ -6,8 +6,9 @@ local distribution_ranges = {}  -- beacon prototype name -> range for affected c
 local search_ranges = {}        -- beacon prototype name -> maximum range that other beacons could be interacted with
 local strict_beacons = {}       -- beacon prototype names for those with "strict" exclusion ranges
 local repeating_beacons = {}    -- beacon prototype name -> list of beacons which won't be disabled
-local offline_beacons = {}      -- beacon unit number -> its attached warning sprite
+local offline_beacons = {}      -- beacon unit number -> attached warning sprite, entity reference (for disabled beacons)
 local update_rate = 0           -- if above zero, how many seconds elapse between updating all beacons (beacons are only updated via triggered events by default)
+local persistent_alerts = true
 
 --- Mod Initialization - called on first startup after the mod is installed; available objects: global, game, rendering, settings
 script.on_init(
@@ -29,6 +30,7 @@ script.on_load(
     repeating_beacons = global.repeating_beacons
     offline_beacons = global.offline_beacons
     update_rate = settings.global["ab-update-rate"].value
+    persistent_alerts = settings.global["ab-persistent-alerts"].value
   end
 )
 
@@ -64,21 +66,39 @@ function enable_scripts()
         local previous_update_rate = update_rate
         update_rate = settings.global["ab-update-rate"].value
         if previous_update_rate ~= update_rate then
-          unregister_periodic_updates()
+          unregister_periodic_updates(previous_update_rate * 60)
           if update_rate > 0 then register_periodic_updates(update_rate * 60) end
+        end
+      end
+      if event.setting == "ab-persistent-alerts" then -- TODO: Allow this to be adjusted per player
+        local previous_setting = persistent_alerts
+        persistent_alerts = settings.global["ab-persistent-alerts"].value
+        if previous_setting == false and persistent_alerts == true then
+          register_alert_refreshing()
+        elseif previous_setting == true and persistent_alerts == false then
+          unregister_alert_refreshing()
         end
       end
     end
   )
-  if update_rate > 0 then register(update_rate * 60) end
+  if update_rate > 0 then register_periodic_updates(update_rate * 60) end
+  if persistent_alerts == true then register_alert_refreshing() end
 end
 
 function register_periodic_updates(tick_rate)
   script.on_nth_tick(tick_rate, function(event) check_global_list() end)
 end
 
-function unregister_periodic_updates()
-  script.on_nth_tick(nil)
+function unregister_periodic_updates(tick_rate)
+  script.on_nth_tick(tick_rate, nil)
+end
+
+function register_alert_refreshing()
+  script.on_nth_tick(601, function(event) refresh_beacon_alerts() end)
+end
+
+function unregister_alert_refreshing()
+  script.on_nth_tick(601, nil)
 end
 
 --- updates global data
@@ -111,6 +131,7 @@ function populate_beacon_data()
     ["speed-beacon-2"] = {value = 8},
     ["speed-beacon-3"] = {value = 11},
     ["beacon-3"] = {value = 11},
+    ["beacon3"] = {value = 8},
     -- pyanodons AM-FM entries are added below
   }
   local updated_repeating_beacons = { -- these beacons don't disable any of the beacons in the list associated with them
@@ -119,18 +140,18 @@ function populate_beacon_data()
     ["kr-singularity-beacon"] = {"kr-singularity-beacon"},
     ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"}, -- TODO: only if beacon overloading is enabled
     ["ei_iron-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
-    ["beacon-mk1"] = {"beacon"},
-    ["beacon-mk2"] = {"beacon"},
-    ["beacon-mk3"] = {"beacon"},
+    ["beacon-mk1"] = {"beacon", "ab-standard-beacon"},
+    ["beacon-mk2"] = {"beacon", "ab-standard-beacon"},
+    ["beacon-mk3"] = {"beacon", "ab-standard-beacon"},
     ["el_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fi_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fu_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["el_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fi_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fu_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
-    ["5d-beacon-02"] = {"beacon"},
-    ["5d-beacon-03"] = {"beacon"},
-    ["5d-beacon-04"] = {"beacon"},
+    ["5d-beacon-02"] = {"beacon", "ab-standard-beacon"},
+    ["5d-beacon-03"] = {"beacon", "ab-standard-beacon"},
+    ["5d-beacon-04"] = {"beacon", "ab-standard-beacon"},
     -- nullius small/large entries are added below
     -- pyanodons AM-FM entries are added below
     -- power crystal entries are added below
@@ -156,7 +177,7 @@ function populate_beacon_data()
 
   -- populate reference tables with repetitive info
   if mods["nullius"] then
-    local repeaters_small = {"beacon"}
+    local repeaters_small = {"beacon", "ab-standard-beacon"}
     local repeaters_large = {}
     for tier=1,3,1 do
       if tier <= 2 then table.insert(repeaters_small, "nullius-large-beacon-" .. tier) end
@@ -251,7 +272,7 @@ function populate_beacon_data()
       local exclusion_range = updated_distribution_ranges[beacon.name]
       local range = custom_exclusion_ranges[beacon.name]
       if range ~= nil then
-        exclusion_range = range.value
+        if range.value ~= nil then exclusion_range = range.value else exclusion_range = updated_distribution_ranges[beacon.name] end
         if range.value == "solo" then
           if range.mode == nil or range.mode == "basic" then
             exclusion_range = 2*updated_distribution_ranges[beacon.name] + max_moduled_building_size-1
@@ -292,9 +313,7 @@ function populate_beacon_data()
     local highest_distribution_range = 0
     local highest_strict_range = 0
     for name2, beacon2 in pairs(beacon_prototypes) do
-      if ((global.repeating_beacons[name1] and global.repeating_beacons[name1][name2]) or (global.repeating_beacons[name2] and global.repeating_beacons[name2][name1])) then
-        -- nothing
-      else
+      if not ((global.repeating_beacons[name1] and global.repeating_beacons[name1][name2]) or (global.repeating_beacons[name2] and global.repeating_beacons[name2][name1])) then
         if updated_exclusion_ranges[name2] > highest_exclusion_range then highest_exclusion_range = updated_exclusion_ranges[name2] end
         if updated_distribution_ranges[name2] > highest_distribution_range then highest_distribution_range = updated_distribution_ranges[name2] end
         if updated_strict_beacons[name2] and updated_exclusion_ranges[name2] > highest_strict_range then highest_strict_range = updated_exclusion_ranges[name2] end
@@ -305,6 +324,8 @@ function populate_beacon_data()
     range = math.max(range, updated_distribution_ranges[name1] + highest_strict_range)
     updated_search_ranges[name1] = range
   end
+
+  -- TODO: calculate distribution width for each beacon and save as global table to reduce runtime complexity involving conflux beacons? and/or make a "semi-strict" custom mode so other beacons can easily be made to interact in the same way
 
   global.exclusion_ranges = updated_exclusion_ranges
   global.distribution_ranges = updated_distribution_ranges
@@ -318,8 +339,9 @@ function populate_beacon_data()
   offline_beacons = updated_offline_beacons
   repeating_beacons = global.repeating_beacons
   update_rate = settings.global["ab-update-rate"].value
+  persistent_alerts = settings.global["ab-persistent-alerts"].value
 
-  if settings.startup["ab-enable-exclusion-areas"].value then
+  if settings.startup["ab-disable-exclusion-areas"].value == false then
     enable_scripts()
     check_global_list()
     if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["add_blacklist_name"] then
@@ -368,12 +390,21 @@ end
 
 -- returns the distance between two bounding boxes
 function get_distance(box_a, box_b)
-  do return math.max(math.min(math.abs(box_a.right_bottom.x - box_b.left_top.x), math.abs(box_b.right_bottom.x - box_a.left_top.x)), math.min(math.abs(box_a.right_bottom.y - box_b.left_top.y), math.abs(box_b.right_bottom.y - box_a.left_top.y))) end
+  local x1 = box_a.right_bottom.x - box_b.left_top.x
+  local x2 = box_b.right_bottom.x - box_a.left_top.x
+  local y1 = box_a.right_bottom.y - box_b.left_top.y
+  local y2 = box_b.right_bottom.y - box_a.left_top.y
+  local dx = math.min(math.abs(x1), math.abs(x2))
+  local dy = math.min(math.abs(y1), math.abs(y2))
+  if x1 > 0 and x2 > 0 then dx = 0 end
+  if y1 > 0 and y2 > 0 then dy = 0 end
+  do return math.max(dx, dy) end
 end
 
 -- enables or disables beacons within the exclusion field (or other effective range) of an added/removed beacon entity
 --   @behavior: either "added" or "removed"
 function check_nearby(entity, behavior)
+  if behavior == "removed" then remove_beacon_alert(entity) end
   local exclusion_mode = "normal"
   local exclusion_range = exclusion_ranges[entity.name]
   local search_range = search_ranges[entity.name]
@@ -406,7 +437,11 @@ function check_nearby(entity, behavior)
       end
       if exclusion_mode == "strict" then disabling_range = math.max(disabling_range, exclusion_range + distribution_ranges[nearby_entity.name]) end
       if exclusion_mode == "super" then disabling_range = math.max(disabling_range, exclusion_range + exclusion_ranges[nearby_entity.name]) end
-      if nearby_entity.name == "ab-conflux-beacon" and distribution_ranges[entity.name] >= distribution_ranges[nearby_entity.name] then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end -- TODO: range is checked rather than total area/size - either change the tooltip or take the beacon's dimensions into account too
+      if nearby_entity.name == "ab-conflux-beacon" then
+        local nearby_distribution_width = 2*distribution_ranges[nearby_entity.name] + nearby_entity.selection_box.right_bottom.x - nearby_entity.selection_box.left_top.x
+        local distribution_width = 2*distribution_ranges[entity.name] + entity.selection_box.right_bottom.x - entity.selection_box.left_top.x
+        if distribution_width >= nearby_distribution_width then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end -- semi-strict
+      end
       if nearby_distance < disabling_range then
         local wasEnabled = nearby_entity.active
         local removed_id = -1
@@ -469,7 +504,11 @@ function check_self(entity, removed_id, wasEnabled)
       end
       if exclusion_mode == "strict" then disabling_range = math.max(disabling_range, exclusion_ranges[nearby_entity.name] + distribution_ranges[entity.name]) end
       if exclusion_mode == "super" then disabling_range = math.max(disabling_range, exclusion_ranges[nearby_entity.name] + exclusion_ranges[entity.name]) end
-      if entity.name == "ab-conflux-beacon" and distribution_ranges[nearby_entity.name] >= distribution_ranges[entity.name] then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end
+      if entity.name == "ab-conflux-beacon" then
+        local nearby_distribution_width = 2*distribution_ranges[nearby_entity.name] + nearby_entity.selection_box.right_bottom.x - nearby_entity.selection_box.left_top.x
+        local distribution_width = 2*distribution_ranges[entity.name] + entity.selection_box.right_bottom.x - entity.selection_box.left_top.x
+        if nearby_distribution_width >= distribution_width then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end -- semi-strict
+      end
       if nearby_entity.name ~= "ab-hub-beacon" then
         if nearby_distance < disabling_range then
           if exclusion_mode == "super" or use_repeating_behavior(nearby_entity, entity) == false then isEnabled = false end -- some beacons don't affect each other
@@ -495,52 +534,57 @@ function handle_change(entity, wasEnabled, isEnabled)
     entity.surface.create_entity{
       name = "flying-text",
       position = entity.position,
-      text = {"ab-beacon-deactivated"}
+      text = {"description.ab_beacon_deactivated"}
     }
     if offline_beacons[entity.unit_number] == nil then
-      offline_beacons[entity.unit_number] = {
-        rendering.draw_sprite{
-          sprite = "ab-beacon-offline",
-          target = entity,
-          surface = entity.surface
-        }
-      }
+      add_beacon_warning(entity)
       for _, player in pairs(entity.force.players) do
-        player.add_custom_alert(entity,
-          {type="virtual", name="ab-beacon-offline"},
-          {"description.ab-beacon-offline-alert", "[img=virtual-signal/ab-beacon-offline]", "[img=entity/" .. entity.name .. "]"},
-          true)
+        add_beacon_alert(entity, player)
       end
     end
-
   elseif (wasEnabled == false and isEnabled == true) then -- beacon activated
     --entity.surface.create_entity{
     --  name = "flying-text",
     --  position = entity.position,
-    --  text = {"ab-beacon-activated"}
+    --  text = {"description.ab_beacon_activated"}
     --}
     if offline_beacons[entity.unit_number] ~= nil then
+      remove_beacon_alert(offline_beacons[entity.unit_number][2])
       rendering.destroy(offline_beacons[entity.unit_number][1])
       offline_beacons[entity.unit_number] = nil
-      --remove_beacon_alert(entity)
     end
   elseif (isEnabled == false and offline_beacons[entity.unit_number] == nil) then -- adds icons to old deactivated beacons (may not be necessary)
-    offline_beacons[entity.unit_number] = {
-      rendering.draw_sprite{
-        sprite = "ab-beacon-offline",
-        target = entity,
-        surface = entity.surface
-      }
-    }
+    add_beacon_warning(entity)
   elseif (isEnabled == true and offline_beacons[entity.unit_number] ~= nil) then -- removes icons in other cases (may not be necessary)
     rendering.destroy(offline_beacons[entity.unit_number][1])
     offline_beacons[entity.unit_number] = nil
   end
 end
 
+function add_beacon_warning(entity)
+  offline_beacons[entity.unit_number] = {
+    rendering.draw_sprite{
+      sprite = "ab_beacon_offline",
+      target = entity,
+      surface = entity.surface,
+      x_scale = 0.5,
+      y_scale = 0.5
+    },
+    entity
+  }
+end
+
+function add_beacon_alert(entity, player)
+  player.add_custom_alert(entity,
+  {type="virtual", name="ab_beacon_offline"},
+  {"description.ab_beacon_offline_alert", "[img=virtual-signal/ab_beacon_offline]", "[img=entity/" .. entity.name .. "]"},
+  true)
+end
+
 function remove_beacon_alert(beacon_entity)
   for _, player in pairs(beacon_entity.force.players) do
-    player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.selection_box.left_top, surface=beacon_entity.surface, message={"description.ab-beacon-offline-alert"}, icon={type="virtual", name="ab-beacon-offline"}}) -- TODO: this should only apply to the alert for the specific beacon_entity
+    --player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
+    player.remove_alert({entity=beacon_entity}) -- this applies to any of the filters rather than requiring all of them to match
   end
 end
 
@@ -576,17 +620,31 @@ end
 -- checks all beacons within range of the given beacon
 function check_remote(entity, behavior)
   local search_range = search_ranges[entity.name]
-  local exclusion_area = {
+  local search_area = {
     {entity.selection_box.left_top.x - search_range, entity.selection_box.left_top.y - search_range},
     {entity.selection_box.right_bottom.x + search_range, entity.selection_box.right_bottom.y + search_range}
   }
-  local nearby_beacons = entity.surface.find_entities_filtered({area = exclusion_area, type = "beacon"})
+  local nearby_beacons = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
   for _, beacon in pairs(nearby_beacons) do
     local wasEnabled = beacon.active
     if behavior == "added" then
       check_self(beacon, -1, wasEnabled)
     elseif (beacon.unit_number ~= entity.unit_number) then
       check_self(beacon, entity.unit_number, wasEnabled)
+    end
+  end
+end
+
+-- re-issues alerts for beacons which were disabled by this mod (they naturally end after 10 seconds)
+function refresh_beacon_alerts()
+  for i, offline_beacon in pairs(offline_beacons) do
+    if offline_beacon ~= nil then
+      local beacon = offline_beacon[2]
+      if beacon.valid then
+        for _, player in pairs(beacon.force.players) do
+          add_beacon_alert(beacon, player)
+        end
+      end
     end
   end
 end

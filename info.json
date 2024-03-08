@@ -1,14 +1,15 @@
 {
 	"name": "alternative-beacons",
-	"version": "0.6.0",
+	"version": "0.6.1",
 	"title": "Alternative Beacons",
+	"source": "https://github.com/BetweenWalls/alternative-beacons",
 	"author": "BetweenWalls",
-	"contact": "@between_walls on discord",
+	"contact": "Discord: @between_walls",
 	"factorio_version": "1.1",
 	"dependencies": [
 		"base >= 1.1",
 		"! beacon-overhaul",
 		"! wret-beacon-rebalance-mod"
 	],
-	"description": "Overhauls the beacon system to use exclusion areas in addition to distribution areas; adds new beacons with different niches while preserving the original game's balance. Integrates beacons from other mods into a single system. Beacons can be enabled or disabled individually in the settings."
+	"description": "Overhauls beacons to use exclusion areas in addition to distribution areas; integrates beacons from multiple mods into a single system. Adds (optional) new beacons with different niches while preserving the original game's balance."
 }

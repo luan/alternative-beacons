@@ -3,9 +3,9 @@
 data:extend ({
     {
         type = "bool-setting",
-        name = "ab-enable-exclusion-areas",
+        name = "ab-disable-exclusion-areas",
         setting_type = "startup",
-        default_value = true,
+        default_value = false,
         hidden = true,
         order = "1"
     },
@@ -73,19 +73,18 @@ data:extend ({
         order = "xc"
     },
     {
-        type = "bool-setting",
-        name = "ab-organize-groups",
-        setting_type = "startup",
-        default_value = true,
-        hidden = true,
-        order = "xd"
-    },
-    {
         type = "int-setting",
         name = "ab-update-rate",
         setting_type = "runtime-global",
         default_value = 0,
         minimum_value = 0,
+        order = "y"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-persistent-alerts",
+        setting_type = "runtime-global",
+        default_value = false,
         order = "z"
     },
 })

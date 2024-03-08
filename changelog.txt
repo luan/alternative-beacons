@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.1
+Date: 2024.03.08
+  Changes:
+    - Added a setting to make alerts persist while beacons remain disabled
+    - Streamlined the locale file to make the task of translations as convenient as possible
+    - Fixed conflux beacons using distribution range instead of distribution size to determine which areas they can overlap
+    - Fixed potential issue for beacons with dimensions wider than twice their own exclusion range
+    - Fixed setting for extended stats not properly being disabled when toggled off
+---------------------------------------------------------------------------------------------------
 Version: 0.6.0
 Date: 2024.03.03
   Changes:

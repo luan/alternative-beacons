@@ -8,6 +8,19 @@ local beacon_hub = require("prototypes/hub-beacon")
 local beacon_isolation = require("prototypes/isolation-beacon")
 local startup = settings.startup
 
+function localise_new_beacon(name, description, addon)
+  data.raw.item[name].localised_name = {"name." .. name}
+  data.raw.recipe[name].localised_name = {"name." .. name}
+  data.raw.beacon[name].localised_name = {"name." .. name}
+  if addon ~= nil then
+    data.raw.item[name].localised_description = {'?', {'', {"description." .. description}, ' ', {"description." .. addon}} }
+    data.raw.beacon[name].localised_description = {'?', {'', {"description." .. description}, ' ', {"description." .. addon}} }
+  else
+    data.raw.item[name].localised_description = {"description." .. description}
+    data.raw.beacon[name].localised_description = {"description." .. description}
+  end
+end
+
 -- enables "focused" beacons
 if startup["ab-enable-focused-beacons"].value then
   data:extend({
@@ -36,6 +49,7 @@ if startup["ab-enable-focused-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-focused-beacon" } )
+  localise_new_beacon("ab-focused-beacon", "ab_different", nil)
 end
 
 -- enables "node" beacons
@@ -66,6 +80,7 @@ if startup["ab-enable-node-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-node-beacon" } )
+  localise_new_beacon("ab-node-beacon", "ab_same", nil)
 end
 
 -- enables "conflux" beacons
@@ -96,6 +111,7 @@ if startup["ab-enable-conflux-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-conflux-beacon" } )
+  localise_new_beacon("ab-conflux-beacon", "ab_different", "ab_conflux_addon")
 end
 
 -- enables "hub" beacons
@@ -126,6 +142,7 @@ if startup["ab-enable-hub-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-hub-beacon" } )
+  localise_new_beacon("ab-hub-beacon", "ab_different", "ab_hub_addon")
 end
 
 -- enables "isolation" beacons
@@ -156,32 +173,33 @@ if startup["ab-enable-isolation-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-isolation-beacon" } )
+  localise_new_beacon("ab-isolation-beacon", "ab_different", nil)
 end
 
 -- adjusts "standard" vanilla beacons
 if data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
 if data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
-if data.raw.recipe.beacon and data.raw.recipe.beacon.normal == nil then
-  data.raw.recipe.beacon.normal = {}
-  data.raw.recipe.beacon.normal.result = data.raw.recipe.beacon.result
-  data.raw.recipe.beacon.normal.enabled = data.raw.recipe.beacon.enabled
-  data.raw.recipe.beacon.normal.energy_required = data.raw.recipe.beacon.energy_required
-  data.raw.recipe.beacon.normal.ingredients = data.raw.recipe.beacon.ingredients
+if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
+  if data.raw.recipe.beacon ~= nil and data.raw.recipe.beacon.normal == nil then
+    data.raw.recipe.beacon.normal = {}
+    data.raw.recipe.beacon.normal.result = data.raw.recipe.beacon.result
+    data.raw.recipe.beacon.normal.enabled = data.raw.recipe.beacon.enabled
+    data.raw.recipe.beacon.normal.energy_required = data.raw.recipe.beacon.energy_required
+    data.raw.recipe.beacon.normal.ingredients = data.raw.recipe.beacon.ingredients
+  end
 end
-
 
 -- warning/alert images for disabled beacons
 data:extend({
   {
     type = "sprite",
-    name = "ab-beacon-offline",
+    name = "ab_beacon_offline",
     filename = "__alternative-beacons__/graphics/beacon-offline.png",
     size = 64,
-    scale = 0.5
   },
   {
     type = "virtual-signal",
-    name = "ab-beacon-offline",
+    name = "ab_beacon_offline",
     icon = "__alternative-beacons__/graphics/beacon-offline.png",
     icon_size = 64,
   }
