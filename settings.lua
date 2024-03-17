@@ -60,6 +60,13 @@ data:extend ({
     },
     {
         type = "bool-setting",
+        name = "ab-enable-se-beacons",
+        setting_type = "startup",
+        default_value = false,
+        order = "g"
+    },
+    {
+        type = "bool-setting",
         name = "ab-update-recipes",
         setting_type = "startup",
         default_value = true,

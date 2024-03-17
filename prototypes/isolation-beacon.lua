@@ -63,23 +63,16 @@ local beacon = {
   },
   distribution_effectivity = 0.5,
   supply_area_distance = 30.05, -- extends from edge of collision box (65x65)
-  -- exclusion_area_distance = 68 (141x141; hardcoded in control.lua)
+  -- exclusion_area_distance = 38 (81x81; strict; hardcoded in control.lua)
   collision_box = { { -2.2, -2.2 }, { 2.2, 2.2 } },
   drawing_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
   selection_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
   graphics_set = beacon_graphics,
-  radius_visualisation_picture = {
-    layers = {
-      {filename = "__alternative-beacons__/graphics/visualization/beacon-radius-visualization-isolation.png", size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-top-left.png", shift = {-4.03125,-4.03125}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-top-mid.png", shift = {0,-4.03125}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-top-right.png", shift = {4.03125,-4.03125}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-mid-left.png", shift = {-4.03125,0}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-mid-right.png", shift = {4.03125,0}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-bottom-left.png", shift = {-4.03125,4.03125}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-bottom-mid.png", shift = {0,4.03125}, size = {129, 129}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-isolation-bottom-right.png", shift = {4.03125,4.03125}, size = {129, 129}, priority = "extra-high-no-scale"}
-    }
+  radius_visualisation_picture =
+  {
+    filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png",
+    priority = "extra-high-no-scale",
+    size = {10, 10}
   },
   water_reflection = {
     pictures = {

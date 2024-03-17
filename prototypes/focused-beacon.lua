@@ -125,18 +125,11 @@ local beacon = {
   drawing_box = { { -1, -1.7 }, { 1, 1 } },
   selection_box = { { -1, -1 }, { 1, 1 } },
   graphics_set = beacon_graphics,
-  radius_visualisation_picture = {
-    layers = {
-      {filename = "__alternative-beacons__/graphics/visualization/beacon-radius-visualization-focused.png", size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-top-left.png", shift = {-0.34375,-0.34375}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-top-mid.png", shift = {0,-0.34375}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-top-right.png", shift = {0.34375,-0.34375}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-mid-left.png", shift = {-0.34375,0}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-mid-right.png", shift = {0.34375,0}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-bottom-left.png", shift = {-0.34375,0.34375}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-bottom-mid.png", shift = {0,0.34375}, size = {11, 11}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-focused-bottom-right.png", shift = {0.34375,0.34375}, size = {11, 11}, priority = "extra-high-no-scale"}
-    }
+  radius_visualisation_picture =
+  {
+    filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png",
+    priority = "extra-high-no-scale",
+    size = {10, 10}
   },
   water_reflection = {
     pictures = {

@@ -6,6 +6,9 @@ local beacon_node = require("prototypes/node-beacon")
 local beacon_conflux = require("prototypes/conflux-beacon")
 local beacon_hub = require("prototypes/hub-beacon")
 local beacon_isolation = require("prototypes/isolation-beacon")
+local beacon_basic = require("prototypes/basic-beacon")
+local beacon_compact = require("prototypes/compact-beacon")
+local beacon_wide = require("prototypes/wide-beacon")
 local startup = settings.startup
 
 function localise_new_beacon(name, description, addon)
@@ -19,6 +22,15 @@ function localise_new_beacon(name, description, addon)
     data.raw.item[name].localised_description = {"description." .. description}
     data.raw.beacon[name].localised_description = {"description." .. description}
   end
+end
+
+function rename_beacon(item, beacon, recipe, name)
+  item.name = name
+  item.place_result = name
+  beacon.name = name
+  beacon.minable.result = name
+  recipe.name = name
+  recipe.result = name
 end
 
 -- enables "focused" beacons
@@ -173,7 +185,156 @@ if startup["ab-enable-isolation-beacons"].value then
     }
   })
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "ab-isolation-beacon" } )
-  localise_new_beacon("ab-isolation-beacon", "ab_different", nil)
+  localise_new_beacon("ab-isolation-beacon", "ab_strict", nil)
+end
+
+-- enables beacons which emulate those from Space Exploration
+if startup["ab-enable-se-beacons"].value then
+  local do_new_technologies = true
+  if mods["exotic-industries"] or mods["Ultracube"] or mods["Satisfactorio"] then do_new_technologies = false end
+  if do_new_technologies and data.raw.technology["effect-transmission"] then
+    local tech_compact_1 = table.deepcopy(data.raw.technology["effect-transmission"])
+    tech_compact_1.effects = {}
+    tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack"}
+    tech_compact_1.unit = {count=500, time=60, ingredients={{name="automation-science-pack", amount=1}, {name="logistic-science-pack", amount=1}, {name="chemical-science-pack", amount=1}, {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}}}
+    tech_compact_1.name = "se-compact-beacon"
+    tech_compact_1.localised_name = {"name.se-compact-beacon"}
+    tech_compact_1.localised_description = {"technology-description.se_compact"}
+
+    local tech_compact_2 = table.deepcopy(tech_compact_1)
+    tech_compact_2.prerequisites = {"se-compact-beacon", "space-science-pack"}
+    tech_compact_2.unit = {count=1000, time=60, ingredients={{name="automation-science-pack", amount=1}, {name="logistic-science-pack", amount=1}, {name="chemical-science-pack", amount=1}, {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}, {name="space-science-pack", amount=1}}}
+    tech_compact_2.name = "se-compact-beacon-2"
+    tech_compact_2.localised_name = {"name.se-compact-beacon-2"}
+    tech_compact_2.localised_description = {"technology-description.se_compact_2"}
+
+    local tech_wide_1 = table.deepcopy(tech_compact_1)
+    tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack"}
+    tech_wide_1.name = "se-wide-beacon"
+    tech_wide_1.localised_name = {"name.se-wide-beacon"}
+    tech_wide_1.localised_description = {"technology-description.se_wide"}
+    
+    local tech_wide_2 = table.deepcopy(tech_compact_2)
+    tech_compact_2.prerequisites = {"se-wide-beacon", "space-science-pack"}
+    tech_wide_2.name = "se-wide-beacon-2"
+    tech_wide_2.localised_name = {"name.se-wide-beacon-2"}
+    tech_wide_2.localised_description = {"technology-description.se_wide_2"}
+
+    data:extend({tech_compact_1})
+    data:extend({tech_compact_2})
+    data:extend({tech_wide_1})
+    data:extend({tech_wide_2})
+  end
+
+  local item_basic = {
+    type = "item",
+    name = "se-basic-beacon",
+    place_result = "se-basic-beacon",
+    icon = "__base__/graphics/icons/beacon.png",
+    icon_size = 64,
+    stack_size = 25,
+    subgroup = "module",
+    order = "a[beacon]i1"
+  }
+  local recipe_basic = {
+    type = "recipe",
+    name = "se-basic-beacon",
+    result = "se-basic-beacon",
+    enabled = false,
+    energy_required = 10,
+    ingredients = {{type = "item", name = "advanced-circuit", amount = 60}, {type = "item", name = "electronic-circuit", amount = 60}, {type = "item", name = "copper-cable", amount = 30}, {type = "item", name = "steel-plate", amount = 30}},
+  }
+  data:extend({item_basic})
+  data:extend({beacon_basic})
+  data:extend({recipe_basic})
+  table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "se-basic-beacon" } )
+  localise_new_beacon("se-basic-beacon", "ab_different", nil)
+
+  local item_compact = {
+    type = "item",
+    name = "se-compact-beacon",
+    place_result = "se-compact-beacon",
+    icon = "__alternative-beacons__/graphics/focused-beacon-icon.png",
+    icon_size = 64,
+    stack_size = 25,
+    subgroup = "module",
+    order = "a[beacon]i2"
+  }
+  local recipe_compact = {
+    type = "recipe",
+    name = "se-compact-beacon",
+    result = "se-compact-beacon",
+    enabled = false,
+    energy_required = 10,
+    ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}}
+  }
+  data:extend({item_compact})
+  data:extend({beacon_compact})
+  data:extend({recipe_compact})
+  localise_new_beacon("se-compact-beacon", "ab_different", nil)
+  data.raw.beacon["se-compact-beacon"].fast_replaceable_group = "compact-beacon"
+
+  local item_compact_2 = table.deepcopy(data.raw.item["se-compact-beacon"])
+  local beacon_compact_2 = table.deepcopy(data.raw.beacon["se-compact-beacon"])
+  local recipe_compact_2 = table.deepcopy(data.raw.recipe["se-compact-beacon"])
+  rename_beacon(item_compact_2, beacon_compact_2, recipe_compact_2, "se-compact-beacon-2")
+  data:extend({item_compact_2})
+  data:extend({beacon_compact_2})
+  data:extend({recipe_compact_2})
+  localise_new_beacon("se-compact-beacon-2", "ab_different", nil)
+  data.raw.beacon["se-compact-beacon-2"].distribution_effectivity = 1
+  data.raw.beacon["se-compact-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}}
+  data.raw.item["se-compact-beacon-2"].order = "a[beacon]i4"
+  data.raw.beacon["se-compact-beacon-2"].fast_replaceable_group = "compact-beacon"
+
+  local item_wide = {
+    type = "item",
+    name = "se-wide-beacon",
+    place_result = "se-wide-beacon",
+    icon = "__alternative-beacons__/graphics/wide-beacon-icon.png",
+    icon_size = 64,
+    stack_size = 25,
+    subgroup = "module",
+    order = "a[beacon]i3"
+  }
+  local recipe_wide = {
+    type = "recipe",
+    name = "se-wide-beacon",
+    result = "se-wide-beacon",
+    enabled = false,
+    energy_required = 10,
+    ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}}
+  }
+  data:extend({item_wide})
+  data:extend({beacon_wide})
+  data:extend({recipe_wide})
+  localise_new_beacon("se-wide-beacon", "ab_different", nil)
+  data.raw.beacon["se-wide-beacon"].fast_replaceable_group = "wide-beacon"
+
+  local item_wide_2 = table.deepcopy(data.raw.item["se-wide-beacon"])
+  local beacon_wide_2 = table.deepcopy(data.raw.beacon["se-wide-beacon"])
+  local recipe_wide_2 = table.deepcopy(data.raw.recipe["se-wide-beacon"])
+  rename_beacon(item_wide_2, beacon_wide_2, recipe_wide_2, "se-wide-beacon-2")
+  item_wide_2.icon = "__alternative-beacons__/graphics/wide-beacon-2-icon.png"
+  beacon_wide_2.graphics_set.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-2-body.png"
+  beacon_wide_2.graphics_set.animation_list[6].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-2-body-animated.png"
+  data:extend({item_wide_2})
+  data:extend({beacon_wide_2})
+  data:extend({recipe_wide_2})
+  localise_new_beacon("se-wide-beacon-2", "ab_different", nil)
+  data.raw.beacon["se-wide-beacon-2"].module_specification.module_slots = 20
+  data.raw.beacon["se-wide-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 600}, {type = "item", name = "electronic-circuit", amount = 600}, {type = "item", name = "copper-cable", amount = 300}, {type = "item", name = "steel-plate", amount = 300}}
+  data.raw.item["se-wide-beacon-2"].order = "a[beacon]i5"
+  data.raw.beacon["se-wide-beacon-2"].fast_replaceable_group = "wide-beacon"
+
+  if do_new_technologies and data.raw.technology["effect-transmission"] then
+    table.insert( data.raw["technology"]["se-compact-beacon"].effects, { type = "unlock-recipe", recipe = "se-compact-beacon" } )
+    table.insert( data.raw["technology"]["se-wide-beacon"].effects, { type = "unlock-recipe", recipe = "se-wide-beacon" } )
+    table.insert( data.raw["technology"]["se-compact-beacon-2"].effects, { type = "unlock-recipe", recipe = "se-compact-beacon-2" } )
+    table.insert( data.raw["technology"]["se-wide-beacon-2"].effects, { type = "unlock-recipe", recipe = "se-wide-beacon-2" } )
+    data.raw.beacon["se-compact-beacon"].next_upgrade = "se-compact-beacon-2"
+    data.raw.beacon["se-wide-beacon"].next_upgrade = "se-wide-beacon-2"
+  end
 end
 
 -- adjusts "standard" vanilla beacons

@@ -1,4 +1,17 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2024.03.15
+  Changes:
+    - Isolation beacons now have a strict exclusion range of 38 instead of a regular exclusion range of 68
+    - Adjusted visualization of exclusion areas to not change the color of distribution areas; made strict exclusion areas
+      a slightly different color to help distinguish them more easily
+    - Added a setting to enable SE-like beacons which emulate the beacons from Space Exploration
+    - Added support for Mini Machines and Micro Machines
+    - Added support for Warptorio 2 - warp beacons don't disable or get disabled by other beacons
+    - Added support for Picker Dollies
+    - Fixed descriptions for 1x1 Tarawind beacons
+    - Fixed an error that could occur when enabling periodic updates
+---------------------------------------------------------------------------------------------------
 Version: 0.6.1
 Date: 2024.03.08
   Changes:

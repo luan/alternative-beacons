@@ -18,20 +18,28 @@ function match_ingredients(ingredients, new_ingredients, multiplier)
   for index, ingredient in pairs(ingredients) do
     multiplier = mult
     if (ingredient.type ~= nil and ingredient.name ~= nil and ingredient.amount ~= nil) then
-      if ingredient.amount * multiplier > 400 then multiplier = multiplier / 2 end
-      if multiplier > 5 and ingredient.amount * multiplier > 400 then multiplier = multiplier / 2 end
+      if ingredient.amount * multiplier > 600 then multiplier = multiplier / 2 end
+      if ingredient.amount * multiplier > 800 then multiplier = multiplier / 2 end
       table.insert(new_ingredients, {["type"] = ingredient.type, ["name"] = ingredient.name, ["amount"] = ingredient.amount * multiplier})
     elseif (ingredient.name ~= nil and ingredient.amount ~= nil) then
-      if ingredient.amount * multiplier > 400 then multiplier = multiplier / 2 end
-      if multiplier > 5 and ingredient.amount * multiplier > 400 then multiplier = multiplier / 2 end
+      if ingredient.amount * multiplier > 600 then multiplier = multiplier / 2 end
+      if ingredient.amount * multiplier > 800 then multiplier = multiplier / 2 end
       table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient.name, ["amount"] = ingredient.amount * multiplier})
     elseif #ingredient == 2 and type(ingredient[2]) == "number" then
-      if ingredient[2] * multiplier > 400 then multiplier = multiplier / 2 end
-      if multiplier > 5 and ingredient[2] * multiplier > 400 then multiplier = multiplier / 2 end
+      if ingredient[2] * multiplier > 600 then multiplier = multiplier / 2 end
+      if ingredient[2] * multiplier > 800 then multiplier = multiplier / 2 end
       table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient[1], ["amount"] = ingredient[2] * multiplier})
     end
   end
   do return new_ingredients end
+end
+
+if startup["ab-enable-se-beacons"].value then
+  ingredient_multipliers["se-basic-beacon"] = 3
+  ingredient_multipliers["se-compact-beacon"] = 10
+  ingredient_multipliers["se-wide-beacon"] = 20
+  ingredient_multipliers["se-compact-beacon-2"] = 15
+  ingredient_multipliers["se-wide-beacon-2"] = 30
 end
 
 -- adjusts recipes to use the same ingredient types as standard beacons (or another beacon if one is deemed more suitable for specific mods)
@@ -66,6 +74,13 @@ if data.raw.recipe.beacon ~= nil then
         if #new_ingredients_expensive > 0 then data.raw.recipe[beacon_name].expensive.ingredients = new_ingredients_expensive else data.raw.recipe[beacon_name].expensive = nil end
       end
     end
+    if mods["mini-machines"] or mods["micro-machines"] then
+      for name, beacon_recipe in pairs(data.raw.recipe) do
+        if beacon_recipe.base_machine and beacon_recipe.base_machine.result and beacon_recipe.base_machine.result.place_result and data.raw.beacon[beacon_recipe.base_machine.result.place_result] then
+          -- TODO: adjust recipe costs based on startup settings?
+        end
+      end
+    end
   end
 end
 
@@ -75,20 +90,22 @@ if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
   if mods["beacons"] and not (mods["pycoalprocessing"] or mods["space-exploration"] or mods["Krastorio2"]) then
     localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
   end
-  if mods["5dim_module"] or mods["OD27_5dim_module"] and not mods["pycoalprocessing"] then
+  if ((mods["5dim_module"] or mods["OD27_5dim_module"]) and not mods["pycoalprocessing"]) then
     localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
-    localise("beacon", {"item", "beacon"}, "description", {"description.ab_standard_tiers"})
+    localise("beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_standard_tiers_addon"}} })
+    data.raw.item.beacon.order = "a[beacon]-1"
+    data.raw.recipe.beacon.order = "a[beacon]-1"
   end
   if (mods["space-exploration"] or mods["exotic-industries"]) then
     local do_technology = false
     if data.raw.technology["effect-transmission"] ~= nil then do_technology = true end
-    if startup["ab-override-vanilla-beacons"].value == true then
-      override_vanilla_beacon(true, do_technology)
-    end
+    if startup["ab-override-vanilla-beacons"].value == true then override_vanilla_beacon(true, do_technology) end
     if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then
       localise("beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
       exclusion_range_values["beacon"] = 11
     end
+  end
+  if (mods["space-exploration"] or mods["exotic-industries"] or ((mods["5dim_module"] or mods["OD27_5dim_module"]) and not mods["pycoalprocessing"])) then
     if startup["ab-show-extended-stats"].value == true then
       local strict = false
       if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then strict = true end

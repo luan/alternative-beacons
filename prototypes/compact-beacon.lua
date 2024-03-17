@@ -1,4 +1,4 @@
--- node-beacon.lua
+-- compact-beacon.lua
 
 local beacon_graphics = {
   module_icons_suppressed = false,
@@ -9,31 +9,33 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/node-beacon-base.png",
+            filename = "__alternative-beacons__/graphics/focused-beacon-base.png",
             width = 116,
             height = 93,
-            shift = util.by_pixel(11, 1.5),
+            shift = util.by_pixel(8, 1),
+            scale = 0.67,
             hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-node-beacon-base.png",
+              filename = "__alternative-beacons__/graphics/hr-focused-beacon-base.png",
               width = 232,
               height = 186,
-              shift = util.by_pixel(11, 1.5),
-              scale = 0.5
+              shift = util.by_pixel(8, 1),
+              scale = 0.335
             }
           },
           {
             filename = "__alternative-beacons__/graphics/node-beacon-base-shadow.png",
             width = 116,
             height = 93,
-            shift = util.by_pixel(11, 1.5),
+            shift = util.by_pixel(8, 1),
             draw_as_shadow = true,
+            scale = 0.67,
             hr_version = {
               filename = "__alternative-beacons__/graphics/hr-node-beacon-base-shadow.png",
               width = 232,
               height = 186,
-              shift = util.by_pixel(11, 1.5),
+              shift = util.by_pixel(8, 1),
               draw_as_shadow = true,
-              scale = 0.5
+              scale = 0.335
             }
           }
         }
@@ -51,7 +53,8 @@ local beacon_graphics = {
             line_length = 8,
             frame_count = 32,
             animation_speed = 0.5,
-            shift = util.by_pixel(-1, -55),
+            shift = util.by_pixel(-0.7, -36),
+            scale = 0.67,
             hr_version = {
               filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna.png",
               width = 108,
@@ -59,8 +62,8 @@ local beacon_graphics = {
               line_length = 8,
               frame_count = 32,
               animation_speed = 0.5,
-              shift = util.by_pixel(-1, -55),
-              scale = 0.5
+              shift = util.by_pixel(-0.7, -36),
+              scale = 0.335
             }
           },
           {
@@ -70,8 +73,9 @@ local beacon_graphics = {
             line_length = 8,
             frame_count = 32,
             animation_speed = 0.5,
-            shift = util.by_pixel(100.5, 15.5),
+            shift = util.by_pixel(67, 10.5),
             draw_as_shadow = true,
+            scale = 0.67,
             hr_version = {
               filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna-shadow.png",
               width = 126,
@@ -79,9 +83,9 @@ local beacon_graphics = {
               line_length = 8,
               frame_count = 32,
               animation_speed = 0.5,
-              shift = util.by_pixel(100.5, 15.5),
+              shift = util.by_pixel(67, 10.5),
               draw_as_shadow = true,
-              scale = 0.5
+              scale = 0.335
             }
           }
         }
@@ -92,34 +96,33 @@ local beacon_graphics = {
 
 local beacon = {
   type = "beacon",
-  name = "ab-node-beacon",
-  icon = "__alternative-beacons__/graphics/node-beacon-icon.png",
+  name = "se-compact-beacon",
+  icon = "__alternative-beacons__/graphics/focused-beacon-icon.png",
   icon_mipmaps = 1,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },
   minable = {
-    mining_time = 0.3,
-    result = "ab-node-beacon"
+    mining_time = 0.2,
+    result = "se-compact-beacon"
   },
   allowed_effects = { "consumption", "speed", "pollution" },
   energy_source = {
     type = "electric",
     usage_priority = "secondary-input"
   },
-  energy_usage = "3600kW",
-  max_health = 300,
+  energy_usage = "800kW",
+  max_health = 400,
   module_specification = {
-    module_info_icon_shift = { 0, 0.5 },
-    module_info_max_icons_per_row = 3,
-    module_info_max_icon_rows = 1,
-    module_slots = 3
+    module_info_icon_shift = { 0, 0.25 },
+    module_info_max_icons_per_row = 5,
+    module_info_max_icon_rows = 2,
+    module_slots = 10
   },
-  distribution_effectivity = 0.5,
-  supply_area_distance = 8.05, -- extends from edge of collision box (19x19)
-  -- exclusion_area_distance = 8 (19x19; hardcoded in control.lua)
-  collision_box = { { -1.2, -1.2 }, { 1.2, 1.2 } },
-  drawing_box = { { -1.5, -2.025 }, { 1.5, 1.5 } },
-  selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } },
+  distribution_effectivity = 0.75,
+  supply_area_distance = 2,
+  collision_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
+  drawing_box = { { -1, -1.7 }, { 1, 1 } },
+  selection_box = { { -1, -1 }, { 1, 1 } },
   graphics_set = beacon_graphics,
   radius_visualisation_picture =
   {
@@ -134,7 +137,7 @@ local beacon = {
       width = 24,
       height = 28,
       scale = 5,
-      shift = { 0, 1.71875 },
+      shift = {0, 1.71875},
       variation_count = 1
     },
     rotate = false,

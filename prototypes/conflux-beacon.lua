@@ -90,18 +90,11 @@ local beacon = {
   drawing_box = { { -2, -2.7 }, { 2, 2 } },
   selection_box = { { -2, -2 }, { 2, 2 } },
   graphics_set = beacon_graphics,
-  radius_visualisation_picture = {
-    layers = {
-      {filename = "__alternative-beacons__/graphics/visualization/beacon-radius-visualization-conflux.png", size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-top-left.png", shift = {-1.34375,-1.34375}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-top-mid.png", shift = {0,-1.34375}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-top-right.png", shift = {1.34375,-1.34375}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-mid-left.png", shift = {-1.34375,0}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-mid-right.png", shift = {1.34375,0}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-bottom-left.png", shift = {-1.34375,1.34375}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-bottom-mid.png", shift = {0,1.34375}, size = {43, 43}, priority = "extra-high-no-scale"},
-      {filename = "__alternative-beacons__/graphics/visualization/brv-conflux-bottom-right.png", shift = {1.34375,1.34375}, size = {43, 43}, priority = "extra-high-no-scale"}
-    }
+  radius_visualisation_picture =
+  {
+    filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png",
+    priority = "extra-high-no-scale",
+    size = {10, 10}
   },
   water_reflection = {
     pictures = {

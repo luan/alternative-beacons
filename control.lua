@@ -48,7 +48,7 @@ script.on_configuration_changed(
 
 
 -- Enables all scripting to make exclusion areas function - can be disabled by other mods via a hidden startup setting if necessary
-function enable_scripts()
+function enable_scripts(mods)
   script.on_event( defines.events.on_built_entity,          function(event) check_nearby(event.created_entity, "added") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.on_robot_built_entity,    function(event) check_nearby(event.created_entity, "added") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.script_raised_built,      function(event) check_nearby(event.entity, "added") end, {{filter = "type", type = "beacon"}} )
@@ -66,11 +66,11 @@ function enable_scripts()
         local previous_update_rate = update_rate
         update_rate = settings.global["ab-update-rate"].value
         if previous_update_rate ~= update_rate then
-          unregister_periodic_updates(previous_update_rate * 60)
+          if previous_update_rate > 0 then unregister_periodic_updates(previous_update_rate * 60) end
           if update_rate > 0 then register_periodic_updates(update_rate * 60) end
         end
       end
-      if event.setting == "ab-persistent-alerts" then -- TODO: Allow this to be adjusted per player
+      if event.setting == "ab-persistent-alerts" then -- TODO: Allow this to be adjusted per player in multiplayer while still allowing the admin to make it available or not
         local previous_setting = persistent_alerts
         persistent_alerts = settings.global["ab-persistent-alerts"].value
         if previous_setting == false and persistent_alerts == true then
@@ -83,6 +83,15 @@ function enable_scripts()
   )
   if update_rate > 0 then register_periodic_updates(update_rate * 60) end
   if persistent_alerts == true then register_alert_refreshing() end
+  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"),
+    function(event) check_remote(event.moved_entity, "added", 1) end)
+  end
+  if mods["pycoalprocessing"] then
+    remote.add_interface("cryogenic-distillation",
+    {am_fm_beacon_settings_changed = function(new_beacon) check_remote(new_beacon, "added", 0) end, -- recheck nearby beacons
+    am_fm_beacon_destroyed = function(receivers, surface) end}) -- do nothing
+  end
 end
 
 function register_periodic_updates(tick_rate)
@@ -114,7 +123,8 @@ function populate_beacon_data()
     ["ab-focused-beacon"] = {value = 3},
     ["ab-conflux-beacon"] = {value = 12},
     ["ab-hub-beacon"] = {value = 34},
-    ["ab-isolation-beacon"] = {value = 68},
+    ["ab-isolation-beacon"] = {value = 38, mode = "strict"},
+    ["se-basic-beacon"] = {value = "solo", mode = "strict"},
     ["se-compact-beacon"] = {value = "solo", mode = "strict"},
     ["se-compact-beacon-2"] = {value = "solo", mode = "strict"},
     ["se-wide-beacon"] = {value = "solo", mode = "strict"},
@@ -138,7 +148,7 @@ function populate_beacon_data()
     ["beacon"] = {"beacon", "ab-standard-beacon", "kr-singularity-beacon", "beacon-mk1", "beacon-mk2", "beacon-mk3", "5d-beacon-02", "5d-beacon-03", "5d-beacon-04"}, -- additional entries added below
     ["ab-standard-beacon"] = {"beacon", "ab-standard-beacon", "kr-singularity-beacon", "beacon-mk1", "beacon-mk2", "beacon-mk3", "5d-beacon-02", "5d-beacon-03", "5d-beacon-04"}, -- additional entries added below
     ["kr-singularity-beacon"] = {"kr-singularity-beacon"},
-    ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"}, -- TODO: only if beacon overloading is enabled
+    ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"}, -- TODO: only if beacon overloading is enabled?
     ["ei_iron-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
     ["beacon-mk1"] = {"beacon", "ab-standard-beacon"},
     ["beacon-mk2"] = {"beacon", "ab-standard-beacon"},
@@ -152,6 +162,8 @@ function populate_beacon_data()
     ["5d-beacon-02"] = {"beacon", "ab-standard-beacon"},
     ["5d-beacon-03"] = {"beacon", "ab-standard-beacon"},
     ["5d-beacon-04"] = {"beacon", "ab-standard-beacon"},
+    ["mini-beacon-1"] = {"mini-beacon-1"},
+    ["micro-beacon-1"] = {"micro-beacon-1"},
     -- nullius small/large entries are added below
     -- pyanodons AM-FM entries are added below
     -- power crystal entries are added below
@@ -176,6 +188,10 @@ function populate_beacon_data()
   end
 
   -- populate reference tables with repetitive info
+  local repeaters_all = {}
+  for _, beacon in pairs(beacon_prototypes) do
+    table.insert(repeaters_all, beacon.name)
+  end
   if mods["nullius"] then
     local repeaters_small = {"beacon", "ab-standard-beacon"}
     local repeaters_large = {}
@@ -235,10 +251,6 @@ function populate_beacon_data()
         table.insert(updated_repeating_beacons[beacon.name], repeaters_crystal[i])
       end
     end
-    local repeaters_all = {}
-    for _, beacon in pairs(beacon_prototypes) do
-      table.insert(repeaters_all, beacon.name)
-    end
     for tier=1,3,1 do
       custom_exclusion_ranges["model-power-crystal-productivity-" .. tier] = {value = 0}
       custom_exclusion_ranges["model-power-crystal-effectivity-" .. tier] = {value = 0}
@@ -256,16 +268,68 @@ function populate_beacon_data()
       end
     end
   end
+  if mods["mini-machines"] then
+    if settings.startup["ab-balance-other-beacons"].value == true then
+      if mods["bobmodules"] then
+        custom_exclusion_ranges["mini-beacon-3"] = {value = 8}
+      elseif mods["FactorioExtended-Plus-Module"] then
+        updated_repeating_beacons["mini-beacon-1"] = {"mini-beacon-1", "mini-beacon-2", "mini-beacon-3", "mini-beacon-4"}
+        updated_repeating_beacons["mini-beacon-2"] = {"mini-beacon-1"}
+        updated_repeating_beacons["mini-beacon-3"] = {"mini-beacon-1"}
+      elseif mods["5dim_module"] then
+        updated_repeating_beacons["mini-beacon-1"] = {"mini-beacon-1", "mini-beacon-2", "mini-beacon-3", "mini-beacon-4"}
+        updated_repeating_beacons["mini-beacon-2"] = {"mini-beacon-1"}
+        updated_repeating_beacons["mini-beacon-3"] = {"mini-beacon-1"}
+      end
+      if mods["5dim_module"] then updated_repeating_beacons["mini-beacon-4"] = {"mini-beacon-1"} end
+    end
+  end
+  if mods["micro-machines"] then
+    if settings.startup["ab-balance-other-beacons"].value == true then
+      if mods["bobmodules"] then
+        custom_exclusion_ranges["micro-beacon-3"] = {value = 5}
+      elseif mods["FactorioExtended-Plus-Module"] then
+        updated_repeating_beacons["micro-beacon-1"] = {"micro-beacon-1", "micro-beacon-2", "micro-beacon-3", "micro-beacon-4"}
+        updated_repeating_beacons["micro-beacon-2"] = {"micro-beacon-1"}
+        updated_repeating_beacons["micro-beacon-3"] = {"micro-beacon-1"}
+      elseif mods["5dim_module"] then
+        updated_repeating_beacons["micro-beacon-1"] = {"micro-beacon-1", "micro-beacon-2", "micro-beacon-3", "micro-beacon-4"}
+        updated_repeating_beacons["micro-beacon-2"] = {"micro-beacon-1"}
+        updated_repeating_beacons["micro-beacon-3"] = {"micro-beacon-1"}
+      end
+      if mods["5dim_module"] then updated_repeating_beacons["micro-beacon-4"] = {"micro-beacon-1"} end
+    end
+  end
   if mods["exotic-industries"] then
     max_moduled_building_size = 11
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       table.insert(updated_repeating_beacons[beacon.name], "ei_alien-beacon")
     end
+    updated_repeating_beacons["ei_alien-beacon"] = repeaters_all
+    -- TODO: prevent cores from being "disabled" even though it has no effect on them relaying module effects to beacons
+  end
+  if mods["warptorio2"] then
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      for i=1,10,1 do
+        table.insert(updated_repeating_beacons[beacon.name], "warptorio-beacon-" .. tostring(i))
+      end
+    end
+    for i=1,10,1 do
+      updated_repeating_beacons["warptorio-beacon-" .. tostring(i)] = repeaters_all
+    end
+  end
+  if mods["EditorExtensions"] then
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      table.insert(updated_repeating_beacons[beacon.name], "ee-super-beacon")
+    end
+    updated_repeating_beacons["ee-super-beacon"] = repeaters_all
   end
 
   -- set distribution/exclusion ranges
-  -- TODO: Change exclusion range to be based on how much is added from distribution range? if other mods change the distribution range, everything would be messed up but it might be less broken if the exclusion ranges are based on the changed values instead of hardcoded
+  -- TODO: Change exclusion range to be based on how much is added from distribution range, rather than the full value?
   for _, beacon in pairs(beacon_prototypes) do
     updated_distribution_ranges[beacon.name] = math.ceil(get_distribution_range(beacon))
     if updated_exclusion_ranges[beacon.name] == nil then
@@ -325,8 +389,6 @@ function populate_beacon_data()
     updated_search_ranges[name1] = range
   end
 
-  -- TODO: calculate distribution width for each beacon and save as global table to reduce runtime complexity involving conflux beacons? and/or make a "semi-strict" custom mode so other beacons can easily be made to interact in the same way
-
   global.exclusion_ranges = updated_exclusion_ranges
   global.distribution_ranges = updated_distribution_ranges
   global.search_ranges = updated_search_ranges
@@ -342,22 +404,8 @@ function populate_beacon_data()
   persistent_alerts = settings.global["ab-persistent-alerts"].value
 
   if settings.startup["ab-disable-exclusion-areas"].value == false then
-    enable_scripts()
+    enable_scripts(mods)
     check_global_list()
-    if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["add_blacklist_name"] then
-      remote.call("PickerDollies", "add_blacklist_name", "beacon")
-      remote.call("PickerDollies", "add_blacklist_name", "ab-focused-beacon")
-      remote.call("PickerDollies", "add_blacklist_name", "ab-node-beacon")
-      remote.call("PickerDollies", "add_blacklist_name", "ab-conflux-beacon")
-      remote.call("PickerDollies", "add_blacklist_name", "ab-hub-beacon")
-      remote.call("PickerDollies", "add_blacklist_name", "ab-isolation-beacon")
-    end
-    -- beacon manipulation within Pyanodons
-    if mods["pycoalprocessing"] then
-      remote.add_interface("cryogenic-distillation",
-      {am_fm_beacon_settings_changed = function(new_beacon) check_remote(new_beacon, "added") end, -- recheck nearby beacons
-      am_fm_beacon_destroyed = function(receivers, surface) end}) -- do nothing
-    end
   end
 end
 
@@ -548,14 +596,17 @@ function handle_change(entity, wasEnabled, isEnabled)
     --  position = entity.position,
     --  text = {"description.ab_beacon_activated"}
     --}
-    if offline_beacons[entity.unit_number] ~= nil then
-      remove_beacon_alert(offline_beacons[entity.unit_number][2])
-      rendering.destroy(offline_beacons[entity.unit_number][1])
-      offline_beacons[entity.unit_number] = nil
-    end
+    remove_beacon_warning(entity)
   elseif (isEnabled == false and offline_beacons[entity.unit_number] == nil) then -- adds icons to old deactivated beacons (may not be necessary)
     add_beacon_warning(entity)
   elseif (isEnabled == true and offline_beacons[entity.unit_number] ~= nil) then -- removes icons in other cases (may not be necessary)
+    remove_beacon_warning(entity)
+  end
+end
+
+function remove_beacon_warning(entity)
+  if offline_beacons[entity.unit_number] ~= nil then
+    remove_beacon_alert(offline_beacons[entity.unit_number][2])
     rendering.destroy(offline_beacons[entity.unit_number][1])
     offline_beacons[entity.unit_number] = nil
   end
@@ -618,19 +669,21 @@ function use_repeating_behavior(entity1, entity2)
 end
 
 -- checks all beacons within range of the given beacon
-function check_remote(entity, behavior)
-  local search_range = search_ranges[entity.name]
-  local search_area = {
-    {entity.selection_box.left_top.x - search_range, entity.selection_box.left_top.y - search_range},
-    {entity.selection_box.right_bottom.x + search_range, entity.selection_box.right_bottom.y + search_range}
-  }
-  local nearby_beacons = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
-  for _, beacon in pairs(nearby_beacons) do
-    local wasEnabled = beacon.active
-    if behavior == "added" then
-      check_self(beacon, -1, wasEnabled)
-    elseif (beacon.unit_number ~= entity.unit_number) then
-      check_self(beacon, entity.unit_number, wasEnabled)
+function check_remote(entity, behavior, extra_search_range)
+  if entity.type == "beacon" then
+    local search_range = search_ranges[entity.name] + extra_search_range
+    local search_area = {
+      {entity.selection_box.left_top.x - search_range, entity.selection_box.left_top.y - search_range},
+      {entity.selection_box.right_bottom.x + search_range, entity.selection_box.right_bottom.y + search_range}
+    }
+    local nearby_beacons = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
+    for _, beacon in pairs(nearby_beacons) do
+      local wasEnabled = beacon.active
+      if behavior == "added" then
+        check_self(beacon, -1, wasEnabled)
+      elseif (beacon.unit_number ~= entity.unit_number) then
+        check_self(beacon, entity.unit_number, wasEnabled)
+      end
     end
   end
 end
