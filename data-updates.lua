@@ -1,29 +1,21 @@
 --- data-updates.lua
 
-local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range which is large enough to prevent synergy with other beacons; the same values are also provided in control.lua
-  ["ab-focused-beacon"] = {value=3},
-  ["ab-conflux-beacon"] = {value=12},
-  ["ab-hub-beacon"] = {value=34},
-  ["ab-isolation-beacon"] = {value=38, mode="strict"},
-  ["se-basic-beacon"] = {value = "solo", mode = "strict"},
-  ["se-compact-beacon"] = {value = "solo", mode = "strict"},
-  ["se-compact-beacon-2"] = {value = "solo", mode = "strict"},
-  ["se-wide-beacon"] = {value = "solo", mode = "strict"},
-  ["se-wide-beacon-2"] = {value = "solo", mode = "strict"},
-  ["ei_copper-beacon"] = {value = "solo", mode = "strict"},
-  ["ei_iron-beacon"] = {value = "solo", mode = "strict"},
-  ["el_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-  ["fi_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-  ["fu_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-  ["productivity-beacon"] = {value = 6},
-  ["productivity-beacon-1"] = {value = 5},
-  ["productivity-beacon-2"] = {value = 6},
-  ["productivity-beacon-3"] = {value = 7},
-  ["speed-beacon-2"] = {value = 8},
-  ["speed-beacon-3"] = {value = 11},
-  ["beacon-3"] = {value = 11},
-  ["beacon3"] = {value = 8},
-  -- pyanodons AM-FM entries are added below
+local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range for "strict" beacons which is large enough to prevent synergy with other beacons; the same values are also provided in control.lua
+  ["ab-focused-beacon"] = {add=1},
+  ["ab-conflux-beacon"] = {add=3},
+  ["ab-hub-beacon"] = {add=20},
+  ["ab-isolation-beacon"] = {add=8, mode="strict"},
+  ["se-basic-beacon"] = {value="solo", mode="strict"},
+  ["se-compact-beacon"] = {value="solo", mode="strict"},
+  ["se-compact-beacon-2"] = {value="solo", mode="strict"},
+  ["se-wide-beacon"] = {value="solo", mode="strict"},
+  ["se-wide-beacon-2"] = {value="solo", mode="strict"},
+  ["ei_copper-beacon"] = {value="solo", mode="strict"},
+  ["ei_iron-beacon"] = {value="solo", mode="strict"},
+  ["el_ki_beacon_entity"] = {value="solo", mode="strict"},
+  ["fi_ki_beacon_entity"] = {value="solo", mode="strict"},
+  ["fu_ki_beacon_entity"] = {value="solo", mode="strict"}
+  -- entries are added below for: Pyanodons AM-FM beacons, Bob's "beacon-3" (and mini/micro versions), productivity/speed beacons from Advanced Modules, beacons from Fast Furnaces, "beacon3", and "productivity-beacon"
 }
 local distribution_range_indent = 0.25 -- how close distribution ranges are to the edge of their affected area in tiles (should be between 0 and 0.5; vanilla default is 0.3)
 local max_moduled_building_size = 9 -- by default, rocket silo (9x9) is the largest building which can use modules
@@ -37,12 +29,12 @@ local beacons = { -- list of beacons available without other mods
   "ab-node-beacon",
   "ab-conflux-beacon",  
   "ab-hub-beacon",
-  "ab-isolation-beacon",
+  "ab-isolation-beacon"
 }
-local exclusion_range_values = {}
-
 local beacon_standard = require("prototypes/standard-beacon")
-local startup = settings.startup
+override_descriptions = {}
+exclusion_range_values = {}
+startup = settings.startup
 
 if startup["ab-enable-se-beacons"].value then
   table.insert(beacons, "se-basic-beacon")
@@ -110,7 +102,7 @@ function enable_replacement_standard_beacon(technology_name, order_string)
     }
   })
   table.insert( data.raw["technology"][technology_name].effects, { type = "unlock-recipe", recipe = "ab-standard-beacon" } )
-  localise_new_beacon("ab-standard-beacon", "ab_other", nil)
+  localise_new_beacon("ab-standard-beacon", "ab_standard", nil)
   if mods["space-exploration"] then data.raw.beacon["ab-standard-beacon"].se_allow_in_space = true end
 end
 
@@ -127,6 +119,7 @@ function override_vanilla_beacon(do_localisation, do_technology)
   if beacon.collision_box[2][1] + beacon.supply_area_distance ~= 4.25 then
     beacon.selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } }
     beacon.collision_box = { { -1.2, -1.2 }, { 1.2, 1.2 } }
+    beacon.drawing_box = { {-1.5, -2.2}, {1.5, 1.3} }
     beacon.supply_area_distance = 3.05 -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
   end
   data.raw.item.beacon.order = "a[beacon]"
@@ -134,7 +127,7 @@ function override_vanilla_beacon(do_localisation, do_technology)
   if data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
   if do_localisation == true then
     localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
-    localise("beacon", {"item", "beacon"}, "description", {"description.ab_other"})
+    localise("beacon", {"item", "beacon"}, "description", {"description.ab_standard"})
   end
   if do_technology then data.raw.technology["effect-transmission"].localised_description = {"technology-description.effect_transmission_default"} end
 end
@@ -223,8 +216,8 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   if range ~= nil then new_beacon.supply_area_distance = range end
   if modules ~= nil then new_beacon.module_specification.module_slots = modules end
   if efficiency ~= nil then new_beacon.distribution_effectivity = efficiency end
-  if effects ~= nil then new_beacon.allowed_effects = effects end
   if power ~= nil then new_beacon.energy_usage = power end
+  if effects ~= nil then new_beacon.allowed_effects = effects end
   data:extend({new_beacon_item})
   data:extend({new_beacon})
   data:extend({new_beacon_recipe})
@@ -295,6 +288,16 @@ function add_extended_description(name, pair, exclusion_range, strict)
     e_range = {"description.ab_exclusion_range", tostring(exclusion_range)},
     dimensions = {"description.ab_dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1])), tostring(math.ceil(beacon.selection_box[2][2] - beacon.selection_box[1][2]))}
   }
+  if override_descriptions[name] then
+    local new_efficiency = beacon.distribution_effectivity
+    if override_descriptions[name].efficiency then
+      new_efficiency = override_descriptions[name].efficiency
+      stats.efficiency = {"description.ab_distribution_efficiency", tostring(new_efficiency)}
+    end
+    if override_descriptions[name].slots then stats.slots = {"description.ab_module_slots", tostring(override_descriptions[name].slots), tostring(math.floor(100*new_efficiency*override_descriptions[name].slots)/100)} end
+    if override_descriptions[name].d_range then stats.d_range = {"description.ab_distribution_range", tostring(override_descriptions[name].d_range)} end
+    if override_descriptions[name].dimensions then stats.dimensions = {"description.ab_dimensions", tostring(override_descriptions[name].dimensions[1]), tostring(override_descriptions[name].dimensions[2])} end
+  end
   if pair.item ~= nil then stats.stack_size = {"description.ab_stack_size", tostring(pair.item.stack_size)} end
   if strict == true then
     stats.e_range = {'?', {'', {"description.ab_exclusion_range", tostring(exclusion_range)}, ' ', {"description.ab_strict_range_addon"}}}
@@ -420,6 +423,7 @@ if mods["exotic-industries"] then ----------------------------------------------
   data.raw.technology["ei_copper-beacon"].localised_description = {'?', {'', {"technology-description.effect_transmission_default"}, '\n\n', {"technology-description.ei_copper_addon"}}}
   data.raw.technology["ei_iron-beacon"].localised_description = {"technology-description.ei_iron"}
   max_moduled_building_size = 11
+  -- TODO: Is there a way to make these beacons fair if beacon overloading is disabled in the settings? They can't be disabled since their liquid requirements already enable/disable them in a separate way.
   -- Note: beacon overloading seems to happen inconsistently in some cases when additional beacons are within 6 tiles but not affecting the machine due to their distribution ranges (different behavior depending on whether the machine or the additional beacon were placed last)
 end
 
@@ -440,7 +444,7 @@ if mods["248k"] then -----------------------------------------------------------
     data.raw.beacon["fu_ki_core_slave_entity"].module_specification.module_slots = 5
     modules = {"5", "15", "15"}
   else
-    -- the usual normalization somehow prevents 248k's beacons from interacting with machines at the correct range even though the visualization appears correct; the KI1 and KI3 beacons have a lower apparent range so those can be increased for a better approximation; exclusion range visualizations are also adjusted further below
+    -- the usual normalization somehow prevents 248k's beacons from interacting with machines at the correct range even though the visualization appears correct; the KI1 and KI3 beacons have a lower apparent range so those can be increased for a better approximation
     if math.ceil(get_distribution_range(data.raw.beacon["el_ki_beacon_entity"])) == 3 then data.raw.beacon["el_ki_beacon_entity"].supply_area_distance = data.raw.beacon["el_ki_beacon_entity"].supply_area_distance + 0.075 end
     if math.ceil(get_distribution_range(data.raw.beacon["fu_ki_beacon_entity"])) == 3 then data.raw.beacon["fu_ki_beacon_entity"].supply_area_distance = data.raw.beacon["fu_ki_beacon_entity"].supply_area_distance + 0.075 end
   end
@@ -602,13 +606,11 @@ if mods["Advanced_Modules"] or mods["Advanced_Sky_Modules"] or mods["Advanced_be
   local kinds = {"clean", "speed", "productivity"}
   for index, kind in pairs(kinds) do
     for tier=1,3,1 do
-      local mode = {"description.ab_different"}
-      if kind == "clean" or (kind == "speed" and tier == 1) then mode = {"description.ab_same"} end
-      localise(kind .. "-beacon-" .. tier, {"item", "beacon"}, "description", {'?', {'', mode, ' ', {"description." .. kind .. "_1_2_3_addon"}}})
+      localise(kind .. "-beacon-" .. tier, {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description." .. kind .. "_1_2_3_addon"}}})
       data.raw.beacon[kind .. "-beacon-" .. tier].radius_visualisation_picture.filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png"
     end
   end
-  data.raw["item-group"]["a-modules"].localised_name = {"name.advanced-modules-group"}
+  data.raw["item-group"]["a-modules"].localised_name = {"name.advanced-modules-group"} -- fixes item group spelling & scale
   data.raw["item-group"]["a-modules"].icon_size = 256
   data.raw["item-group"]["a-modules"].icon_mipmaps = 4
   -- Beacons/modules only getting speed or productivity effects is not a downside (those are the most powerful effects) so these mods canot be balanced to the same level as others without also modifying module stats
@@ -617,20 +619,33 @@ if mods["Advanced_Modules"] or mods["Advanced_Sky_Modules"] or mods["Advanced_be
     data.raw.beacon["productivity-beacon-1"].energy_usage = "1000kW"
     data.raw.beacon["productivity-beacon-1"].distribution_effectivity = 0.25
     data.raw.beacon["productivity-beacon-1"].supply_area_distance = 2
+    custom_exclusion_ranges["productivity-beacon-1"] = {add=3}
     data.raw.beacon["productivity-beacon-2"].energy_usage = "2500kW"
     data.raw.beacon["productivity-beacon-2"].distribution_effectivity = 0.25
     data.raw.beacon["productivity-beacon-2"].supply_area_distance = 2
+    custom_exclusion_ranges["productivity-beacon-2"] = {add=4}
     data.raw.beacon["productivity-beacon-3"].energy_usage = "6000kW"
     data.raw.beacon["productivity-beacon-3"].distribution_effectivity = 0.25
     data.raw.beacon["productivity-beacon-3"].supply_area_distance = 2
+    custom_exclusion_ranges["productivity-beacon-3"] = {add=5}
     data.raw.beacon["speed-beacon-1"].energy_usage = "1000kW"
     data.raw.beacon["speed-beacon-1"].distribution_effectivity = 0.5
+    data.raw.beacon["speed-beacon-1"].supply_area_distance = 6
     data.raw.beacon["speed-beacon-2"].energy_usage = "2500kW"
     data.raw.beacon["speed-beacon-2"].distribution_effectivity = 0.5
     data.raw.beacon["speed-beacon-2"].module_specification.module_slots = 4
+    data.raw.beacon["speed-beacon-2"].supply_area_distance = 6
+    custom_exclusion_ranges["speed-beacon-2"] = {add=2}
     data.raw.beacon["speed-beacon-3"].energy_usage = "6000kW"
     data.raw.beacon["speed-beacon-3"].distribution_effectivity = 0.5
     data.raw.beacon["speed-beacon-3"].module_specification.module_slots = 6
+    data.raw.beacon["speed-beacon-3"].supply_area_distance = 6
+    custom_exclusion_ranges["speed-beacon-3"] = {add=5}
+    localise("productivity-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.productivity_1_2_3_addon"}}})
+    localise("productivity-beacon-2", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.productivity_1_2_3_addon"}}})
+    localise("productivity-beacon-3", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.productivity_1_2_3_addon"}}})
+    localise("speed-beacon-2", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.speed_1_2_3_addon"}}})
+    localise("speed-beacon-3", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.speed_1_2_3_addon"}}})
     -- Balance: modules
     local kinds = {["speed"] = {20,40,60,80,100,120}, ["productivity"] = {5,10,15,20,25,30}}
     if mods["Advanced_Sky_Modules"] == nil then
@@ -652,24 +667,13 @@ if mods["Advanced_Modules"] or mods["Advanced_Sky_Modules"] or mods["Advanced_be
       data.raw.module["god-module"].effect = { consumption = {bonus=-0.25}, speed = {bonus=0.25}, productivity = {bonus=0.25}, pollution = {bonus=-0.25} } -- reduced to match original version; fixes pollution so it gets reduced instead of increased
     end
   end
-  data.raw.beacon["speed-beacon-1"].supply_area_distance = 6  -- TODO: add more functionality in control.lua so the setting which enables/disables balance changes can also correctly handle different ranges for entities with the same names (exclusion ranges are currently hardcoded based on item name)
-  data.raw.beacon["speed-beacon-2"].supply_area_distance = 6
-  data.raw.beacon["speed-beacon-3"].supply_area_distance = 6
   -- TODO: Balance more? less?
-end
-
-if mods["IndustrialRevolution3"] then -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  order_beacons("beacon", 1, "zz", "zz")
-end
-
-if mods["SeaBlock"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  order_beacons("beacon", 1, "a[beacon]-x", "a[beacon]-x")
 end
 
 if mods["bobmodules"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- same names as Endgame Extension and Beacon 2; beacon-2 has 6 range, 4 modules, and 0.75 efficiency; beacon-3 has 9 range, 6 modules, and 1.0 efficiency
   localise("beacon-2", {"item", "beacon"}, "description", {"description.ab_same"})
-  localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
+  localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_same"})
   -- Balance: power requirements adjusted upward, efficiencies reduced, reduced range of beacon-2, beacon-3 given +2 exclusion range; they are still superior to node/conflux beacons, although they are at least somewhat comparable now
   if startup["ab-balance-other-beacons"].value then
     data.raw.beacon["beacon-2"].energy_usage = "3000kW"
@@ -677,14 +681,16 @@ if mods["bobmodules"] then -----------------------------------------------------
     data.raw.beacon["beacon-2"].supply_area_distance = 5
     data.raw.beacon["beacon-3"].energy_usage = "6000kW"
     data.raw.beacon["beacon-3"].distribution_effectivity = 0.5
+    custom_exclusion_ranges["beacon-3"] = {add=2}
+    localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
   end
 end
 
 if mods["EndgameExtension"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- same names as Bob's and Beacon 2; beacon-2 has 5 range, 0.75 efficiency, 3 module slots; beacon-3 has 7 range, 1.0 efficiency, 5 module slots; productivity-beacon has 3 range, 1.0 efficiency, 5 module slots
   localise("beacon-2", {"item", "beacon"}, "description", {"description.ab_same"})
-  localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
-  localise("productivity-beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_different"}, ' ', {"description.productivity_addon"}}})
+  localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_same"})
+  localise("productivity-beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.productivity_addon"}}})
   local beacons = {"beacon-2", "beacon-3", "productivity-beacon"}
   for index, name in pairs(beacons) do
     data.raw.recipe[name].order = "a[beacon]n2[" .. name .. "]"
@@ -701,6 +707,10 @@ if mods["EndgameExtension"] then -----------------------------------------------
     data.raw.beacon["beacon-3"].distribution_effectivity = 0.5
     data.raw.beacon["beacon-3"].module_specification.module_slots = 6
     data.raw.beacon["beacon-3"].supply_area_distance = 9
+    custom_exclusion_ranges["beacon-3"] = {add=2}
+    custom_exclusion_ranges["productivity-beacon"] = {add=3}
+    localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
+    localise("productivity-beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_different"}, ' ', {"description.productivity_addon"}}})
   end
   -- TODO: fix crash with Nullius?
 end
@@ -735,10 +745,10 @@ if mods["zombiesextended-modules"] then ----------------------------------------
 end
 
 if mods["BeaconMk2"] then -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- beaconmk2 has 5 range, 0.5 efficiency, 4 module slots
   localise("beaconmk2", {"item", "beacon"}, "description", {"description.ab_same"})
   data.raw.recipe["beaconmk2"].order = "a[beacon]mk2"
   data.raw.item["beaconmk2"].order = "a[beacon]mk2"
-  -- beaconmk2 has 5 range, 0.5 efficiency, 4 module slots
 end
 
 if mods["beacons"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -753,8 +763,10 @@ if mods["beacons"] then --------------------------------------------------------
     data.raw.beacon["beacon2"].distribution_effectivity = 0.5
     data.raw.beacon["beacon2"].supply_area_distance = 5
     data.raw.beacon["beacon3"].distribution_effectivity = 0.5
+    data.raw.beacon["beacon3"].supply_area_distance = 6
+    custom_exclusion_ranges["beacon3"] = {add=2}
+    localise("beacon3", {"item", "beacon"}, "description", {"description.ab_different"})
   end
-  data.raw.beacon["beacon3"].supply_area_distance = 6
 end
 
 if mods["mini-machines"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -770,7 +782,7 @@ if mods["mini-machines"] then --------------------------------------------------
       if mods["bobmodules"] then
         generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, 4, 3, 0.5, "2250kW")
         generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_different"}, 2, 6, 5, 0.5, "4500kW")
-        custom_exclusion_ranges["mini-beacon-3"] = {value = 8}
+        custom_exclusion_ranges["mini-beacon-3"] = {add = 2}
       elseif mods["FactorioExtended-Plus-Module"] then
         localise("mini-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_tiers_addon"}}})
         generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.55, "450kW")
@@ -835,7 +847,7 @@ if mods["micro-machines"] then -------------------------------------------------
       if mods["bobmodules"] then
         generate_new_beacon("beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1, 2, 2, 0.5, "1500kW")
         generate_new_beacon("beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_different"}, 1, 3, 4, 0.5, "3000kW")
-        custom_exclusion_ranges["micro-beacon-3"] = {value = 5}
+        custom_exclusion_ranges["micro-beacon-3"] = {add = 2}
       elseif mods["FactorioExtended-Plus-Module"] then
         localise("micro-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_tiers_addon"}}})
         generate_new_beacon("beacon-mk2", "micro-beacon-2", "Micro beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.75, "300kW")
@@ -886,10 +898,15 @@ if mods["micro-machines"] then -------------------------------------------------
 end
 
 if mods["TarawindBeaconsRE"] or mods["TarawindBeaconsRE3x3"] then ---------------------------------------------------------------------------------------------------------------------------------------
+  -- Balance: range and efficiency adjusted
   if startup["ab-balance-other-beacons"].value then
     for tier=1,7,1 do
-      if not startup["tarawind-reloaded-reducerange"].value then data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].module_specification.module_slots end
-      data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.3
+      if startup["tarawind-reloaded-reducerange"] and startup["tarawind-reloaded-reducerange"].value == false then
+        data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].module_specification.module_slots
+        data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.3
+      else
+        data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.5
+      end
     end
   end
   for tier=1,7,1 do
@@ -898,10 +915,16 @@ if mods["TarawindBeaconsRE"] or mods["TarawindBeaconsRE3x3"] then --------------
     data.raw.item["twBeacon" .. tostring(tier)].order = "a[beacon]tw" .. tostring(tier)
     data.raw.beacon["twBeacon" .. tostring(tier)].radius_visualisation_picture.filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png"
     data.raw.beacon["twBeacon" .. tostring(tier)].radius_visualisation_picture.size = {10, 10}
-    if startup["tarawind-reloaded-3x3mode"].value == false then
-      data.raw.beacon["twBeacon" .. tostring(tier)].selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
-      data.raw.beacon["twBeacon" .. tostring(tier)].collision_box = {{-0.2, -0.2}, {0.2, 0.2}}
-      data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance + 1 -- temporarily sets value so that descriptions will be correct
+    override_descriptions["twBeacon" .. tostring(tier)] = {}
+    if startup["tarawind-reloaded-reducerange"] and startup["tarawind-reloaded-reducerange"].value == true then
+      override_descriptions["twBeacon" .. tostring(tier)].d_range = 3
+    end
+    if startup["tarawind-reloaded-3x3mode"] and startup["tarawind-reloaded-3x3mode"].value == false then
+      local range = math.ceil(get_distribution_range(data.raw.beacon["twBeacon" .. tostring(tier)]))
+      override_descriptions["twBeacon" .. tostring(tier)] = {dimensions={1,1}, d_range=range}
+      if startup["tarawind-reloaded-reducerange"] and startup["tarawind-reloaded-reducerange"].value == false then
+        override_descriptions["twBeacon" .. tostring(tier)].d_range = range + 1
+      end
     end
   end
 end
@@ -913,9 +936,39 @@ if mods["Darkstar_utilities"] or mods["Darkstar_utilities_fixed"] then ---------
   localise("ultra-beacon", {"item", "beacon"}, "description", {"description.ab_same"})
   localise("power-boost-beacon", {"item", "beacon"}, "description", {"description.ab_same"})
   localise("world-array", {"item", "beacon"}, "description", {"description.ab_same"})
+  -- TODO: Balance?
 end
 
-if mods["warptorio2"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+if mods["FastFurnaces"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- reika-fast-beacon has 6 range, 4 module slots, 0.8 efficiency, 800kW power; reika-fast-beacon-2 has 9 range, 12 module slots, 1 efficiency, 4MW power
+  localise("reika-fast-beacon", {"item", "beacon"}, "description", {"description.ab_same"})
+  localise("reika-fast-beacon-2", {"item", "beacon"}, "description", {"description.ab_same"})
+  data.raw.item["reika-fast-beacon"].order = "a[beacon]-reika-fast-1"
+  data.raw.recipe["reika-fast-beacon"].order = "a[beacon]-reika-fast-1"
+  data.raw.item["reika-fast-beacon-2"].order = "a[beacon]-reika-fast-2"
+  data.raw.recipe["reika-fast-beacon-2"].order = "a[beacon]-reika-fast-2"
+  -- Balance: reika-fast-beacon is given +2 exclusion range, reika-fast-beacon-2 is given a strict exclusion range
+  if startup["ab-balance-other-beacons"].value then
+    custom_exclusion_ranges["reika-fast-beacon"] = {add=2}
+    custom_exclusion_ranges["reika-fast-beacon-2"] = {value="solo", mode="strict"}
+    localise("reika-fast-beacon", {"item", "beacon"}, "description", {"description.ab_different"})
+    localise("reika-fast-beacon-2", {"item", "beacon"}, "description", {"description.ab_different"})
+  end
+end
+
+if mods["starry-sakura"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- all beacons have 3 range: tiny-beacon is 1x1 and has 1 module slot, 0.5 efficiency; small-beacon is 2x2 and has 2 module slots, 0.5 efficiency; sakura-beacon has 4 module slots, 0.65 efficiency; star-beacon has 8 module slots, 0.8 efficiency
+  data.raw.beacon["tiny-beacon"].selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
+  -- Balance: reduced distance to match width, changed module power of small-beacon to be halfway between standard beacons and tiny beacons; tiny beacons and small beacons also only disable other types of beacons
+  if startup["ab-balance-other-beacons"].value then
+    data.raw.beacon["tiny-beacon"].supply_area_distance = 1
+    data.raw.beacon["small-beacon"].supply_area_distance = 2
+    data.raw.beacon["small-beacon"].distribution_effectivity = 0.375
+    -- TODO: Reduce recipe costs for tiny/small beacons?
+  end
+end
+
+if mods["warptorio2"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- warp beacons neither disable nor get disabled by other beacons via the "exclusion area" system
   for i=1,10,1 do
     data.raw.beacon["warptorio-beacon-" .. i].localised_description = {"description.ab_bypass"}
@@ -938,20 +991,65 @@ if mods["PowerCrystals"] then --------------------------------------------------
   -- Balance: Power crystals neither disable nor get disabled by other beacons via the "exclusion area" system
 end
 
-if mods["EditorExtensions"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  -- ee-super-beacon is only available in the editor so it was changed to not interact with the "exclusion area" system
+--if mods["EditorExtensions"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- ee-super-beacon is only available in the editor so it was changed within control.lua to not interact with the "exclusion area" system
+--end
+
+--if mods["creative-mod"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- creative-mod_super-beacon is only available in the editor so it was changed within control.lua to not interact with the "exclusion area" system
+--end
+
+-- The mods below do not add beacons themselves:
+
+if mods["IndustrialRevolution3"] then -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  order_beacons("beacon", 1, "zz", "zz")
 end
 
-if mods["starry-sakura"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  -- TODO: ?
+if mods["SeaBlock"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  order_beacons("beacon", 1, "a[beacon]-x", "a[beacon]-x")
 end
 
-if mods["FreightForwarding"] then
-  if data.raw.technology["se-compact-beacon-2"] and data.raw.technology["se-wide-beacon-2"] then
+if mods["FreightForwarding"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if startup["ab-enable-se-beacons"].value then
     table.insert(data.raw.technology["se-compact-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-wide-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-compact-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-wide-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
+  end
+end
+
+if mods["mini"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if startup["ab-override-vanilla-beacons"].value then
+    if data.raw.technology["effect-transmission"] then
+      enable_replacement_standard_beacon("effect-transmission", "a[beacon]")
+      cancel_override = true
+    end
+  end
+  override_descriptions["beacon"] = {dimensions={1,1}}
+end
+
+if mods["Custom-Mods"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if startup["ab-override-vanilla-beacons"].value then
+    if data.raw.technology["effect-transmission"] then
+      enable_replacement_standard_beacon("effect-transmission", "a[beacon]")
+      cancel_override = true
+    end
+  end
+end
+
+if mods["more-module-slots"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if startup["more-module-slots_beacon"].value and startup["ab-show-extended-stats"].value then
+    local factor = startup["more-module-slots_factor"].value
+    local multiply = startup["more-module-slots_multiplicative-module-slots"].value
+    for name, beacon in pairs(data.raw.beacon) do
+      local new_slots = beacon.module_specification.module_slots
+      if multiply then
+        new_slots = new_slots * factor
+      else
+        new_slots = new_slots + factor
+      end
+      override_descriptions[name] = {slots=new_slots}
+    end
   end
 end
 
@@ -971,7 +1069,7 @@ end
 normalize_distribution_ranges(distribution_range_indent)
 if ordered == false then order_beacons("beacon", 2, "a[beacon]x", "x") end
 
--- add visualization for beacons from other mods which use custom exclusion ranges; does not do error checking for invalid possibilities within custom_exclusion_ranges
+-- add visualization for beacons from other mods which use custom exclusion ranges
 if startup["ab-disable-exclusion-areas"].value == false then
   for name, range in pairs(custom_exclusion_ranges) do
     local beacon = data.raw.beacon[name]
@@ -979,10 +1077,14 @@ if startup["ab-disable-exclusion-areas"].value == false then
       local distribution_range = get_distribution_range(beacon)
       local exclusion_range = range.value
       if range.value == nil then
-        exclusion_range = distribution_range
+        if range.add then
+          exclusion_range = distribution_range + range.add
+        else
+          exclusion_range = distribution_range
+        end
       elseif range.value == "solo" then
         if range.mode == nil or range.mode == "basic" then
-          exclusion_range = 2*distribution_range + max_moduled_building_size-1
+          exclusion_range = 2*math.ceil(distribution_range) + max_moduled_building_size-1 - distribution_range_indent
         elseif range.mode == "strict" then
           exclusion_range = distribution_range + max_moduled_building_size-1
         end
@@ -1045,6 +1147,7 @@ if startup["ab-show-extended-stats"].value then
   no_stats["el_ki_core_slave_entity"] = true
   no_stats["fi_ki_core_slave_entity"] = true
   no_stats["fu_ki_core_slave_entity"] = true
+  no_stats["bt-waste-electricity"] = true
 
   local beacon_list = {}
   for name, beacon_item in pairs(data.raw.item) do
@@ -1063,11 +1166,5 @@ if startup["ab-show-extended-stats"].value then
       if custom_exclusion_ranges[name] and custom_exclusion_ranges[name].mode ~= nil and custom_exclusion_ranges[name].mode == "strict" then strict = true end
       if no_stats[name] == nil then add_extended_description(name, pair, exclusion_range_values[name], strict) end
     end
-  end
-end
-
-if mods["TarawindBeaconsRE"] or mods["TarawindBeaconsRE3x3"] then
-  for tier=1,7,1 do
-    if not startup["tarawind-reloaded-3x3mode"].value then data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance - 1 end -- removes temporary value
   end
 end

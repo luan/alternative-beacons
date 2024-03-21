@@ -8,8 +8,14 @@ local ingredient_multipliers = {
     ["ab-hub-beacon"] = 20,
     ["ab-isolation-beacon"] = 20,
 }
-local exclusion_range_values = {}
-local startup = settings.startup
+
+if startup["ab-enable-se-beacons"].value then
+  ingredient_multipliers["se-basic-beacon"] = 3
+  ingredient_multipliers["se-compact-beacon"] = 10
+  ingredient_multipliers["se-wide-beacon"] = 20
+  ingredient_multipliers["se-compact-beacon-2"] = 15
+  ingredient_multipliers["se-wide-beacon-2"] = 30
+end
 
 -- remakes an ingredient list with multiplied amounts
 -- TODO: account for other possible ingredient variables (fluids and catalysts)
@@ -32,14 +38,6 @@ function match_ingredients(ingredients, new_ingredients, multiplier)
     end
   end
   do return new_ingredients end
-end
-
-if startup["ab-enable-se-beacons"].value then
-  ingredient_multipliers["se-basic-beacon"] = 3
-  ingredient_multipliers["se-compact-beacon"] = 10
-  ingredient_multipliers["se-wide-beacon"] = 20
-  ingredient_multipliers["se-compact-beacon-2"] = 15
-  ingredient_multipliers["se-wide-beacon-2"] = 30
 end
 
 -- adjusts recipes to use the same ingredient types as standard beacons (or another beacon if one is deemed more suitable for specific mods)
@@ -102,22 +100,20 @@ if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
     if startup["ab-override-vanilla-beacons"].value == true then override_vanilla_beacon(true, do_technology) end
     if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then
       localise("beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
-      exclusion_range_values["beacon"] = 11
     end
   end
   if (mods["space-exploration"] or mods["exotic-industries"] or ((mods["5dim_module"] or mods["OD27_5dim_module"]) and not mods["pycoalprocessing"])) then
     if startup["ab-show-extended-stats"].value == true then
       local strict = false
       if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then strict = true end
-      if exclusion_range_values["beacon"] == nil then exclusion_range_values["beacon"] = math.ceil(get_distribution_range(data.raw.beacon.beacon)) end
       add_extended_description("beacon", {item=data.raw.item.beacon, beacon=data.raw.beacon.beacon}, exclusion_range_values["beacon"], strict)
     end
   end
 end
 
-if mods["bobmodules"] and mods["exotic-industries"] and startup["ab-balance-other-beacons"].value then -- removes "hidden" flags since they don't interact with Exotic Industries' supercooled beacons anymore
+if mods["bobmodules"] and mods["exotic-industries"] and startup["ab-balance-other-beacons"].value then
   data.raw.beacon["beacon"].next_upgrade = nil
   data.raw.beacon["beacon-2"].next_upgrade = nil
-  data.raw.item["beacon-2"].flags = nil
+  data.raw.item["beacon-2"].flags = nil -- removes "hidden" flag
   data.raw.item["beacon-3"].flags = nil
 end

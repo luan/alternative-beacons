@@ -19,19 +19,17 @@ local beacon_graphics = {
   }
 }
 -- Additional settings changes
-beacon_graphics.animation_list[1].render_layer = "lower-object-above-shadow"
-beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/isolation-beacon-full-off.png"
+beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-isolation-off.png"
 
-beacon_graphics.animation_list[2].render_layer = "lower-object-above-shadow"
 beacon_graphics.animation_list[2].always_draw = false
-beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/isolation-beacon-full-animated.png"
+beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-isolation-animated.png"
 beacon_graphics.animation_list[2].animation.line_length = 8
 beacon_graphics.animation_list[2].animation.frame_count = 32
 beacon_graphics.animation_list[2].animation.animation_speed = 0.5
 beacon_graphics.animation_list[2].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[3].animation.draw_as_shadow = true
-beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/isolation-beacon-shadow.png"
+beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-isolation-shadow.png"
 beacon_graphics.animation_list[3].animation.width = 366
 beacon_graphics.animation_list[3].animation.height = 204
 beacon_graphics.animation_list[3].animation.shift = {2, 0}
@@ -39,7 +37,7 @@ beacon_graphics.animation_list[3].animation.shift = {2, 0}
 local beacon = {
   type = "beacon",
   name = "ab-isolation-beacon",
-  icon = "__alternative-beacons__/graphics/isolation-beacon-icon.png",
+  icon = "__alternative-beacons__/graphics/icon-isolation.png",
   icon_mipmaps = 1,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },

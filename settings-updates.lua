@@ -28,3 +28,14 @@ if mods["TarawindBeaconsRE3x3"] then
         data.raw["bool-setting"]["tarawind-reloaded-productivityreduce"].default_value = true
     end
 end
+if mods["TarawindBeaconsRE"] then
+    if data.raw["bool-setting"]["TBRE-Productivity"] ~= nil then
+        data.raw["bool-setting"]["TBRE-Productivity"].hidden = true
+        data.raw["bool-setting"]["TBRE-Productivity"].forced_value = true -- prevents a crash
+    end
+end
+if mods["more-module-slots"] then
+    if data.raw["bool-setting"]["more-module-slots_beacon"] ~= nil then
+        data.raw["bool-setting"]["more-module-slots_beacon"].default_value = false
+    end
+end

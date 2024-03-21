@@ -2,8 +2,8 @@
 
 local animationTemplate = {
   animation = {
-      width = 198,
-      height = 340,
+      width = 191,
+      height = 335,
       scale = 0.625,
       line_length = 1,
       frame_count = 1,
@@ -15,50 +15,29 @@ local beacon_graphics = {
   animation_list = {
       table.deepcopy(animationTemplate),
       table.deepcopy(animationTemplate),
-      table.deepcopy(animationTemplate),
-      table.deepcopy(animationTemplate),
-      table.deepcopy(animationTemplate),
-      table.deepcopy(animationTemplate),
       table.deepcopy(animationTemplate)
   }
 }
-beacon_graphics.animation_list[1].render_layer = "lower-object-above-shadow"
-beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-base.png"
-beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-antenna.png"
-beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-body.png"
+-- Additional settings changes
+beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-wide-1-off.png"
 
-beacon_graphics.animation_list[4].render_layer = "lower-object-above-shadow"
-beacon_graphics.animation_list[4].always_draw = false
-beacon_graphics.animation_list[4].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-base-animated.png"
-beacon_graphics.animation_list[4].animation.line_length = 8
-beacon_graphics.animation_list[4].animation.frame_count = 32
-beacon_graphics.animation_list[4].animation.animation_speed = 0.5
-beacon_graphics.animation_list[4].animation.draw_as_glow = true
+beacon_graphics.animation_list[2].always_draw = false
+beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-wide-1-animated.png"
+beacon_graphics.animation_list[2].animation.line_length = 8
+beacon_graphics.animation_list[2].animation.frame_count = 32
+beacon_graphics.animation_list[2].animation.animation_speed = 0.5
+beacon_graphics.animation_list[2].animation.draw_as_glow = true
 
-beacon_graphics.animation_list[5].always_draw = false
-beacon_graphics.animation_list[5].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-antenna-animated.png"
-beacon_graphics.animation_list[5].animation.line_length = 8
-beacon_graphics.animation_list[5].animation.frame_count = 32
-beacon_graphics.animation_list[5].animation.animation_speed = 0.5
-beacon_graphics.animation_list[5].animation.draw_as_glow = true
-
-beacon_graphics.animation_list[6].always_draw = false
-beacon_graphics.animation_list[6].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-body-animated.png"
-beacon_graphics.animation_list[6].animation.line_length = 8
-beacon_graphics.animation_list[6].animation.frame_count = 32
-beacon_graphics.animation_list[6].animation.animation_speed = 0.5
-beacon_graphics.animation_list[6].animation.draw_as_glow = true
-
-beacon_graphics.animation_list[7].animation.draw_as_shadow = true
-beacon_graphics.animation_list[7].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-shadow.png"
-beacon_graphics.animation_list[7].animation.width = 366
-beacon_graphics.animation_list[7].animation.height = 204
-beacon_graphics.animation_list[7].animation.shift = {1.59, 0}
+beacon_graphics.animation_list[3].animation.draw_as_shadow = true
+beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-isolation-shadow.png"
+beacon_graphics.animation_list[3].animation.width = 366
+beacon_graphics.animation_list[3].animation.height = 204
+beacon_graphics.animation_list[3].animation.shift = {1.6125, 0}
 
 local beacon = {
   type = "beacon",
   name = "se-wide-beacon",
-  icon = "__alternative-beacons__/graphics/wide-beacon-icon.png",
+  icon = "__alternative-beacons__/graphics/icon-wide-1.png",
   icon_mipmaps = 1,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },

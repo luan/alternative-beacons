@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.3
+Date: 2024.03.21
+  Changes:
+    - Adjusted placeholder graphics for several beacons to be more easily distinguishable
+    - Disabling the "balance other beacons" setting now properly reverts exclusion area changes in addition to other stat changes for
+      beacons from mods listed in that setting's tooltip; beacons from other mods (SE, Py, EI, 248K) keep their wider exclusion areas
+    - Added a basic explanation regarding exclusion areas to the InformaTron menu
+    - Improved support for Mini Factorio, Starry Sakura, Fast Furnaces, Custom Mods, More Module Slots
+---------------------------------------------------------------------------------------------------
 Version: 0.6.2
 Date: 2024.03.15
   Changes:

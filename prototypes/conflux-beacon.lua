@@ -9,14 +9,14 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-conflux-beacon-base.png",
+            filename = "__alternative-beacons__/graphics/hr-conflux-base.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(15, 3),
             scale = 0.67
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-node-beacon-base-shadow.png",
+            filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(15, 3),
@@ -32,7 +32,7 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna.png",
+            filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
             width = 108,
             height = 100,
             line_length = 8,
@@ -42,7 +42,7 @@ local beacon_graphics = {
             scale = 0.67
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna-shadow.png",
+            filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
             width = 126,
             height = 98,
             line_length = 8,
@@ -61,8 +61,8 @@ local beacon_graphics = {
 local beacon = {
   type = "beacon",
   name = "ab-conflux-beacon",
-  icon = "__alternative-beacons__/graphics/conflux-beacon-icon.png",
-  icon_mipmaps = 1,
+  icon = "__alternative-beacons__/graphics/icon-conflux.png",
+  icon_mipmaps = 4,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },
   minable = {

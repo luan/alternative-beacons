@@ -40,7 +40,7 @@ if startup["ab-enable-focused-beacons"].value then
       type = "item",
       name = "ab-focused-beacon",
       place_result = "ab-focused-beacon",
-      icon = "__alternative-beacons__/graphics/focused-beacon-icon.png",
+      icon = "__alternative-beacons__/graphics/icon-focused.png",
       icon_size = 64,
       stack_size = 20,
       subgroup = "module",
@@ -71,7 +71,7 @@ if startup["ab-enable-node-beacons"].value then
       type = "item",
       name = "ab-node-beacon",
       place_result = "ab-node-beacon",
-      icon = "__alternative-beacons__/graphics/node-beacon-icon.png",
+      icon = "__alternative-beacons__/graphics/icon-node.png",
       icon_size = 64,
       stack_size = 20,
       subgroup = "module",
@@ -102,7 +102,7 @@ if startup["ab-enable-conflux-beacons"].value then
       type = "item",
       name = "ab-conflux-beacon",
       place_result = "ab-conflux-beacon",
-      icon = "__alternative-beacons__/graphics/conflux-beacon-icon.png",
+      icon = "__alternative-beacons__/graphics/icon-conflux.png",
       icon_size = 64,
       stack_size = 20,
       subgroup = "module",
@@ -133,7 +133,7 @@ if startup["ab-enable-hub-beacons"].value then
       type = "item",
       name = "ab-hub-beacon",
       place_result = "ab-hub-beacon",
-      icon = "__alternative-beacons__/graphics/hub-beacon-icon.png",
+      icon = "__alternative-beacons__/graphics/icon-hub.png",
       icon_size = 64,
       stack_size = 20,
       subgroup = "module",
@@ -164,7 +164,7 @@ if startup["ab-enable-isolation-beacons"].value then
       type = "item",
       name = "ab-isolation-beacon",
       place_result = "ab-isolation-beacon",
-      icon = "__alternative-beacons__/graphics/isolation-beacon-icon.png",
+      icon = "__alternative-beacons__/graphics/icon-isolation.png",
       icon_size = 64,
       stack_size = 20,
       subgroup = "module",
@@ -248,13 +248,13 @@ if startup["ab-enable-se-beacons"].value then
   data:extend({beacon_basic})
   data:extend({recipe_basic})
   table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = "se-basic-beacon" } )
-  localise_new_beacon("se-basic-beacon", "ab_different", nil)
+  localise_new_beacon("se-basic-beacon", "ab_strict", nil)
 
   local item_compact = {
     type = "item",
     name = "se-compact-beacon",
     place_result = "se-compact-beacon",
-    icon = "__alternative-beacons__/graphics/focused-beacon-icon.png",
+    icon = "__alternative-beacons__/graphics/icon-compact-1.png",
     icon_size = 64,
     stack_size = 25,
     subgroup = "module",
@@ -271,17 +271,20 @@ if startup["ab-enable-se-beacons"].value then
   data:extend({item_compact})
   data:extend({beacon_compact})
   data:extend({recipe_compact})
-  localise_new_beacon("se-compact-beacon", "ab_different", nil)
+  localise_new_beacon("se-compact-beacon", "ab_strict", nil)
   data.raw.beacon["se-compact-beacon"].fast_replaceable_group = "compact-beacon"
 
   local item_compact_2 = table.deepcopy(data.raw.item["se-compact-beacon"])
   local beacon_compact_2 = table.deepcopy(data.raw.beacon["se-compact-beacon"])
   local recipe_compact_2 = table.deepcopy(data.raw.recipe["se-compact-beacon"])
   rename_beacon(item_compact_2, beacon_compact_2, recipe_compact_2, "se-compact-beacon-2")
+  item_compact_2.icon = "__alternative-beacons__/graphics/icon-compact-2.png"
+  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].filename = "__alternative-beacons__/graphics/sr-compact-2-base.png"
+  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].hr_version.filename = "__alternative-beacons__/graphics/hr-compact-2-base.png"
   data:extend({item_compact_2})
   data:extend({beacon_compact_2})
   data:extend({recipe_compact_2})
-  localise_new_beacon("se-compact-beacon-2", "ab_different", nil)
+  localise_new_beacon("se-compact-beacon-2", "ab_strict", nil)
   data.raw.beacon["se-compact-beacon-2"].distribution_effectivity = 1
   data.raw.beacon["se-compact-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}}
   data.raw.item["se-compact-beacon-2"].order = "a[beacon]i4"
@@ -291,7 +294,7 @@ if startup["ab-enable-se-beacons"].value then
     type = "item",
     name = "se-wide-beacon",
     place_result = "se-wide-beacon",
-    icon = "__alternative-beacons__/graphics/wide-beacon-icon.png",
+    icon = "__alternative-beacons__/graphics/icon-wide-1.png",
     icon_size = 64,
     stack_size = 25,
     subgroup = "module",
@@ -308,21 +311,23 @@ if startup["ab-enable-se-beacons"].value then
   data:extend({item_wide})
   data:extend({beacon_wide})
   data:extend({recipe_wide})
-  localise_new_beacon("se-wide-beacon", "ab_different", nil)
+  localise_new_beacon("se-wide-beacon", "ab_strict", nil)
   data.raw.beacon["se-wide-beacon"].fast_replaceable_group = "wide-beacon"
 
   local item_wide_2 = table.deepcopy(data.raw.item["se-wide-beacon"])
   local beacon_wide_2 = table.deepcopy(data.raw.beacon["se-wide-beacon"])
   local recipe_wide_2 = table.deepcopy(data.raw.recipe["se-wide-beacon"])
   rename_beacon(item_wide_2, beacon_wide_2, recipe_wide_2, "se-wide-beacon-2")
-  item_wide_2.icon = "__alternative-beacons__/graphics/wide-beacon-2-icon.png"
-  beacon_wide_2.graphics_set.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-2-body.png"
-  beacon_wide_2.graphics_set.animation_list[6].animation.filename = "__alternative-beacons__/graphics/hr-wide-beacon-2-body-animated.png"
+  item_wide_2.icon = "__alternative-beacons__/graphics/icon-wide-2.png"
+  beacon_wide_2.graphics_set.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-wide-2-off.png"
+  beacon_wide_2.graphics_set.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-wide-2-animated.png"
   data:extend({item_wide_2})
   data:extend({beacon_wide_2})
   data:extend({recipe_wide_2})
-  localise_new_beacon("se-wide-beacon-2", "ab_different", nil)
+  localise_new_beacon("se-wide-beacon-2", "ab_strict", nil)
   data.raw.beacon["se-wide-beacon-2"].module_specification.module_slots = 20
+  data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_max_icon_rows = 4
+  data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_multi_row_initial_height_modifier = -0.9
   data.raw.beacon["se-wide-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 600}, {type = "item", name = "electronic-circuit", amount = 600}, {type = "item", name = "copper-cable", amount = 300}, {type = "item", name = "steel-plate", amount = 300}}
   data.raw.item["se-wide-beacon-2"].order = "a[beacon]i5"
   data.raw.beacon["se-wide-beacon-2"].fast_replaceable_group = "wide-beacon"
@@ -350,21 +355,34 @@ if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
   end
 end
 
--- warning/alert images for disabled beacons
+-- warning/alert images for disabled beacons and images for informatron
 data:extend({
   {
     type = "sprite",
     name = "ab_beacon_offline",
     filename = "__alternative-beacons__/graphics/beacon-offline.png",
-    size = 64,
+    size = 64
   },
   {
     type = "virtual-signal",
     name = "ab_beacon_offline",
     icon = "__alternative-beacons__/graphics/beacon-offline.png",
     icon_size = 64,
+    localised_name = {"description.ab_beacon_deactivated"}
   }
 })
+
+if mods["informatron"] then
+  data:extend({
+    {
+      type = "sprite",
+      name = "ab_informatron_1",
+      filename = "__alternative-beacons__/graphics/hr-wide-1-off.png",
+      size = {191, 335},
+      scale = 0.5
+    }
+  })
+end
 
 -- fixes potential incompatibility between Space Exploration and other beacon mods such as 5Dim's and Advanced Modules
 if mods["space-exploration"] then

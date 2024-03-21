@@ -27,34 +27,34 @@ local beacon_graphics = {
 }
 -- Additional settings changes
 beacon_graphics.animation_list[1].render_layer = "lower-object-above-shadow"
-beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-base.png"
-beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-antenna.png"
-beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-body.png"
+beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-hub-base.png"
+beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-hub-antenna.png"
+beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-hub-body.png"
 
 beacon_graphics.animation_list[4].render_layer = "lower-object-above-shadow"
 beacon_graphics.animation_list[4].always_draw = false
-beacon_graphics.animation_list[4].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-base-animated.png"
+beacon_graphics.animation_list[4].animation.filename = "__alternative-beacons__/graphics/hr-hub-base-animated.png"
 beacon_graphics.animation_list[4].animation.line_length = 8
 beacon_graphics.animation_list[4].animation.frame_count = 32
 beacon_graphics.animation_list[4].animation.animation_speed = 0.5
 beacon_graphics.animation_list[4].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[5].always_draw = false
-beacon_graphics.animation_list[5].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-antenna-animated.png"
+beacon_graphics.animation_list[5].animation.filename = "__alternative-beacons__/graphics/hr-hub-antenna-animated.png"
 beacon_graphics.animation_list[5].animation.line_length = 8
 beacon_graphics.animation_list[5].animation.frame_count = 32
 beacon_graphics.animation_list[5].animation.animation_speed = 0.5
 beacon_graphics.animation_list[5].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[6].always_draw = false
-beacon_graphics.animation_list[6].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-body-animated.png"
+beacon_graphics.animation_list[6].animation.filename = "__alternative-beacons__/graphics/hr-hub-body-animated.png"
 beacon_graphics.animation_list[6].animation.line_length = 8
 beacon_graphics.animation_list[6].animation.frame_count = 32
 beacon_graphics.animation_list[6].animation.animation_speed = 0.5
 beacon_graphics.animation_list[6].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[7].animation.draw_as_shadow = true
-beacon_graphics.animation_list[7].animation.filename = "__alternative-beacons__/graphics/hr-hub-beacon-shadow.png"
+beacon_graphics.animation_list[7].animation.filename = "__alternative-beacons__/graphics/hr-hub-shadow.png"
 beacon_graphics.animation_list[7].animation.width = 366
 beacon_graphics.animation_list[7].animation.height = 204
 beacon_graphics.animation_list[7].animation.shift = {1.59, 0}
@@ -62,8 +62,8 @@ beacon_graphics.animation_list[7].animation.shift = {1.59, 0}
 local beacon = {
   type = "beacon",
   name = "ab-hub-beacon",
-  icon = "__alternative-beacons__/graphics/hub-beacon-icon.png",
-  icon_mipmaps = 1,
+  icon = "__alternative-beacons__/graphics/icon-hub.png",
+  icon_mipmaps = 4,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },
   minable = {

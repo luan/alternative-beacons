@@ -9,12 +9,12 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/node-beacon-base.png",
+            filename = "__alternative-beacons__/graphics/sr-node-base.png",
             width = 116,
             height = 93,
             shift = util.by_pixel(11, 1.5),
             hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-node-beacon-base.png",
+              filename = "__alternative-beacons__/graphics/hr-node-base.png",
               width = 232,
               height = 186,
               shift = util.by_pixel(11, 1.5),
@@ -22,13 +22,13 @@ local beacon_graphics = {
             }
           },
           {
-            filename = "__alternative-beacons__/graphics/node-beacon-base-shadow.png",
+            filename = "__alternative-beacons__/graphics/sr-classic-base-shadow.png",
             width = 116,
             height = 93,
             shift = util.by_pixel(11, 1.5),
             draw_as_shadow = true,
             hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-node-beacon-base-shadow.png",
+              filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
               width = 232,
               height = 186,
               shift = util.by_pixel(11, 1.5),
@@ -45,7 +45,7 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/node-beacon-antenna.png",
+            filename = "__alternative-beacons__/graphics/sr-classic-antenna.png",
             width = 54,
             height = 50,
             line_length = 8,
@@ -53,7 +53,7 @@ local beacon_graphics = {
             animation_speed = 0.5,
             shift = util.by_pixel(-1, -55),
             hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna.png",
+              filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
               width = 108,
               height = 100,
               line_length = 8,
@@ -64,7 +64,7 @@ local beacon_graphics = {
             }
           },
           {
-            filename = "__alternative-beacons__/graphics/node-beacon-antenna-shadow.png",
+            filename = "__alternative-beacons__/graphics/sr-classic-antenna-shadow.png",
             width = 63,
             height = 49,
             line_length = 8,
@@ -73,7 +73,7 @@ local beacon_graphics = {
             shift = util.by_pixel(100.5, 15.5),
             draw_as_shadow = true,
             hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-node-beacon-antenna-shadow.png",
+              filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
               width = 126,
               height = 98,
               line_length = 8,
@@ -93,8 +93,8 @@ local beacon_graphics = {
 local beacon = {
   type = "beacon",
   name = "ab-node-beacon",
-  icon = "__alternative-beacons__/graphics/node-beacon-icon.png",
-  icon_mipmaps = 1,
+  icon = "__alternative-beacons__/graphics/icon-node.png",
+  icon_mipmaps = 4,
   icon_size = 64,
   flags = { "placeable-player", "player-creation" },
   minable = {

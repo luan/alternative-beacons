@@ -8,7 +8,7 @@ local strict_beacons = {}       -- beacon prototype names for those with "strict
 local repeating_beacons = {}    -- beacon prototype name -> list of beacons which won't be disabled
 local offline_beacons = {}      -- beacon unit number -> attached warning sprite, entity reference (for disabled beacons)
 local update_rate = 0           -- if above zero, how many seconds elapse between updating all beacons (beacons are only updated via triggered events by default)
-local persistent_alerts = true
+local persistent_alerts = false
 
 --- Mod Initialization - called on first startup after the mod is installed; available objects: global, game, rendering, settings
 script.on_init(
@@ -84,13 +84,19 @@ function enable_scripts(mods)
   if update_rate > 0 then register_periodic_updates(update_rate * 60) end
   if persistent_alerts == true then register_alert_refreshing() end
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"),
-    function(event) check_remote(event.moved_entity, "added", 1) end)
+    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), function(event) check_remote(event.moved_entity, "added", 1) end) -- rechecks nearby beacons when a beacon is moved
   end
   if mods["pycoalprocessing"] then
-    remote.add_interface("cryogenic-distillation",
-    {am_fm_beacon_settings_changed = function(new_beacon) check_remote(new_beacon, "added", 0) end, -- recheck nearby beacons
-    am_fm_beacon_destroyed = function(receivers, surface) end}) -- do nothing
+    remote.add_interface("cryogenic-distillation", {
+      am_fm_beacon_settings_changed = function(new_beacon) check_remote(new_beacon, "added", 0) end, -- rechecks nearby beacons when an AM:FM beacon is updated
+      am_fm_beacon_destroyed = function(receivers, surface) end -- unused
+    })
+  end
+  if mods["informatron"] then
+    remote.add_interface("alternative-beacons", {
+      informatron_menu = function(data) return informatron_beacon_menu(data.player_index) end,
+      informatron_page_content = function(data) return informatron_beacon_page_content(data.page_name, data.player_index, data.element) end
+    })
   end
 end
 
@@ -110,8 +116,21 @@ function unregister_alert_refreshing()
   script.on_nth_tick(601, nil)
 end
 
+function informatron_beacon_menu(player_index) return {} end
+
+function informatron_beacon_page_content(page_name, player_index, element)
+  if page_name == "alternative-beacons" then
+    element.add{type="label", name="text_1", caption={"alternative-beacons.page_alternative-beacons_text_1"}}
+    local image_container = element.add{type = "flow"}
+    image_container.style.horizontal_align = "center"
+    image_container.style.horizontally_stretchable = true
+    image_container.add{type = "sprite", sprite = "ab_informatron_1"}
+    element.add{type="label", name="text_2", caption={"alternative-beacons.page_alternative-beacons_text_2"}}
+  end
+end
+
 --- updates global data
---  creates and updates exclusion ranges for all beacons - beacons from other mods will use their distribution range as their exclusion range
+--  creates and updates exclusion ranges for all beacons - beacons from other mods will use their distribution range as their exclusion range unless otherwise noted
 function populate_beacon_data()
   global = { exclusion_ranges = {}, distribution_ranges = {}, strict_beacons = {}, offline_beacons = {},  repeating_beacons = {} }
   local updated_distribution_ranges = {}
@@ -119,36 +138,28 @@ function populate_beacon_data()
   local updated_offline_beacons = {}
   local updated_exclusion_ranges = {}
 
-  local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range which is large enough to prevent synergy with other beacons
-    ["ab-focused-beacon"] = {value = 3},
-    ["ab-conflux-beacon"] = {value = 12},
-    ["ab-hub-beacon"] = {value = 34},
-    ["ab-isolation-beacon"] = {value = 38, mode = "strict"},
-    ["se-basic-beacon"] = {value = "solo", mode = "strict"},
-    ["se-compact-beacon"] = {value = "solo", mode = "strict"},
-    ["se-compact-beacon-2"] = {value = "solo", mode = "strict"},
-    ["se-wide-beacon"] = {value = "solo", mode = "strict"},
-    ["se-wide-beacon-2"] = {value = "solo", mode = "strict"},
-    ["ei_copper-beacon"] = {value = "solo", mode = "strict"},
-    ["ei_iron-beacon"] = {value = "solo", mode = "strict"},
-    ["el_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-    ["fi_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-    ["fu_ki_beacon_entity"] = {value = "solo", mode = "strict"},
-    ["productivity-beacon"] = {value = 6},
-    ["productivity-beacon-1"] = {value = 5},
-    ["productivity-beacon-2"] = {value = 6},
-    ["productivity-beacon-3"] = {value = 7},
-    ["speed-beacon-2"] = {value = 8},
-    ["speed-beacon-3"] = {value = 11},
-    ["beacon-3"] = {value = 11},
-    ["beacon3"] = {value = 8},
-    -- pyanodons AM-FM entries are added below
+  local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range for "strict" beacons which is large enough to prevent synergy with other beacons
+    ["ab-focused-beacon"] = {add=1},
+    ["ab-conflux-beacon"] = {add=3},
+    ["ab-hub-beacon"] = {add=20},
+    ["ab-isolation-beacon"] = {add=8, mode="strict"},
+    ["se-basic-beacon"] = {value="solo", mode="strict"},
+    ["se-compact-beacon"] = {value="solo", mode="strict"},
+    ["se-compact-beacon-2"] = {value="solo", mode="strict"},
+    ["se-wide-beacon"] = {value="solo", mode="strict"},
+    ["se-wide-beacon-2"] = {value="solo", mode="strict"},
+    ["ei_copper-beacon"] = {value="solo", mode="strict"},
+    ["ei_iron-beacon"] = {value="solo", mode="strict"},
+    ["el_ki_beacon_entity"] = {value="solo", mode="strict"},
+    ["fi_ki_beacon_entity"] = {value="solo", mode="strict"},
+    ["fu_ki_beacon_entity"] = {value="solo", mode="strict"}
+    -- entries are added below for: Pyanodons AM-FM beacons, Bob's "beacon-3" (and mini/micro versions), productivity/speed beacons from Advanced Modules, beacons from Fast Furnaces, "beacon3", and "productivity-beacon"
   }
   local updated_repeating_beacons = { -- these beacons don't disable any of the beacons in the list associated with them
     ["beacon"] = {"beacon", "ab-standard-beacon", "kr-singularity-beacon", "beacon-mk1", "beacon-mk2", "beacon-mk3", "5d-beacon-02", "5d-beacon-03", "5d-beacon-04"}, -- additional entries added below
     ["ab-standard-beacon"] = {"beacon", "ab-standard-beacon", "kr-singularity-beacon", "beacon-mk1", "beacon-mk2", "beacon-mk3", "5d-beacon-02", "5d-beacon-03", "5d-beacon-04"}, -- additional entries added below
     ["kr-singularity-beacon"] = {"kr-singularity-beacon"},
-    ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"}, -- TODO: only if beacon overloading is enabled?
+    ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
     ["ei_iron-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
     ["beacon-mk1"] = {"beacon", "ab-standard-beacon"},
     ["beacon-mk2"] = {"beacon", "ab-standard-beacon"},
@@ -163,10 +174,8 @@ function populate_beacon_data()
     ["5d-beacon-03"] = {"beacon", "ab-standard-beacon"},
     ["5d-beacon-04"] = {"beacon", "ab-standard-beacon"},
     ["mini-beacon-1"] = {"mini-beacon-1"},
-    ["micro-beacon-1"] = {"micro-beacon-1"},
-    -- nullius small/large entries are added below
-    -- pyanodons AM-FM entries are added below
-    -- power crystal entries are added below
+    ["micro-beacon-1"] = {"micro-beacon-1"}
+    -- entries are added below for: pyanodons AM-FM beacons, nullius small/large beacons, mini/micro beacons, power crystals, alien beacons, warp beacons, editor beacons
   }
 
   local max_moduled_building_size = 9 -- by default, rocket silo (9x9) is the largest building which can use modules
@@ -186,13 +195,51 @@ function populate_beacon_data()
     updated_repeating_beacons["fi_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
     updated_repeating_beacons["fu_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
   end
+  -- TODO: prevent 248K beacon cores from being "disabled" even though it has no effect on them relaying module effects to beacons
 
-  -- populate reference tables with repetitive info
+  -- populate reference tables with repetitive and conditional info
   local repeaters_all = {}
   for _, beacon in pairs(beacon_prototypes) do
     table.insert(repeaters_all, beacon.name)
   end
-  if mods["nullius"] then
+  if mods["Advanced_Modules"] or mods["Advanced_Sky_Modules"] or mods["Advanced_beacons"] then ------------------------------------------------------------------------------------------------------------
+    if settings.startup["ab-balance-other-beacons"].value then
+      custom_exclusion_ranges["productivity-beacon-1"] = {add=3}
+      custom_exclusion_ranges["productivity-beacon-2"] = {add=4}
+      custom_exclusion_ranges["productivity-beacon-3"] = {add=5}
+      custom_exclusion_ranges["speed-beacon-2"] = {add=2}
+      custom_exclusion_ranges["speed-beacon-3"] = {add=5}
+    end
+  end
+  if mods["bobmodules"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if settings.startup["ab-balance-other-beacons"].value then
+      custom_exclusion_ranges["beacon-3"] = {add=2}
+    end
+  end
+  if mods["EndgameExtension"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if settings.settings.startup["ab-balance-other-beacons"].value then
+      custom_exclusion_ranges["beacon-3"] = {add=2}
+      custom_exclusion_ranges["productivity-beacon"] = {add=3}
+    end
+  end
+  if mods["beacons"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if settings.startup["ab-balance-other-beacons"].value then
+      custom_exclusion_ranges["beacon3"] = {add=2}
+    end
+  end
+  if mods["FastFurnaces"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if settings.startup["ab-balance-other-beacons"].value then
+      custom_exclusion_ranges["reika-fast-beacon"] = {add=2}
+      custom_exclusion_ranges["reika-fast-beacon-2"] = {value="solo", mode="strict"}
+    end
+  end
+  if mods["starry-sakura"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    if startup["ab-balance-other-beacons"].value then
+      updated_repeating_beacons["tiny-beacon"] = {"tiny-beacon"}
+      updated_repeating_beacons["small-beacon"] = {"small-beacon"}
+    end
+  end
+  if mods["nullius"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_small = {"beacon", "ab-standard-beacon"}
     local repeaters_large = {}
     for tier=1,3,1 do
@@ -216,7 +263,7 @@ function populate_beacon_data()
       end
     end
   end
-  if mods["pycoalprocessing"] then
+  if mods["pycoalprocessing"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_AM_FM = {}
     for am=1,5,1 do
       for fm=1,5,1 do
@@ -233,7 +280,7 @@ function populate_beacon_data()
       end
     end
   end
-  if mods["PowerCrystals"] then
+  if mods["PowerCrystals"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_crystal = {}
     for tier=1,3,1 do
       table.insert(repeaters_crystal, "model-power-crystal-productivity-" .. tier)
@@ -268,10 +315,10 @@ function populate_beacon_data()
       end
     end
   end
-  if mods["mini-machines"] then
+  if mods["mini-machines"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if settings.startup["ab-balance-other-beacons"].value == true then
       if mods["bobmodules"] then
-        custom_exclusion_ranges["mini-beacon-3"] = {value = 8}
+        custom_exclusion_ranges["mini-beacon-3"] = {add=3}
       elseif mods["FactorioExtended-Plus-Module"] then
         updated_repeating_beacons["mini-beacon-1"] = {"mini-beacon-1", "mini-beacon-2", "mini-beacon-3", "mini-beacon-4"}
         updated_repeating_beacons["mini-beacon-2"] = {"mini-beacon-1"}
@@ -284,10 +331,10 @@ function populate_beacon_data()
       if mods["5dim_module"] then updated_repeating_beacons["mini-beacon-4"] = {"mini-beacon-1"} end
     end
   end
-  if mods["micro-machines"] then
+  if mods["micro-machines"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if settings.startup["ab-balance-other-beacons"].value == true then
       if mods["bobmodules"] then
-        custom_exclusion_ranges["micro-beacon-3"] = {value = 5}
+        custom_exclusion_ranges["micro-beacon-3"] = {add=2}
       elseif mods["FactorioExtended-Plus-Module"] then
         updated_repeating_beacons["micro-beacon-1"] = {"micro-beacon-1", "micro-beacon-2", "micro-beacon-3", "micro-beacon-4"}
         updated_repeating_beacons["micro-beacon-2"] = {"micro-beacon-1"}
@@ -300,16 +347,17 @@ function populate_beacon_data()
       if mods["5dim_module"] then updated_repeating_beacons["micro-beacon-4"] = {"micro-beacon-1"} end
     end
   end
-  if mods["exotic-industries"] then
+  if mods["exotic-industries"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     max_moduled_building_size = 11
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       table.insert(updated_repeating_beacons[beacon.name], "ei_alien-beacon")
     end
+    custom_exclusion_ranges["ei_alien-beacon"] = {value=0}
     updated_repeating_beacons["ei_alien-beacon"] = repeaters_all
-    -- TODO: prevent cores from being "disabled" even though it has no effect on them relaying module effects to beacons
+    -- TODO: Make copper/iron beacons repeatable for all other beacons since they can't be disabled anyway
   end
-  if mods["warptorio2"] then
+  if mods["warptorio2"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       for i=1,10,1 do
@@ -317,26 +365,36 @@ function populate_beacon_data()
       end
     end
     for i=1,10,1 do
+      custom_exclusion_ranges["warptorio-beacon-" .. tostring(i)] = {value=0}
       updated_repeating_beacons["warptorio-beacon-" .. tostring(i)] = repeaters_all
     end
   end
-  if mods["EditorExtensions"] then
+  if mods["EditorExtensions"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       table.insert(updated_repeating_beacons[beacon.name], "ee-super-beacon")
     end
+    custom_exclusion_ranges["ee-super-beacon"] = {value=0}
     updated_repeating_beacons["ee-super-beacon"] = repeaters_all
   end
-
+  if mods["creative-mod"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      table.insert(updated_repeating_beacons[beacon.name], "creative-mod_super-beacon")
+    end
+    custom_exclusion_ranges["creative-mod_super-beacon"] = {value=0}
+    updated_repeating_beacons["creative-mod_super-beacon"] = repeaters_all
+  end
+  
   -- set distribution/exclusion ranges
-  -- TODO: Change exclusion range to be based on how much is added from distribution range, rather than the full value?
   for _, beacon in pairs(beacon_prototypes) do
     updated_distribution_ranges[beacon.name] = math.ceil(get_distribution_range(beacon))
     if updated_exclusion_ranges[beacon.name] == nil then
       local exclusion_range = updated_distribution_ranges[beacon.name]
       local range = custom_exclusion_ranges[beacon.name]
       if range ~= nil then
-        if range.value ~= nil then exclusion_range = range.value else exclusion_range = updated_distribution_ranges[beacon.name] end
+        if range.add ~= nil then exclusion_range = exclusion_range + range.add end
+        if range.value ~= nil then exclusion_range = range.value end
         if range.value == "solo" then
           if range.mode == nil or range.mode == "basic" then
             exclusion_range = 2*updated_distribution_ranges[beacon.name] + max_moduled_building_size-1
@@ -426,6 +484,7 @@ end
 
 -- checks all beacons
 function check_global_list()
+  -- TODO: Spread actions over many ticks instead of just letting it go as quickly as possible
   for _, surface in pairs(game.surfaces) do
     if surface ~= nil then
       local beacons = surface.find_entities_filtered({type = "beacon"})
@@ -604,14 +663,7 @@ function handle_change(entity, wasEnabled, isEnabled)
   end
 end
 
-function remove_beacon_warning(entity)
-  if offline_beacons[entity.unit_number] ~= nil then
-    remove_beacon_alert(offline_beacons[entity.unit_number][2])
-    rendering.destroy(offline_beacons[entity.unit_number][1])
-    offline_beacons[entity.unit_number] = nil
-  end
-end
-
+-- adds a warning sprite to a disabled beacon
 function add_beacon_warning(entity)
   offline_beacons[entity.unit_number] = {
     rendering.draw_sprite{
@@ -625,6 +677,16 @@ function add_beacon_warning(entity)
   }
 end
 
+-- removes a warning sprite from a beacon
+function remove_beacon_warning(entity)
+  if offline_beacons[entity.unit_number] ~= nil then
+    remove_beacon_alert(offline_beacons[entity.unit_number][2])
+    rendering.destroy(offline_beacons[entity.unit_number][1])
+    offline_beacons[entity.unit_number] = nil
+  end
+end
+
+-- adds a flashing alert to the bottom right of the GUI for a disabled beacon and player 
 function add_beacon_alert(entity, player)
   player.add_custom_alert(entity,
   {type="virtual", name="ab_beacon_offline"},
@@ -632,6 +694,7 @@ function add_beacon_alert(entity, player)
   true)
 end
 
+-- removes flashing alerts for the given beacon (all players)
 function remove_beacon_alert(beacon_entity)
   for _, player in pairs(beacon_entity.force.players) do
     --player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
@@ -701,3 +764,4 @@ function refresh_beacon_alerts()
     end
   end
 end
+
