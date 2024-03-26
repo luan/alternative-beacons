@@ -39,3 +39,9 @@ if mods["more-module-slots"] then
         data.raw["bool-setting"]["more-module-slots_beacon"].default_value = false
     end
 end
+if mods["CoppermineBobModuleRebalancing"] then
+    if data.raw["bool-setting"]["bobmods-modules-enable-modules-lab"] ~= nil then
+        data.raw["bool-setting"]["bobmods-modules-enable-modules-lab"].hidden = true
+        data.raw["bool-setting"]["bobmods-modules-enable-modules-lab"].forced_value = true -- prevents a crash
+    end
+end

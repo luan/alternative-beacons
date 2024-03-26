@@ -7,12 +7,13 @@ local search_ranges = {}        -- beacon prototype name -> maximum range that o
 local strict_beacons = {}       -- beacon prototype names for those with "strict" exclusion ranges
 local repeating_beacons = {}    -- beacon prototype name -> list of beacons which won't be disabled
 local offline_beacons = {}      -- beacon unit number -> attached warning sprite, entity reference (for disabled beacons)
-local update_rate = 0           -- if above zero, how many seconds elapse between updating all beacons (beacons are only updated via triggered events by default)
-local persistent_alerts = false
+local update_rate               -- integer; if above zero, how many seconds elapse between updating all beacons (beacons are only updated via triggered events by default)
+local persistent_alerts         -- boolean; whether or not alerts are refreshed for disabled beacons
 
 --- Mod Initialization - called on first startup after the mod is installed; available objects: global, game, rendering, settings
 script.on_init(
   function()
+    global = { exclusion_ranges = {}, distribution_ranges = {}, search_ranges = {}, strict_beacons = {}, repeating_beacons = {}, offline_beacons = {} }
     populate_beacon_data()
   end
 )
@@ -31,6 +32,7 @@ script.on_load(
     offline_beacons = global.offline_beacons
     update_rate = settings.global["ab-update-rate"].value
     persistent_alerts = settings.global["ab-persistent-alerts"].value
+    if settings.startup["ab-disable-exclusion-areas"].value == false then enable_scripts(script.active_mods) end
   end
 )
 
@@ -70,7 +72,7 @@ function enable_scripts(mods)
           if update_rate > 0 then register_periodic_updates(update_rate * 60) end
         end
       end
-      if event.setting == "ab-persistent-alerts" then -- TODO: Allow this to be adjusted per player in multiplayer while still allowing the admin to make it available or not
+      if event.setting == "ab-persistent-alerts" then -- TODO: Allow this to be adjusted per player in multiplayer while still allowing the admin to make it available or not?
         local previous_setting = persistent_alerts
         persistent_alerts = settings.global["ab-persistent-alerts"].value
         if previous_setting == false and persistent_alerts == true then
@@ -84,15 +86,17 @@ function enable_scripts(mods)
   if update_rate > 0 then register_periodic_updates(update_rate * 60) end
   if persistent_alerts == true then register_alert_refreshing() end
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), function(event) check_remote(event.moved_entity, "added", 1) end) -- rechecks nearby beacons when a beacon is moved
+    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), function(event) check_remote(event["moved_entity"], "added", 1) end) -- rechecks nearby beacons when a beacon is moved; a maximum moved distance of 1 is assumed
   end
   if mods["pycoalprocessing"] then
+    remote.remove_interface("cryogenic-distillation")
     remote.add_interface("cryogenic-distillation", {
       am_fm_beacon_settings_changed = function(new_beacon) check_remote(new_beacon, "added", 0) end, -- rechecks nearby beacons when an AM:FM beacon is updated
       am_fm_beacon_destroyed = function(receivers, surface) end -- unused
     })
   end
   if mods["informatron"] then
+    remote.remove_interface("alternative-beacons")
     remote.add_interface("alternative-beacons", {
       informatron_menu = function(data) return informatron_beacon_menu(data.player_index) end,
       informatron_page_content = function(data) return informatron_beacon_page_content(data.page_name, data.player_index, data.element) end
@@ -132,10 +136,8 @@ end
 --- updates global data
 --  creates and updates exclusion ranges for all beacons - beacons from other mods will use their distribution range as their exclusion range unless otherwise noted
 function populate_beacon_data()
-  global = { exclusion_ranges = {}, distribution_ranges = {}, strict_beacons = {}, offline_beacons = {},  repeating_beacons = {} }
   local updated_distribution_ranges = {}
   local updated_strict_beacons = {}
-  local updated_offline_beacons = {}
   local updated_exclusion_ranges = {}
 
   local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range for "strict" beacons which is large enough to prevent synergy with other beacons
@@ -212,12 +214,12 @@ function populate_beacon_data()
     end
   end
   if mods["bobmodules"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if settings.startup["ab-balance-other-beacons"].value then
+    if settings.startup["ab-balance-other-beacons"].value and not (mods["CoppermineBobModuleRebalancing"] and settings.startup["coppermine-bob-module-nerfed-beacons"] and settings.startup["coppermine-bob-module-nerfed-beacons"].value) then
       custom_exclusion_ranges["beacon-3"] = {add=2}
     end
   end
   if mods["EndgameExtension"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if settings.settings.startup["ab-balance-other-beacons"].value then
+    if settings.startup["ab-balance-other-beacons"].value then
       custom_exclusion_ranges["beacon-3"] = {add=2}
       custom_exclusion_ranges["productivity-beacon"] = {add=3}
     end
@@ -385,24 +387,26 @@ function populate_beacon_data()
     custom_exclusion_ranges["creative-mod_super-beacon"] = {value=0}
     updated_repeating_beacons["creative-mod_super-beacon"] = repeaters_all
   end
-  
+
   -- set distribution/exclusion ranges
   for _, beacon in pairs(beacon_prototypes) do
     updated_distribution_ranges[beacon.name] = math.ceil(get_distribution_range(beacon))
     if updated_exclusion_ranges[beacon.name] == nil then
       local exclusion_range = updated_distribution_ranges[beacon.name]
       local range = custom_exclusion_ranges[beacon.name]
-      if range ~= nil then
-        if range.add ~= nil then exclusion_range = exclusion_range + range.add end
-        if range.value ~= nil then exclusion_range = range.value end
-        if range.value == "solo" then
+      if range then
+        if range.value == nil then
+          if range.add then exclusion_range = exclusion_range + range.add end
+        elseif range.value == "solo" then
           if range.mode == nil or range.mode == "basic" then
             exclusion_range = 2*updated_distribution_ranges[beacon.name] + max_moduled_building_size-1
           elseif range.mode == "strict" then
             exclusion_range = updated_distribution_ranges[beacon.name] + max_moduled_building_size-1
           end
+        else
+          exclusion_range = range.value
         end
-        if range.mode ~= nil and range.mode == "strict" then updated_strict_beacons[beacon.name] = true end
+        if range.mode and range.mode == "strict" then updated_strict_beacons[beacon.name] = true end
       end
       updated_exclusion_ranges[beacon.name] = exclusion_range
     end
@@ -451,13 +455,12 @@ function populate_beacon_data()
   global.distribution_ranges = updated_distribution_ranges
   global.search_ranges = updated_search_ranges
   global.strict_beacons = updated_strict_beacons
-  global.offline_beacons = updated_offline_beacons
   exclusion_ranges = updated_exclusion_ranges
   distribution_ranges = updated_distribution_ranges
   search_ranges = updated_search_ranges
   strict_beacons = updated_strict_beacons
-  offline_beacons = updated_offline_beacons
   repeating_beacons = global.repeating_beacons
+  offline_beacons = global.offline_beacons
   update_rate = settings.global["ab-update-rate"].value
   persistent_alerts = settings.global["ab-persistent-alerts"].value
 

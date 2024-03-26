@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.4
+Date: 2024.03.26
+  Changes:
+    - Fixed scripts for exclusion areas not activating properly on load in some cases
+    - Fixed warning icons for disabled beacons sometimes not being updated correctly
+    - Fixed a crash which could occur with Pyanodons or InformaTron
+    - Improved support for "Coppermine's Bob's module rebalancing" mod (it is given priority for balancing Bob's beacons)
+    - This mod no longer alters any modules at all (removed module balancing for Advanced Modules mods)
+---------------------------------------------------------------------------------------------------
 Version: 0.6.3
 Date: 2024.03.21
   Changes:

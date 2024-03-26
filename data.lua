@@ -9,7 +9,7 @@ local beacon_isolation = require("prototypes/isolation-beacon")
 local beacon_basic = require("prototypes/basic-beacon")
 local beacon_compact = require("prototypes/compact-beacon")
 local beacon_wide = require("prototypes/wide-beacon")
-local startup = settings.startup
+local startup = settings["startup"]
 
 function localise_new_beacon(name, description, addon)
   data.raw.item[name].localised_name = {"name." .. name}
@@ -176,7 +176,7 @@ if startup["ab-enable-isolation-beacons"].value then
     {
       type = "recipe",
       name = "ab-isolation-beacon",
-      result = "ab-isolation-beacon", 
+      result = "ab-isolation-beacon",
       enabled = false,
       energy_required = 60,
       ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}},
@@ -213,7 +213,7 @@ if startup["ab-enable-se-beacons"].value then
     tech_wide_1.name = "se-wide-beacon"
     tech_wide_1.localised_name = {"name.se-wide-beacon"}
     tech_wide_1.localised_description = {"technology-description.se_wide"}
-    
+
     local tech_wide_2 = table.deepcopy(tech_compact_2)
     tech_compact_2.prerequisites = {"se-wide-beacon", "space-science-pack"}
     tech_wide_2.name = "se-wide-beacon-2"
@@ -286,7 +286,7 @@ if startup["ab-enable-se-beacons"].value then
   data:extend({recipe_compact_2})
   localise_new_beacon("se-compact-beacon-2", "ab_strict", nil)
   data.raw.beacon["se-compact-beacon-2"].distribution_effectivity = 1
-  data.raw.beacon["se-compact-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}}
+  data.raw.recipe["se-compact-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}}
   data.raw.item["se-compact-beacon-2"].order = "a[beacon]i4"
   data.raw.beacon["se-compact-beacon-2"].fast_replaceable_group = "compact-beacon"
 
@@ -328,7 +328,7 @@ if startup["ab-enable-se-beacons"].value then
   data.raw.beacon["se-wide-beacon-2"].module_specification.module_slots = 20
   data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_max_icon_rows = 4
   data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_multi_row_initial_height_modifier = -0.9
-  data.raw.beacon["se-wide-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 600}, {type = "item", name = "electronic-circuit", amount = 600}, {type = "item", name = "copper-cable", amount = 300}, {type = "item", name = "steel-plate", amount = 300}}
+  data.raw.recipe["se-wide-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 600}, {type = "item", name = "electronic-circuit", amount = 600}, {type = "item", name = "copper-cable", amount = 300}, {type = "item", name = "steel-plate", amount = 300}}
   data.raw.item["se-wide-beacon-2"].order = "a[beacon]i5"
   data.raw.beacon["se-wide-beacon-2"].fast_replaceable_group = "wide-beacon"
 
@@ -346,12 +346,15 @@ end
 if data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
 if data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
 if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
-  if data.raw.recipe.beacon ~= nil and data.raw.recipe.beacon.normal == nil then
-    data.raw.recipe.beacon.normal = {}
-    data.raw.recipe.beacon.normal.result = data.raw.recipe.beacon.result
-    data.raw.recipe.beacon.normal.enabled = data.raw.recipe.beacon.enabled
-    data.raw.recipe.beacon.normal.energy_required = data.raw.recipe.beacon.energy_required
-    data.raw.recipe.beacon.normal.ingredients = data.raw.recipe.beacon.ingredients
+  local beacon_recipe = data.raw.recipe.beacon
+  if beacon_recipe and beacon_recipe.normal == nil then
+    beacon_recipe.normal = {
+      ingredients = beacon_recipe.ingredients,
+      results = beacon_recipe.results,
+      result = beacon_recipe.result,
+      energy_required = beacon_recipe.energy_required,
+      enabled = beacon_recipe.enabled
+    }
   end
 end
 
@@ -387,7 +390,7 @@ end
 -- fixes potential incompatibility between Space Exploration and other beacon mods such as 5Dim's and Advanced Modules
 if mods["space-exploration"] then
   for i, beacon in pairs(data.raw.beacon) do
-    beacon.se_allow_in_space = true
+    beacon["se_allow_in_space"] = true
     if (beacon.allowed_effects and (beacon.allowed_effects == "productivity" or (#beacon.allowed_effects == 1 and beacon.allowed_effects[1] == "productivity"))) then
       beacon.allowed_effects = {"productivity", "consumption"}
     end -- Space Exploration only checks non-productivity effects when validating space entities so at least one of those is required in addition to productivity

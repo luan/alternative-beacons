@@ -72,13 +72,13 @@ if data.raw.recipe.beacon ~= nil then
         if #new_ingredients_expensive > 0 then data.raw.recipe[beacon_name].expensive.ingredients = new_ingredients_expensive else data.raw.recipe[beacon_name].expensive = nil end
       end
     end
-    if mods["mini-machines"] or mods["micro-machines"] then
-      for name, beacon_recipe in pairs(data.raw.recipe) do
-        if beacon_recipe.base_machine and beacon_recipe.base_machine.result and beacon_recipe.base_machine.result.place_result and data.raw.beacon[beacon_recipe.base_machine.result.place_result] then
-          -- TODO: adjust recipe costs based on startup settings?
-        end
-      end
-    end
+    --if mods["mini-machines"] or mods["micro-machines"] then
+    --  for name, beacon_recipe in pairs(data.raw.recipe) do
+    --    if beacon_recipe["base_machine"] and beacon_recipe["base_machine"].result and beacon_recipe["base_machine"].result.place_result and data.raw.beacon[beacon_recipe["base_machine"].result.place_result] then
+    --      -- TODO: adjust mini/micro recipe costs based on startup settings? or just reduce by 25%/50% if they're balanced by this mod?
+    --    end
+    --  end
+    --end
   end
 end
 
