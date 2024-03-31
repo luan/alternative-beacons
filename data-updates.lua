@@ -20,7 +20,6 @@ local custom_exclusion_ranges = { -- these beacons are given custom exclusion ra
 local distribution_range_indent = 0.25 -- how close distribution ranges are to the edge of their affected area in tiles (should be between 0 and 0.5; vanilla default is 0.3)
 local max_moduled_building_size = 9 -- by default, rocket silo (9x9) is the largest building which can use modules
 
-local cancel_override = false
 local override_localisation = true
 local ordered = false
 local beacons = { -- list of beacons available without other mods
@@ -31,11 +30,12 @@ local beacons = { -- list of beacons available without other mods
   "ab-hub-beacon",
   "ab-isolation-beacon"
 }
-local beacon_standard = require("prototypes/standard-beacon")
 override_descriptions = {}
 exclusion_range_values = {}
-startup = settings["startup"]
+se_technologies = false
+ab_technologies = false
 
+if startup["ab-override-vanilla-beacons"].value and cancel_override then beacons[1] = "ab-standard-beacon" end
 if startup["ab-enable-se-beacons"].value then
   table.insert(beacons, "se-basic-beacon")
   table.insert(beacons, "se-compact-beacon")
@@ -43,6 +43,9 @@ if startup["ab-enable-se-beacons"].value then
   table.insert(beacons, "se-compact-beacon-2")
   table.insert(beacons, "se-wide-beacon-2")
 end
+if data.raw.technology["se-compact-beacon"] and data.raw.technology["se-wide-beacon"] and data.raw.technology["se-compact-beacon-2"] and data.raw.technology["se-wide-beacon-2"] then se_technologies = true end
+if data.raw.technology["ab-novel-effect-transmission"] then ab_technologies = true end
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --- functions
@@ -72,38 +75,6 @@ function get_distribution_range(beacon)
     if selection_radius < collision_radius then range = beacon.supply_area_distance else range = beacon.supply_area_distance - (selection_radius - collision_radius) end
   end
   do return range end -- note: use ceil() on the returned range to get the total tiles affected
-end
-
--- enables a separate version of "standard" beacons - used in cases where the original changed version should be preserved ahead of the vanilla version due to complexity or importance
-function enable_replacement_standard_beacon(technology_name, order_string)
-  data:extend({
-    {
-      type = "item",
-      name = "ab-standard-beacon",
-      place_result = "ab-standard-beacon",
-      icon = "__base__/graphics/icons/beacon.png",
-      icon_size = 64,
-      stack_size = 20,
-      subgroup = "module",
-      order = order_string
-    }
-  })
-  data:extend({beacon_standard})
-  data:extend({
-    {
-      type = "recipe",
-      name = "ab-standard-beacon",
-      result = "ab-standard-beacon",
-      enabled = false,
-      energy_required = 15,
-      ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}},
-      normal = { result = "ab-standard-beacon", enabled = false, energy_required = 15, ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}} },
-      expensive = { result = "ab-standard-beacon", enabled = false, energy_required = 15, ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}} }
-    }
-  })
-  table.insert( data.raw.technology[technology_name].effects, { type = "unlock-recipe", recipe = "ab-standard-beacon" } )
-  localise_new_beacon("ab-standard-beacon", "ab_standard", nil)
-  if mods["space-exploration"] then data.raw.beacon["ab-standard-beacon"]["se_allow_in_space"] = true end
 end
 
 function override_vanilla_beacon(do_localisation, do_technology)
@@ -194,12 +165,10 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   local icon_indicator = nil
   if style == "mini" then
     icon_indicator = "__mini-machines__/graphics/shrink.png"
-    if new_beacon_item.stack_size < 30 then new_beacon_item.stack_size = 30 end
   elseif style == "micr" then
     icon_indicator = "__micro-machines__/graphics/shrink3.png"
     new_beacon_item.order = new_beacon_item.order .. "b-micro"
     new_beacon_recipe.order = new_beacon_item.order
-    if new_beacon_item.stack_size < 50 then new_beacon_item.stack_size = 50 end
   end
   if icon_indicator ~= nil then
     new_beacon_recipe.base_machine = base_name -- causes technologies to be handled by mini/micro mods
@@ -223,7 +192,7 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   data:extend({new_beacon_recipe})
   localise(name, {"item", "beacon"}, "name", localised_name)
   localise(name, {"item", "beacon"}, "description", localised_description)
-  if icon_indicator == nil then table.insert( data.raw["technology"]["effect-transmission"].effects, { type = "unlock-recipe", recipe = name } ) end
+  if icon_indicator == nil then table.insert( data.raw.technology["effect-transmission"].effects, { type = "unlock-recipe", recipe = name } ) end
 end
 
 -- orders beacons and increases stack size to match other mods
@@ -235,15 +204,15 @@ function order_beacons(anchor, start_at, order_if_nil, filler)
     local order_recipe = data.raw.recipe[anchor].order or ""
     local order_item = data.raw.item[anchor].order or ""
     for i=start_at,#beacons,1 do
-      if data.raw.item[beacons[i]] then
-        data.raw.recipe[beacons[i]].category = category_recipe
-        data.raw.recipe[beacons[i]].subgroup = subgroup_recipe
-        data.raw.item[beacons[i]].subgroup = subgroup_item
+      if data.raw.item[ beacons[i] ] then
+        data.raw.recipe[ beacons[i] ].category = category_recipe
+        data.raw.recipe[ beacons[i] ].subgroup = subgroup_recipe
+        data.raw.item[ beacons[i] ].subgroup = subgroup_item
         local text = tostring(i)
         if i > 9 then text = "9" .. text end
-        if order_recipe == "" then data.raw.recipe[beacons[i]].order = order_if_nil .. text else data.raw.recipe[beacons[i]].order = order_recipe .. filler .. text end
-        if order_item == "" then data.raw.item[beacons[i]].order = order_if_nil .. text else data.raw.item[beacons[i]].order = order_item .. filler .. text end
-        if data.raw.item[beacons[i]].stack_size < data.raw.item[anchor].stack_size then data.raw.item[beacons[i]].stack_size = data.raw.item[anchor].stack_size end
+        if order_recipe == "" then data.raw.recipe[ beacons[i] ].order = order_if_nil .. text else data.raw.recipe[ beacons[i] ].order = order_recipe .. filler .. text end
+        if order_item == "" then data.raw.item[ beacons[i] ].order = order_if_nil .. text else data.raw.item[ beacons[i] ].order = order_item .. filler .. text end
+        if data.raw.item[ beacons[i] ].stack_size < data.raw.item[anchor].stack_size then data.raw.item[ beacons[i] ].stack_size = data.raw.item[anchor].stack_size end
       end
     end
     ordered = true
@@ -334,32 +303,29 @@ end
 
 if mods["Krastorio2"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   if not mods["space-exploration"] then -- singularity beacons are disabled if SE is also active
-    for i=1,#beacons,1 do
-      if data.raw.item[beacons[i]] then
-        if data.raw.item[beacons[i]].stack_size < data.raw.item["kr-singularity-beacon"].stack_size then data.raw.item[beacons[i]].stack_size = data.raw.item["kr-singularity-beacon"].stack_size end
-      end
-    end
     localise("kr-singularity-beacon", {"item", "beacon"}, "description", {"description.kr_singularity"})
+    localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
     localise("beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_standard_kr_addon"}} })
     override_localisation = false
-    if data.raw.technology["se-compact-beacon-2"] and data.raw.technology["se-wide-beacon-2"] then
-      data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "kr-singularity-tech-card"}
-      data.raw.technology["se-compact-beacon-2"].unit = {count=1000, time=60, ingredients={{name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}, {name="space-science-pack", amount=1}, {name="matter-tech-card", amount=1}, {name="advanced-tech-card", amount=1}, {name="singularity-tech-card", amount=1}}}
-      data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "kr-singularity-tech-card"}
-      data.raw.technology["se-wide-beacon-2"].unit = data.raw.technology["se-compact-beacon-2"].unit
+    if se_technologies then
+      table.insert(data.raw.technology["se-compact-beacon-2"].prerequisites, "kr-singularity-tech-card")
+      data.raw.technology["se-compact-beacon-2"].unit.ingredients = { {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}, {name="space-science-pack", amount=1}, {name="matter-tech-card", amount=1}, {name="advanced-tech-card", amount=1}, {name="singularity-tech-card", amount=1} }
+      table.insert(data.raw.technology["se-wide-beacon-2"].prerequisites, "kr-singularity-tech-card")
+      data.raw.technology["se-wide-beacon-2"].unit.ingredients = data.raw.technology["se-compact-beacon-2"].unit.ingredients
     end
+    if ab_technologies then data.raw.technology["ab-novel-effect-transmission"].unit.count = 500 end
   end
 end
 
 if mods["space-exploration"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  for i=1,#beacons,1 do
-    if data.raw.beacon[beacons[i]] then
-      if data.raw.item[beacons[i]].stack_size < data.raw.item["se-compact-beacon"].stack_size then data.raw.item[beacons[i]].stack_size = data.raw.item["se-compact-beacon"].stack_size end
-    end
-    for i, beacon in pairs(data.raw.beacon) do
-      beacon["se_allow_in_space"] = true
-    end
+  for _, beacon in pairs(data.raw.beacon) do
+    if not beacon["se_allow_in_space"] then beacon["se_allow_in_space"] = true end
   end
+  if ab_technologies then data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"effect-transmission", "effectivity-module-3", "speed-module-3"} end
+  data.raw.recipe.beacon.order = "z-a[beacon]-a"
+  data.raw.item.beacon.order = "z-a[beacon]-a"
+  custom_exclusion_ranges["beacon"] = {value="solo", mode="strict"}
+  localise("beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
   localise("se-compact-beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
   localise("se-compact-beacon-2", {"item", "beacon"}, "description", {"description.ab_strict"})
   localise("se-wide-beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
@@ -369,24 +335,11 @@ if mods["space-exploration"] then ----------------------------------------------
   data.raw.technology["se-wide-beacon"].localised_description = {"technology-description.se_wide"}
   data.raw.technology["se-wide-beacon-2"].localised_description = {"technology-description.se_wide_2"}
   data.raw.technology["effect-transmission"].localised_description = {"technology-description.effect_transmission_default"}
-  if not startup["ab-override-vanilla-beacons"].value then
-    localise("beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
-    custom_exclusion_ranges["beacon"] = {value = "solo", mode = "strict"}
-  end
   -- TODO: Disable beacon overloading or limit it to basic/compact/wide beacons
 end
 
 if mods["nullius"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  order_beacons("nullius-large-beacon-2", 2, "nullius-cx", "nullius-cx") -- also prevents beacons from being hidden
-  for i=2,#beacons,1 do
-    if data.raw.item[beacons[i]] then
-      if beacons[i] == "se-compact-beacon-2" or beacons[i] == "se-wide-beacon-2" then
-        table.insert( data.raw["technology"]["nullius-broadcasting-4"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
-      else
-        table.insert( data.raw["technology"]["nullius-broadcasting-3"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
-      end
-    end
-  end
+  order_beacons("nullius-large-beacon-2", 2, "nullius-cx", "nullius-cx") -- the internal name/order for items/recipes/technologies needs to begin with "nullius-" for them to appear
   for tier=1,3,1 do
     localise("nullius-beacon-" .. tier, {"item", "beacon"}, "description", {"description.nullius"})
     if tier <= 2 then localise("nullius-large-beacon-" .. tier, {"item", "beacon"}, "description", {"description.nullius_large"}) end
@@ -394,17 +347,17 @@ if mods["nullius"] then --------------------------------------------------------
       data.raw.beacon["nullius-beacon-" .. tier .. "-" .. count].localised_description = {'?', {'', {"description.nullius"}, ' ', {"description.nullius_1_2_3_4_addon", count}} }
     end
   end
+  data.raw.technology["nullius-broadcasting-2"].localised_description = {"technology-description.effect_transmission_default"}
   data.raw.technology["nullius-broadcasting-3"].localised_description = {"technology-description.effect_transmission_default"}
+  data.raw.technology["nullius-broadcasting-4"].localised_description = {"technology-description.effect_transmission_default"}
   -- TODO: boxing/unboxing recipes?
 end
 
 if mods["exotic-industries"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   for i=1,#beacons,1 do
-    if data.raw.item[beacons[i]] then
-      if beacons[i] == "se-compact-beacon-2" or beacons[i] == "se-wide-beacon-2" then
-        table.insert( data.raw["technology"]["ei_iron-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
-      else
-        table.insert( data.raw["technology"]["ei_copper-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
+    if data.raw.item[ beacons[i] ] then
+      if beacons[i] == "beacon" or beacons[i] == "ab-standard-beacon" or beacons[i] == "ab-focused-beacon" or beacons[i] == "ab-node-beacon" or beacons[i] == "se-basic-beacon" or (ab_technologies == false and (beacons[i] == "ab-conflux-beacon" or beacons[i] == "ab-hub-beacon" or beacons[i] == "ab-isolation-beacon")) then
+        table.insert( data.raw.technology["ei_copper-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
       end
     end
   end
@@ -416,7 +369,7 @@ if mods["exotic-industries"] then ----------------------------------------------
   data.raw.technology["ei_copper-beacon"].localised_name = {"technology-name.effect_transmission_default"}
   data.raw.technology["ei_copper-beacon"].localised_description = {'?', {'', {"technology-description.effect_transmission_default"}, '\n\n', {"technology-description.ei_copper_addon"}}}
   data.raw.technology["ei_iron-beacon"].localised_description = {"technology-description.ei_iron"}
-  max_moduled_building_size = 11
+  max_moduled_building_size = math.max(11, max_moduled_building_size)
   -- TODO: Is there a way to make these beacons fair if beacon overloading is disabled in the settings? They can't be disabled since their liquid requirements already enable/disable them in a separate way.
   -- Note: beacon overloading seems to happen inconsistently in some cases when additional beacons are within 6 tiles but not affecting the machine due to their distribution ranges (different behavior depending on whether the machine or the additional beacon were placed last)
 end
@@ -442,8 +395,8 @@ if mods["248k"] then -----------------------------------------------------------
     if math.ceil(get_distribution_range(data.raw.beacon["el_ki_beacon_entity"])) == 3 then data.raw.beacon["el_ki_beacon_entity"].supply_area_distance = data.raw.beacon["el_ki_beacon_entity"].supply_area_distance + 0.075 end
     if math.ceil(get_distribution_range(data.raw.beacon["fu_ki_beacon_entity"])) == 3 then data.raw.beacon["fu_ki_beacon_entity"].supply_area_distance = data.raw.beacon["fu_ki_beacon_entity"].supply_area_distance + 0.075 end
   end
-  local beacons = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity"}
-  for _, name in pairs(beacons) do
+  local ki_beacons = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity"}
+  for _, name in pairs(ki_beacons) do
     local entity = data.raw.beacon[name]
     entity.radius_visualisation_picture.filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png"
     entity.radius_visualisation_picture.size = {10, 10}
@@ -478,33 +431,28 @@ if mods["248k"] then -----------------------------------------------------------
 end
 
 if mods["pycoalprocessing"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  local effects = table.deepcopy(data.raw["technology"]["effect-transmission"].effects)
-  if effects then
-    for e=#effects,1,-1 do
-      if effects[e].type == "unlock-recipe" then
-        for i=2,#beacons,1 do
-          if data.raw.item[beacons[i]] and beacons[i] == effects[e].recipe then
-            table.remove(data.raw.technology["effect-transmission"].effects, e)
-            e = e - 1
-          end
-        end
-      end
-    end
-  end
-  enable_replacement_standard_beacon("diet-beacon", "a[beacon]a")
+  -- replacement standard beacon may be enabled in data.lua
+  -- beacon recipe unlocks are added to "diet-beacon" instead of "effect-transmission" in data.lua
   order_beacons("beacon", 2, "a[beacon]x", "a[beacon]x")
-  if data.raw.item["ab-standard-beacon"].stack_size < data.raw.item["beacon-mk01"].stack_size then data.raw.item["ab-standard-beacon"].stack_size = data.raw.item["beacon-mk01"].stack_size end
-  for i=2,6,1 do -- only 5 beacons are added here, the others have their own technologies
-    if data.raw.item[beacons[i]] then
-      table.insert( data.raw["technology"]["diet-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
-    end
+  if ab_technologies then
+    data.raw.technology["ab-novel-effect-transmission"].unit = data.raw.technology["diet-beacon"].unit
+    data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"diet-beacon"}
   end
-  cancel_override = true
+  table.insert(data.raw.technology["effect-transmission"].prerequisites, "diet-beacon")
+  if se_technologies then
+    data.raw.technology["se-compact-beacon"].prerequisites = {"diet-beacon", "effectivity-module-2", "speed-module-2"}
+    data.raw.technology["se-compact-beacon"].unit = data.raw.technology["diet-beacon"].unit
+    data.raw.technology["se-wide-beacon"].prerequisites = {"diet-beacon", "effectivity-module-2", "speed-module-2"}
+    data.raw.technology["se-wide-beacon"].unit = data.raw.technology["diet-beacon"].unit
+    data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "effect-transmission", "effectivity-module-3", "speed-module-3"}
+    data.raw.technology["se-compact-beacon-2"].unit = data.raw.technology["effect-transmission"].unit
+    data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "effect-transmission", "effectivity-module-3", "speed-module-3"}
+    data.raw.technology["se-wide-beacon-2"].unit = data.raw.technology["se-compact-beacon-2"].unit
+  end
   data.raw.item["beacon"].localised_description = {"description.py_AM_FM"}
   data.raw.technology["diet-beacon"].localised_name = {"technology-name.py_diet_transmission"}
   data.raw.technology["diet-beacon"].localised_description = {'?', {'', {"technology-description.effect_transmission_default"}, '\n\n', {"technology-description.py_diet_addon"}}}
   data.raw.technology["effect-transmission"].localised_description = {"technology-description.py_main"}
-  table.insert(data.raw.technology["effect-transmission"].prerequisites, "diet-beacon")
   for am=1,5,1 do
     for fm=1,5,1 do
       data.raw.beacon["beacon-AM" .. tostring(am) .. "-FM" .. tostring(fm)].localised_description = {"description.py_AM_FM"}
@@ -513,28 +461,17 @@ if mods["pycoalprocessing"] then -----------------------------------------------
       custom_exclusion_ranges["diet-beacon-AM" .. am .. "-FM" .. fm] = {value = "solo", mode = "strict"}
     end
   end
-  if data.raw.technology["se-compact-beacon"] and data.raw.technology["se-wide-beacon"] and data.raw.technology["se-compact-beacon-2"] and data.raw.technology["se-wide-beacon-2"] then
-    table.insert( data.raw.technology["diet-beacon"].effects, { type = "unlock-recipe", recipe = "se-basic-beacon" } )
-    data.raw.technology["se-compact-beacon"].prerequisites = {"diet-beacon"}
-    data.raw.technology["se-compact-beacon"].unit = {count=500, time=60, ingredients={{name="automation-science-pack", amount=3}, {name="logistic-science-pack", amount=2}, {name="chemical-science-pack", amount=1}}}
-    data.raw.technology["se-wide-beacon"].prerequisites = {"diet-beacon"}
-    data.raw.technology["se-wide-beacon"].unit = data.raw.technology["se-compact-beacon"].unit
-    data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "effect-transmission"}
-    data.raw.technology["se-compact-beacon-2"].unit = {count=1000, time=60, ingredients={{name="automation-science-pack", amount=6}, {name="logistic-science-pack", amount=3}, {name="chemical-science-pack", amount=2}, {name="production-science-pack", amount=1}}}
-    data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "effect-transmission"}
-    data.raw.technology["se-wide-beacon-2"].unit = data.raw.technology["se-compact-beacon-2"].unit
-  end
-  max_moduled_building_size = 11
-  if mods["pypetroleumhandling"] then max_moduled_building_size = 15 end
+  max_moduled_building_size = math.max(11, max_moduled_building_size)
+  if mods["pypetroleumhandling"] then max_moduled_building_size = math.max(15, max_moduled_building_size) end
   --if mods["pyrawores"] then max_moduled_building_size = 19 end -- the only module-able structures larger than 15x15 are the aluminum mine (19x19) and titanium mine (23x23); TODO: test whether belts even have the throughput to support 4x the normal maximum for larger buildings like this
   exclusion_range_values["beacon"] = 64 + max_moduled_building_size-1
 end
 
 if mods["Ultracube"] then -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   for i=1,#beacons,1 do
-    if data.raw.item[beacons[i]] then
-      table.insert( data.raw["technology"]["cube-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
-      data.raw.beacon[beacons[i]].distribution_effectivity = data.raw.beacon[beacons[i]].distribution_effectivity * 0.2
+    if data.raw.item[ beacons[i] ] then
+      table.insert( data.raw.technology["cube-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
+      data.raw.beacon[ beacons[i] ].distribution_effectivity = data.raw.beacon[ beacons[i] ].distribution_effectivity * 0.2
     end
   end
   cancel_override = true
@@ -543,7 +480,7 @@ if mods["Ultracube"] then ------------------------------------------------------
   data.raw["assembling-machine"]["cube-beacon-fluid-source"].localised_name = {"name.ultra_cube"}
   data.raw["assembling-machine"]["cube-beacon-fluid-source"].localised_description = {"description.ultra_cube"}
   data.raw.technology["cube-beacon"].localised_description = {'?', {'', {"technology-description.effect_transmission_default"}, ' ', {"technology-description.ultra_cube_addon"}}}
-  -- TODO: Disable beacon overloading or limit it to arcane beacons
+  -- TODO: Disable beacon overloading or limit it to arcane beacons, make arcane beacons strict?
 end
 
 if mods["5dim_module"] or mods["OD27_5dim_module"] then -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -996,32 +933,23 @@ if mods["SeaBlock"] then -------------------------------------------------------
 end
 
 if mods["FreightForwarding"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  if startup["ab-enable-se-beacons"].value then
+  if se_technologies then
     table.insert(data.raw.technology["se-compact-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-wide-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-compact-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
     table.insert(data.raw.technology["se-wide-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
   end
+  if ab_technologies then table.insert(data.raw.technology["ab-novel-effect-transmission"].unit.ingredients, {name="ff-transport-science-pack", amount=1}) end
 end
 
 if mods["mini"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  if startup["ab-override-vanilla-beacons"].value then
-    if data.raw.technology["effect-transmission"] then
-      enable_replacement_standard_beacon("effect-transmission", "a[beacon]")
-      cancel_override = true
-    end
-  end
+  -- replacement standard beacon created in data.lua since its properties get overridden otherwise
   override_descriptions["beacon"] = {dimensions={1,1}}
 end
 
-if mods["Custom-Mods"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  if startup["ab-override-vanilla-beacons"].value then
-    if data.raw.technology["effect-transmission"] then
-      enable_replacement_standard_beacon("effect-transmission", "a[beacon]")
-      cancel_override = true
-    end
-  end
-end
+--if mods["Custom-Mods"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- replacement standard beacon created in data.lua since its properties get overridden otherwise
+--end
 
 if mods["more-module-slots"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   if startup["more-module-slots_beacon"].value and startup["ab-show-extended-stats"].value then
@@ -1045,6 +973,34 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+-- adds beacon recipe unlocks to technologies that might not have existed in previous data stage
+for name, tech in pairs(beacon_techs) do
+  if data.raw.beacon[name] and data.raw.technology[tech] then
+    local added = false
+    for i, effect in pairs(data.raw.technology[tech].effects) do
+      if effect.type == "unlock-recipe" and effect.recipe == name then added = true end
+    end
+    if added == false then table.insert( data.raw.technology[tech].effects, { type = "unlock-recipe", recipe = name } ) end
+  end
+end
+
+-- adjusts technologies to have higher count & time properties if their prerequisites do
+techs = {"ab-novel-effect-transmission", "se-compact-beacon", "se-wide-beacon", "se-compact-beacon-2", "se-wide-beacon-2"}
+for _, tech_name in pairs(techs) do
+  tech = data.raw.technology[tech_name]
+  if tech then
+    for _, prerequisite in pairs(tech.prerequisites) do
+      if data.raw.technology[prerequisite] and prerequisite ~= "space-science-pack" then
+        if tech.unit.count < data.raw.technology[prerequisite].unit.count then tech.unit.count = data.raw.technology[prerequisite].unit.count end
+        if tech.unit.time < data.raw.technology[prerequisite].unit.time then tech.unit.time = data.raw.technology[prerequisite].unit.time end
+      end
+      if data.raw.technology[prerequisite] and prerequisite == "effect-transmission" and tech_name == "ab-novel-effect-transmission" then
+        tech.unit.ingredients = data.raw.technology[prerequisite].unit.ingredients
+      end
+    end
+  end
+end
+
 -- override stats of vanilla beacons
 if startup["ab-override-vanilla-beacons"].value and cancel_override == false then
   if data.raw.recipe.beacon ~= nil and data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil and data.raw.technology["effect-transmission"] ~= nil then
@@ -1053,9 +1009,14 @@ if startup["ab-override-vanilla-beacons"].value and cancel_override == false the
 end
 
 normalize_distribution_ranges(distribution_range_indent)
-if ordered == false then order_beacons("beacon", 2, "a[beacon]x", "x") end
 
--- add visualization for beacons from other mods which use custom exclusion ranges
+if ordered == false then
+  local anchor = "beacon"
+  if data.raw.beacon["ab-standard-beacon"] then anchor = "ab-standard-beacon" end
+  order_beacons(anchor, 2, "a[beacon]x", "x")
+end
+
+-- add visualizations for exclusion ranges
 if startup["ab-disable-exclusion-areas"].value == false then
   for name, range in pairs(custom_exclusion_ranges) do
     local beacon = data.raw.beacon[name]
@@ -1113,6 +1074,38 @@ if startup["ab-disable-exclusion-areas"].value == false then
   end
 end
 
+-- creates a list of all beacon items/entities
+local beacon_list = {}
+for name, beacon_item in pairs(data.raw.item) do
+  local place_result = beacon_item.place_result
+  local beacon_entity = data.raw.beacon[place_result]
+  if beacon_entity then beacon_list[beacon_entity.name] = {item=beacon_item, beacon=beacon_entity} end
+end
+for name, beacon_entity in pairs(data.raw.beacon) do
+  if beacon_list[beacon_entity.name] == nil then beacon_list[beacon_entity.name] = {beacon=beacon_entity} end
+end
+if mods["pycoalprocessing"] then
+  beacon_list["beacon-AM1-FM1"].item = data.raw.item["beacon"]
+  beacon_list["diet-beacon-AM1-FM1"].item = data.raw.item["beacon-mk01"]
+end
+
+-- raises stack size to match the maximum among beacons
+local max_stack_size = 0
+for _, pair in pairs(beacon_list) do
+  if pair.item and pair.item.stack_size > max_stack_size then max_stack_size = pair.item.stack_size end
+end
+for _, pair in pairs(beacon_list) do
+  if pair.item and (mods["mini-machines"] or mods["micro-machines"]) then -- mini/micro beacons are given higher default stack sizes
+    local name_prefix = string.sub(pair.item.name,1,4)
+    if name_prefix == "mini" then
+      pair.item.stack_size = 30
+    elseif name_prefix == "micr" then
+      pair.item.stack_size = 50
+    end
+  end
+  if pair.item and pair.item.stack_size < max_stack_size then pair.item.stack_size = max_stack_size end
+end
+
 -- adds extended stats for most beacon items & entities
 if startup["ab-show-extended-stats"].value then
   local no_stats = {} -- stats aren't shown for the naturally-generated beacons from the Power Crystals mod or the inner part of KI cores
@@ -1130,16 +1123,6 @@ if startup["ab-show-extended-stats"].value then
   no_stats["fi_ki_core_slave_entity"] = true
   no_stats["fu_ki_core_slave_entity"] = true
   no_stats["bt-waste-electricity"] = true
-
-  local beacon_list = {}
-  for name, beacon_item in pairs(data.raw.item) do
-    local place_result = beacon_item.place_result
-    local beacon_entity = data.raw.beacon[place_result]
-    if beacon_entity then beacon_list[beacon_entity.name] = {item=beacon_item, beacon=beacon_entity} end
-  end
-  for name, beacon_entity in pairs(data.raw.beacon) do
-    if beacon_list[beacon_entity.name] == nil then beacon_list[beacon_entity.name] = {beacon=beacon_entity} end
-  end
 
   for name, pair in pairs(beacon_list) do
     if data.raw.beacon[name].selection_box then

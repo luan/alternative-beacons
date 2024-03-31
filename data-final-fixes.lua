@@ -2,15 +2,16 @@
 --  should only make changes which cannot be made earlier due to other mod changes; changes should be for specific mods combinations or come with settings so they can be disabled
 
 local ingredient_multipliers = {
+    ["ab-standard-beacon"] = 1,
     ["ab-focused-beacon"] = 2,
-    ["ab-node-beacon"] = 5,
+    ["ab-node-beacon"] = 4,
     ["ab-conflux-beacon"] = 10,
-    ["ab-hub-beacon"] = 20,
+    ["ab-hub-beacon"] = 15,
     ["ab-isolation-beacon"] = 20,
 }
 
 if startup["ab-enable-se-beacons"].value then
-  ingredient_multipliers["se-basic-beacon"] = 3
+  ingredient_multipliers["se-basic-beacon"] = 4
   ingredient_multipliers["se-compact-beacon"] = 10
   ingredient_multipliers["se-wide-beacon"] = 20
   ingredient_multipliers["se-compact-beacon-2"] = 15
@@ -24,17 +25,14 @@ function match_ingredients(ingredients, new_ingredients, multiplier)
   for index, ingredient in pairs(ingredients) do
     multiplier = mult
     if (ingredient.type ~= nil and ingredient.name ~= nil and ingredient.amount ~= nil) then
-      if ingredient.amount * multiplier > 600 then multiplier = multiplier / 2 end
-      if ingredient.amount * multiplier > 800 then multiplier = multiplier / 2 end
-      table.insert(new_ingredients, {["type"] = ingredient.type, ["name"] = ingredient.name, ["amount"] = ingredient.amount * multiplier})
+      if ingredient.amount * multiplier > 500 then multiplier = multiplier/((ingredient.amount * multiplier)/500) end
+      table.insert(new_ingredients, {["type"] = ingredient.type, ["name"] = ingredient.name, ["amount"] = math.ceil(ingredient.amount * multiplier)})
     elseif (ingredient.name ~= nil and ingredient.amount ~= nil) then
-      if ingredient.amount * multiplier > 600 then multiplier = multiplier / 2 end
-      if ingredient.amount * multiplier > 800 then multiplier = multiplier / 2 end
-      table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient.name, ["amount"] = ingredient.amount * multiplier})
+      if ingredient.amount * multiplier > 500 then multiplier = multiplier/((ingredient.amount * multiplier)/500) end
+      table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient.name, ["amount"] = math.ceil(ingredient.amount * multiplier)})
     elseif #ingredient == 2 and type(ingredient[2]) == "number" then
-      if ingredient[2] * multiplier > 600 then multiplier = multiplier / 2 end
-      if ingredient[2] * multiplier > 800 then multiplier = multiplier / 2 end
-      table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient[1], ["amount"] = ingredient[2] * multiplier})
+      if ingredient[2] * multiplier > 500 then multiplier = multiplier/((ingredient[2] * multiplier)/500) end
+      table.insert(new_ingredients, {["type"] = "item", ["name"] = ingredient[1], ["amount"] = math.ceil(ingredient[2] * multiplier)})
     end
   end
   do return new_ingredients end
@@ -45,7 +43,7 @@ end
 if data.raw.recipe.beacon ~= nil then
   if startup["ab-update-recipes"].value then
     local common = "beacon"
-    if mods["nullius"] then common = "nullius-beacon-3" end
+    if mods["nullius"] then common = "nullius-large-beacon-1" end
     if mods["5dim_module"] or mods["OD27_5dim_module"] then common = "5d-beacon-02" end
     if mods["exotic-industries"] then
       common = "ei_copper-beacon"
@@ -53,7 +51,6 @@ if data.raw.recipe.beacon ~= nil then
     end
     if mods["pycoalprocessing"] then
       common = "beacon-mk01"
-      ingredient_multipliers["ab-standard-beacon"] = 1
     end
     if mods["Ultracube"] then
       common = "cube-beacon"
@@ -84,7 +81,6 @@ end
 
 -- override stats of vanilla beacons (again) for specific mods
 if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
-  if mods["Krastorio2"] then data.raw.beacon["beacon"].localised_description = data.raw.item["beacon"].localised_description end -- TODO: This may not be necessary - find out what causes the two descriptions to be different
   if mods["beacons"] and not (mods["pycoalprocessing"] or mods["space-exploration"] or mods["Krastorio2"]) then
     localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
   end
@@ -94,18 +90,14 @@ if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
     data.raw.item.beacon.order = "a[beacon]-1"
     data.raw.recipe.beacon.order = "a[beacon]-1"
   end
-  if (mods["space-exploration"] or mods["exotic-industries"]) then
+  if (mods["exotic-industries"]) then
     local do_technology = false
     if data.raw.technology["effect-transmission"] ~= nil then do_technology = true end
     if startup["ab-override-vanilla-beacons"].value == true then override_vanilla_beacon(true, do_technology) end
-    if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then
-      localise("beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
-    end
   end
-  if (mods["space-exploration"] or mods["exotic-industries"] or ((mods["5dim_module"] or mods["OD27_5dim_module"]) and not mods["pycoalprocessing"])) then
+  if (mods["exotic-industries"] or ((mods["5dim_module"] or mods["OD27_5dim_module"]) and not mods["pycoalprocessing"])) then
     if startup["ab-show-extended-stats"].value == true then
       local strict = false
-      if mods["space-exploration"] and startup["ab-override-vanilla-beacons"].value == false then strict = true end
       add_extended_description("beacon", {item=data.raw.item.beacon, beacon=data.raw.beacon.beacon}, exclusion_range_values["beacon"], strict)
     end
   end

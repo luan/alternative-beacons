@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.5
+Date: 2024.03.31
+  Changes:
+    - Added a startup setting to use multiple technologies for new beacons
+    - Reduced recipe costs of node beacons and hub beacons
+    - Beacon stack sizes are now more consistent
+    - Adjusted recipe ingredients & technologies of new beacons for Nullius
+    - Standard beacons are now created in addition to basic beacons (instead of replacing them) for Space Exploration
+    - Fixed a potential error involving persistent alerts
+    - Fixed mismatched prerequisites for SE-like beacons
+---------------------------------------------------------------------------------------------------
 Version: 0.6.4
 Date: 2024.03.26
   Changes:

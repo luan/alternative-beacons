@@ -163,41 +163,57 @@ function populate_beacon_data()
     ["kr-singularity-beacon"] = {"kr-singularity-beacon"},
     ["ei_copper-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
     ["ei_iron-beacon"] = {"ei_copper-beacon","ei_iron-beacon"},
-    ["beacon-mk1"] = {"beacon", "ab-standard-beacon"},
-    ["beacon-mk2"] = {"beacon", "ab-standard-beacon"},
-    ["beacon-mk3"] = {"beacon", "ab-standard-beacon"},
+    ["beacon-mk1"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
+    ["beacon-mk2"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
+    ["beacon-mk3"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
     ["el_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fi_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fu_ki_beacon_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["el_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fi_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
     ["fu_ki_core_slave_entity"] = {"el_ki_beacon_entity", "fi_ki_beacon_entity", "fu_ki_beacon_entity", "el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"},
-    ["5d-beacon-02"] = {"beacon", "ab-standard-beacon"},
-    ["5d-beacon-03"] = {"beacon", "ab-standard-beacon"},
-    ["5d-beacon-04"] = {"beacon", "ab-standard-beacon"},
+    ["5d-beacon-02"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
+    ["5d-beacon-03"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
+    ["5d-beacon-04"] = {"beacon", "ab-standard-beacon", "nullius-beacon-3"},
     ["mini-beacon-1"] = {"mini-beacon-1"},
     ["micro-beacon-1"] = {"micro-beacon-1"}
     -- entries are added below for: pyanodons AM-FM beacons, nullius small/large beacons, mini/micro beacons, power crystals, alien beacons, warp beacons, editor beacons
   }
 
   local max_moduled_building_size = 9 -- by default, rocket silo (9x9) is the largest building which can use modules
+  local standard = true
   local beacon_prototypes = game.get_filtered_entity_prototypes({{filter = "type", type = "beacon"}})
   local mods = script.active_mods
+  if (mods["pycoalprocessing"] or mods["space-exploration"] or mods["mini"] or mods["Custom-Mods"]) then standard = false end
+
+  -- adjusts reference tables
+  if not standard then
+    for name, beacon_list in pairs(updated_repeating_beacons) do
+      for i=1,#beacon_list,1 do
+        if beacon_list[i] == "beacon" then table.remove(updated_repeating_beacons[name], i) end
+      end
+    end
+    updated_repeating_beacons["beacon"] = {}
+  end
+  if mods["space-exploration"] then
+    custom_exclusion_ranges["beacon"] = {value = "solo", mode = "strict"}
+    if mods["248k"] then -- changes KI beacons to solo-style beacons
+      updated_repeating_beacons["el_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
+      updated_repeating_beacons["fi_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
+      updated_repeating_beacons["fu_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
+    end
+  end
+  -- TODO: prevent 248K beacon cores from being "disabled" even though it has no effect on them relaying module effects to beacons
   if mods["Beacon2"] then
     for _, beacon in pairs(beacon_prototypes) do                              -- TODO: can the beacon stats be checked directly instead of iterating through all beacons?
       if beacon.name == "beacon-2" and beacon.supply_area_distance < 3.5 then -- only allow repeating if it's a specific version (multiple mods use the same name)
-        updated_repeating_beacons["beacon-2"] = {"beacon"}
-        table.insert(updated_repeating_beacons["beacon"], "beacon-2")
+        updated_repeating_beacons["beacon-2"] = {"ab-standard-beacon"}
+        if standard then updated_repeating_beacons["beacon-2"] = {"beacon", "ab-standard-beacon"} end
+        table.insert(updated_repeating_beacons["ab-standard-beacon"], "beacon-2")
+        if standard then table.insert(updated_repeating_beacons["beacon"], "beacon-2") end
       end
     end
   end
-  if mods["space-exploration"] and settings.startup["ab-override-vanilla-beacons"].value == false then custom_exclusion_ranges["beacon"] = {value = "solo", mode = "strict"} end -- changes standard beacons to solo-style beacons
-  if mods["space-exploration"] and mods["248k"] then -- changes KI beacons to solo-style beacons
-    updated_repeating_beacons["el_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
-    updated_repeating_beacons["fi_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
-    updated_repeating_beacons["fu_ki_beacon_entity"] = {"el_ki_core_slave_entity", "fi_ki_core_slave_entity", "fu_ki_core_slave_entity"}
-  end
-  -- TODO: prevent 248K beacon cores from being "disabled" even though it has no effect on them relaying module effects to beacons
 
   -- populate reference tables with repetitive and conditional info
   local repeaters_all = {}
@@ -244,16 +260,17 @@ function populate_beacon_data()
   if mods["nullius"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_small = {"beacon", "ab-standard-beacon"}
     local repeaters_large = {}
+    if not standard then repeaters_small = {"ab-standard-beacon"} end
     for tier=1,3,1 do
       if tier <= 2 then table.insert(repeaters_small, "nullius-large-beacon-" .. tier) end
       table.insert(repeaters_small, "nullius-beacon-" .. tier)
       table.insert(repeaters_large, "nullius-beacon-" .. tier)
-      table.insert(updated_repeating_beacons["beacon"], "nullius-beacon-" .. tier)
+      if standard then table.insert(updated_repeating_beacons["beacon"], "nullius-beacon-" .. tier) end
       table.insert(updated_repeating_beacons["ab-standard-beacon"], "nullius-beacon-" .. tier)
       for count=1,4,1 do
         table.insert(repeaters_small, "nullius-beacon-" .. tier .. "-" .. count)
         table.insert(repeaters_large, "nullius-beacon-" .. tier .. "-" .. count)
-        table.insert(updated_repeating_beacons["beacon"], "nullius-beacon-" .. tier .. "-" .. count)
+        if standard then table.insert(updated_repeating_beacons["beacon"], "nullius-beacon-" .. tier .. "-" .. count) end
         table.insert(updated_repeating_beacons["ab-standard-beacon"], "nullius-beacon-" .. tier .. "-" .. count)
       end
     end
@@ -263,6 +280,13 @@ function populate_beacon_data()
       for count=1,4,1 do
         updated_repeating_beacons["nullius-beacon-" .. tier .. "-" .. count] = repeaters_small
       end
+    end
+    for _, beacon_to_compare in pairs(updated_repeating_beacons["ab-standard-beacon"]) do -- small beacon 3 acts as a standard beacon
+      local added = false
+      for _, beacon in pairs (updated_repeating_beacons["nullius-beacon-3"]) do
+        if beacon == beacon_to_compare then added = true end
+      end
+      if not added then table.insert(updated_repeating_beacons["nullius-beacon-3"], beacon_to_compare) end
     end
   end
   if mods["pycoalprocessing"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -281,6 +305,8 @@ function populate_beacon_data()
         updated_repeating_beacons["diet-beacon-AM" .. am .. "-FM" .. fm] = repeaters_AM_FM
       end
     end
+    max_moduled_building_size = math.max(11, max_moduled_building_size)
+    if mods["pypetroleumhandling"] then max_moduled_building_size = math.max(15, max_moduled_building_size) end
   end
   if mods["PowerCrystals"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_crystal = {}
@@ -350,7 +376,7 @@ function populate_beacon_data()
     end
   end
   if mods["exotic-industries"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    max_moduled_building_size = 11
+    max_moduled_building_size = math.max(11, max_moduled_building_size)
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       table.insert(updated_repeating_beacons[beacon.name], "ei_alien-beacon")
@@ -419,14 +445,9 @@ function populate_beacon_data()
       for i=1,#updated_repeating_beacons[beacon.name],1 do
         local is_valid = false
         for _, beacon_to_compare in pairs(beacon_prototypes) do
-          if beacon_to_compare.name == updated_repeating_beacons[beacon.name][i] then
-            is_valid = true
-            if (beacon.name == "beacon" and beacon_to_compare.name == "beacon" and mods["space-exploration"] and settings.startup["ab-override-vanilla-beacons"].value == false) then is_valid = false end
-          end
+          if beacon_to_compare.name == updated_repeating_beacons[beacon.name][i] then is_valid = true end
         end
-        if is_valid == true then
-          affected_beacons[updated_repeating_beacons[beacon.name][i]] = true
-        end
+        if is_valid == true then affected_beacons[ updated_repeating_beacons[beacon.name][i] ] = true end
       end
       global.repeating_beacons[beacon.name] = affected_beacons
     end
@@ -695,6 +716,7 @@ function add_beacon_alert(entity, player)
   {type="virtual", name="ab_beacon_offline"},
   {"description.ab_beacon_offline_alert", "[img=virtual-signal/ab_beacon_offline]", "[img=entity/" .. entity.name .. "]"},
   true)
+  --if persistent_alerts == true and #offline_beacons > 0 then register_alert_refreshing() end -- TODO: Can persistent alerts be modified to have zero performance impact whenever there are no offline beacons?
 end
 
 -- removes flashing alerts for the given beacon (all players)
@@ -703,6 +725,7 @@ function remove_beacon_alert(beacon_entity)
     --player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
     player.remove_alert({entity=beacon_entity}) -- this applies to any of the filters rather than requiring all of them to match
   end
+  --if persistent_alerts == true and #offline_beacons == 0 then unregister_alert_refreshing() end
 end
 
 -- returns true if the given beacon (entity) is within the exclusion field of a specific hub (hubID)
@@ -759,7 +782,7 @@ function refresh_beacon_alerts()
   for i, offline_beacon in pairs(offline_beacons) do
     if offline_beacon ~= nil then
       local beacon = offline_beacon[2]
-      if beacon.valid then
+      if beacon and beacon.valid then
         for _, player in pairs(beacon.force.players) do
           add_beacon_alert(beacon, player)
         end

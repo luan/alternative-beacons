@@ -67,10 +67,17 @@ data:extend ({
     },
     {
         type = "bool-setting",
+        name = "ab-additional-technologies",
+        setting_type = "startup",
+        default_value = false,
+        order = "xa"
+    },
+    {
+        type = "bool-setting",
         name = "ab-update-recipes",
         setting_type = "startup",
         default_value = true,
-        order = "xa"
+        order = "xb"
     },
     {
         type = "bool-setting",
