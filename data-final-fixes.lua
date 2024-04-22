@@ -80,7 +80,7 @@ if data.raw.recipe.beacon ~= nil then
 end
 
 -- override stats of vanilla beacons (again) for specific mods
-if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil then
+if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil and data.raw.recipe.beacon ~= nil then
   if mods["beacons"] and not (mods["pycoalprocessing"] or mods["space-exploration"] or mods["Krastorio2"]) then
     localise("beacon", {"item", "beacon", "recipe"}, "name", {"name.ab-standard-beacon"})
   end
@@ -108,4 +108,22 @@ if mods["bobmodules"] and mods["exotic-industries"] and startup["ab-balance-othe
   data.raw.beacon["beacon-2"].next_upgrade = nil
   data.raw.item["beacon-2"].flags = nil -- removes "hidden" flag
   data.raw.item["beacon-3"].flags = nil
+end
+
+if mods["minno-beacon-rebalance-mod"] then
+  -- note: included in data-final-fixes.lua since these beacons aren't instantiated until after data-updates.lua finishes executing
+  localise("beacon-highpower", {"item", "beacon"}, "description", {"description.ab_overload"})
+  localise("beacon-2-highpower", {"item", "beacon"}, "description", {"description.ab_overload"})
+  localise("beacon-3-highpower", {"item", "beacon"}, "description", {"description.ab_overload"})
+  override_localisation = false
+  data.raw.beacon["beacon-3-highpower"].radius_visualisation_picture = data.raw.beacon["beacon"].radius_visualisation_picture
+  if startup["ab-show-extended-stats"].value then
+    local new_beacons = {"beacon-highpower", "beacon-2-highpower", "beacon-3-highpower"}
+    for _, name in pairs(new_beacons) do
+      if data.raw.beacon[name].selection_box then
+        if exclusion_range_values[name] == nil then exclusion_range_values[name] = math.ceil(get_distribution_range(data.raw.beacon[name])) end
+        add_extended_description(name, {item=data.raw.item[name], beacon=data.raw.beacon[name]}, exclusion_range_values[name], false)
+      end
+    end
+  end
 end

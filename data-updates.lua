@@ -914,6 +914,12 @@ if mods["PowerCrystals"] then --------------------------------------------------
   -- Balance: Power crystals neither disable nor get disabled by other beacons via the "exclusion area" system
 end
 
+if mods["early-modules"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if startup["em-enable-beacon-0"].value then
+    localise("beacon-0", {"item", "beacon"}, "description", {"description.ab_same"})
+  end
+end
+
 --if mods["EditorExtensions"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- ee-super-beacon is only available in the editor so it was changed within control.lua to not interact with the "exclusion area" system
 --end
@@ -963,6 +969,17 @@ if mods["more-module-slots"] then ----------------------------------------------
         new_slots = new_slots + factor
       end
       override_descriptions[name] = {slots=new_slots}
+    end
+  end
+end
+
+if mods["Li-Module-Fix"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- The startup setting which adjusts beacon range is disabled (supporting it would require somehow passing info between the data and control stages)
+  if startup["ab-show-extended-stats"].value then
+    for name, beacon in pairs(data.raw.beacon) do
+      local new_slots = beacon.module_specification.module_slots + startup["more_slots_unm"].value
+      local new_efficiency = beacon.distribution_effectivity * startup["beacon_de"].value
+      override_descriptions[name] = {slots=new_slots, efficiency=new_efficiency}
     end
   end
 end

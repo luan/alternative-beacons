@@ -45,3 +45,19 @@ if mods["CoppermineBobModuleRebalancing"] then
         data.raw["bool-setting"]["bobmods-modules-enable-modules-lab"].forced_value = true -- prevents a crash
     end
 end
+if mods["Li-Module-Fix"] then
+    if data.raw["double-setting"]["beacon_sad"] ~= nil then
+        data.raw["double-setting"]["beacon_sad"].hidden = true
+        data.raw["double-setting"]["beacon_sad"].forced_value = 1 -- custom beacon range currently unsupported (it would require transferring info between data/control stages)
+        data.raw["double-setting"]["beacon_sad"].default_value = 1
+        data.raw["double-setting"]["beacon_sad"].maximum_value = 1.00001
+        data.raw["double-setting"]["beacon_sad"].minimum_value = 1
+    end
+    if data.raw["double-setting"]["beacon_de"] ~= nil then
+        data.raw["double-setting"]["beacon_de"].default_value = 1
+    end
+    if data.raw["int-setting"]["more_slots_unm"] ~= nil then
+        data.raw["int-setting"]["more_slots_unm"].default_value = 0
+        data.raw["int-setting"]["more_slots_unm"].minimum_value = 0
+    end
+end
