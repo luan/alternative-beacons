@@ -1,8 +1,11 @@
 --- settings-updates.lua
 
 if mods["space-exploration"] then
-    data.raw["bool-setting"]["ab-enable-se-beacons"].hidden = true
-    data.raw["bool-setting"]["ab-enable-se-beacons"].forced_value = false
+    if mods["Krastorio2"] then
+        data.raw["bool-setting"]["ab-enable-k2-beacons"].hidden = false
+    end
+else
+    data.raw["bool-setting"]["ab-enable-se-beacons"].hidden = false
 end
 if mods["pycoalprocessing"] then
     if data.raw["bool-setting"]["future-beacons"] ~= nil then

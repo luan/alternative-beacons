@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.7
+Date: 2024.05.14
+  Changes:
+    - Added support for Lunar Landings
+    - Added startup setting to enable singularity beacons when both Krastario 2 and Space Exploration are active
+    - Startup setting for SE-like beacons is now remembered when enabling or disabling Space Exploration
+---------------------------------------------------------------------------------------------------
 Version: 0.6.6
 Date: 2024.04.22
   Changes:

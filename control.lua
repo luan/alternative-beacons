@@ -397,6 +397,14 @@ function populate_beacon_data()
       updated_repeating_beacons["warptorio-beacon-" .. tostring(i)] = repeaters_all
     end
   end
+  if mods["LunarLandings"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      table.insert(updated_repeating_beacons[beacon.name], "ll-oxygen-diffuser")
+    end
+    custom_exclusion_ranges["ll-oxygen-diffuser"] = {value=0}
+    updated_repeating_beacons["ll-oxygen-diffuser"] = repeaters_all
+  end
   if mods["EditorExtensions"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
@@ -412,6 +420,24 @@ function populate_beacon_data()
     end
     custom_exclusion_ranges["creative-mod_super-beacon"] = {value=0}
     updated_repeating_beacons["creative-mod_super-beacon"] = repeaters_all
+  end
+  if mods["janky-beacon-rebalance"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    local repeaters_janky = {"beacon", "ab-standard-beacon"}
+    for count=1,24,1 do
+      for quality=1,5,1 do
+        if quality == 1 then
+          table.insert(repeaters_janky, "janky-beacon-" .. count)
+        else
+          table.insert(repeaters_janky, "janky-beacon-" .. count .. "-quality-" .. quality)
+        end
+      end
+    end
+    for count=1,24,1 do
+      for quality=1,5,1 do
+        updated_repeating_beacons["janky-beacon-" .. count] = repeaters_janky
+        updated_repeating_beacons["janky-beacon-" .. count .. "-quality-" .. quality] = repeaters_janky
+      end
+    end
   end
 
   -- set distribution/exclusion ranges
@@ -548,7 +574,7 @@ function check_nearby(entity, behavior)
   local hubCount = 0
   local hubIDs = {}
   local nearby_entities = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
-  if entity.name ~= "ab-hub-beacon" then
+  if entity.name ~= "ab-hub-beacon" and entity.name ~= "ll-oxygen-diffuser" then
     for _, nearby_entity in pairs(nearby_entities) do
       if nearby_entity.name == "ab-hub-beacon" then
         if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges["ab-hub-beacon"] then
@@ -560,7 +586,7 @@ function check_nearby(entity, behavior)
   end
   -- adjust nearby beacons as needed
   for _, nearby_entity in pairs(nearby_entities) do
-    if nearby_entity.unit_number ~= entity.unit_number then
+    if nearby_entity.unit_number ~= entity.unit_number and nearby_entity.name ~= "ll-oxygen-diffuser" then
       local nearby_distance = get_distance(entity.selection_box, nearby_entity.selection_box)
       local disabling_range = exclusion_range
       if hubCount > 0 then
@@ -609,7 +635,7 @@ function check_self(entity, removed_id, wasEnabled)
   local hubID = -1
   local hubIDs = {}
   local nearby_entities = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
-  if entity.name ~= "ab-hub-beacon" then
+  if entity.name ~= "ab-hub-beacon" and entity.name ~= "ll-oxygen-diffuser" then
     for _, nearby_entity in pairs(nearby_entities) do
       if nearby_entity.name == "ab-hub-beacon" and nearby_entity.unit_number ~= removed_id then
         if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges["ab-hub-beacon"] then
@@ -625,7 +651,7 @@ function check_self(entity, removed_id, wasEnabled)
   end
   -- adjust beacon based on surrounding beacons
   for _, nearby_entity in pairs(nearby_entities) do
-    if (nearby_entity.unit_number ~= entity.unit_number and nearby_entity.unit_number ~= removed_id) then
+    if (nearby_entity.unit_number ~= entity.unit_number and nearby_entity.unit_number ~= removed_id and nearby_entity.name ~= "ll-oxygen-diffuser") then
       local exclusion_mode = "normal"
       local nearby_distance = get_distance(entity.selection_box, nearby_entity.selection_box)
       local disabling_range = exclusion_ranges[nearby_entity.name]

@@ -24,7 +24,8 @@ beacon_techs = {
   ["se-compact-beacon"] = "se-compact-beacon",
   ["se-wide-beacon"] = "se-wide-beacon",
   ["se-compact-beacon-2"] = "se-compact-beacon-2",
-  ["se-wide-beacon-2"] = "se-wide-beacon-2"
+  ["se-wide-beacon-2"] = "se-wide-beacon-2",
+  ["k2-singularity-beacon-2"] = "effect-transmission"
 }
 cancel_override = false
 
@@ -233,7 +234,7 @@ if startup["ab-enable-isolation-beacons"].value then
 end
 
 -- enables beacons which emulate those from Space Exploration
-if startup["ab-enable-se-beacons"].value then
+if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   local item_basic = {
     type = "item",
     name = "se-basic-beacon",

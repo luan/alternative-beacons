@@ -36,7 +36,7 @@ se_technologies = false
 ab_technologies = false
 
 if startup["ab-override-vanilla-beacons"].value and cancel_override then beacons[1] = "ab-standard-beacon" end
-if startup["ab-enable-se-beacons"].value then
+if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   table.insert(beacons, "se-basic-beacon")
   table.insert(beacons, "se-compact-beacon")
   table.insert(beacons, "se-wide-beacon")
@@ -315,6 +315,30 @@ if mods["Krastorio2"] then -----------------------------------------------------
     end
     if ab_technologies then data.raw.technology["ab-novel-effect-transmission"].unit.count = 500 end
   end
+
+  -- enables singularity beacons while Space Exploration is enabled
+  if startup["ab-enable-k2-beacons"].value and mods["space-exploration"] then
+    local recipe_singularity = {
+      type = "recipe",
+      name = "k2-singularity-beacon",
+      result = "kr-singularity-beacon",
+      enabled = false,
+      energy_required = 10,
+      ingredients = {{type = "item", name = "processing-unit", amount = 20}, {type = "item", name = "se-holmium-solenoid", amount = 10}, {type = "item", name = "energy-control-unit", amount = 10}, {type = "item", name = "ab-standard-beacon", amount = 1}}
+    }
+    data:extend({recipe_singularity})
+    if data.raw.beacon["kr-singularity-beacon"] and data.raw.technology["se-compact-beacon"] then table.insert( data.raw.technology["se-compact-beacon"].effects, { type = "unlock-recipe", recipe = "k2-singularity-beacon" } ) end
+    -- TODO: Add separate technology for singularity beacons?
+    data.raw.beacon["kr-singularity-beacon"].selection_box = {{-1,-1}, {1, 1}}
+    data.raw.beacon["kr-singularity-beacon"].drawing_box = {{-1,-1.5}, {1, 1}}
+    data.raw.beacon["kr-singularity-beacon"].module_specification.module_slots = 2
+    data.raw.beacon["kr-singularity-beacon"].supply_area_distance = 2
+    data.raw.item["kr-singularity-beacon"].place_result = "kr-singularity-beacon"
+    data.raw.recipe["k2-singularity-beacon"].localised_name = {"name.kr_singularity"}
+    localise("kr-singularity-beacon", {"item", "beacon"}, "name", {"name.kr_singularity"})
+    localise("kr-singularity-beacon", {"item", "beacon"}, "description", {"description.kr_singularity"})
+    -- TODO: Revert Compact Beacon 2 to using its original art?
+  end
 end
 
 if mods["space-exploration"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -331,6 +355,7 @@ if mods["space-exploration"] then ----------------------------------------------
   localise("se-wide-beacon", {"item", "beacon"}, "description", {"description.ab_strict"})
   localise("se-wide-beacon-2", {"item", "beacon"}, "description", {"description.ab_strict"})
   data.raw.technology["se-compact-beacon"].localised_description = {"technology-description.se_compact"}
+  if startup["ab-enable-k2-beacons"].value then data.raw.technology["se-compact-beacon"].localised_description = {"technology-description.k2se_compact"} end
   data.raw.technology["se-compact-beacon-2"].localised_description = {"technology-description.se_compact_2"}
   data.raw.technology["se-wide-beacon"].localised_description = {"technology-description.se_wide"}
   data.raw.technology["se-wide-beacon-2"].localised_description = {"technology-description.se_wide_2"}
@@ -920,6 +945,10 @@ if mods["early-modules"] then --------------------------------------------------
   end
 end
 
+--if mods["LunarLandings"] then -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  -- ll-oxygen-diffuser uses a beacon prototype but has zero module slots and doesn't behave like a beacon so it was changed within control.lua accordingly
+--end
+
 --if mods["EditorExtensions"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- ee-super-beacon is only available in the editor so it was changed within control.lua to not interact with the "exclusion area" system
 --end
@@ -953,7 +982,7 @@ if mods["mini"] then -----------------------------------------------------------
   override_descriptions["beacon"] = {dimensions={1,1}}
 end
 
---if mods["Custom-Mods"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--if mods["Custom-Mods"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- replacement standard beacon created in data.lua since its properties get overridden otherwise
 --end
 
@@ -1140,6 +1169,7 @@ if startup["ab-show-extended-stats"].value then
   no_stats["fi_ki_core_slave_entity"] = true
   no_stats["fu_ki_core_slave_entity"] = true
   no_stats["bt-waste-electricity"] = true
+  no_stats["ll-oxygen-diffuser"] = true
 
   for name, pair in pairs(beacon_list) do
     if data.raw.beacon[name].selection_box then

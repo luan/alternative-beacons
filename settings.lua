@@ -62,8 +62,17 @@ data:extend ({
         type = "bool-setting",
         name = "ab-enable-se-beacons",
         setting_type = "startup",
+        hidden = true,
         default_value = false,
         order = "g"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-enable-k2-beacons",
+        setting_type = "startup",
+        hidden = true,
+        default_value = false,
+        order = "f"
     },
     {
         type = "bool-setting",

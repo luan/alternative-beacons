@@ -10,7 +10,7 @@ local ingredient_multipliers = {
     ["ab-isolation-beacon"] = 20,
 }
 
-if startup["ab-enable-se-beacons"].value then
+if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   ingredient_multipliers["se-basic-beacon"] = 4
   ingredient_multipliers["se-compact-beacon"] = 10
   ingredient_multipliers["se-wide-beacon"] = 20
