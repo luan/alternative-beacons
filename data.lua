@@ -25,7 +25,7 @@ beacon_techs = {
   ["se-wide-beacon"] = "se-wide-beacon",
   ["se-compact-beacon-2"] = "se-compact-beacon-2",
   ["se-wide-beacon-2"] = "se-wide-beacon-2",
-  ["k2-singularity-beacon-2"] = "effect-transmission"
+  ["k2-singularity-beacon"] = "effect-transmission"
 }
 cancel_override = false
 

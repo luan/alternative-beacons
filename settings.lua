@@ -101,6 +101,7 @@ data:extend ({
         setting_type = "runtime-global",
         default_value = 0,
         minimum_value = 0,
+        maximum_value = 86400,
         order = "y"
     },
     {

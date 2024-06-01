@@ -907,7 +907,7 @@ end
 if mods["starry-sakura"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   -- all beacons have 3 range: tiny-beacon is 1x1 and has 1 module slot, 0.5 efficiency; small-beacon is 2x2 and has 2 module slots, 0.5 efficiency; sakura-beacon has 4 module slots, 0.65 efficiency; star-beacon has 8 module slots, 0.8 efficiency
   data.raw.beacon["tiny-beacon"].selection_box = {{-0.5, -0.5}, {0.5, 0.5}}
-  -- Balance: reduced distance to match width, changed module power of small-beacon to be halfway between standard beacons and tiny beacons; tiny beacons and small beacons also only disable other types of beacons
+  -- Balance: reduced range to match width, changed module power of small-beacon to be halfway between standard beacons and tiny beacons; tiny beacons and small beacons also only disable other types of beacons
   if startup["ab-balance-other-beacons"].value then
     data.raw.beacon["tiny-beacon"].supply_area_distance = 1
     data.raw.beacon["small-beacon"].supply_area_distance = 2
@@ -1094,7 +1094,7 @@ if startup["ab-disable-exclusion-areas"].value == false then
         }
         local image_size = 129
         local base = (2*distribution_range + width) * 2 -- may require the distribution_range_indent to be 0.25
-        if base <= image_size then
+        if base <= image_size and exclusion_range_values[name] > math.ceil(distribution_range) then
           local image_exclusion = "__alternative-beacons__/graphics/visualization/exclude.png"
           if custom_exclusion_ranges[name].mode == "strict" then image_exclusion = "__alternative-beacons__/graphics/visualization/exclude_strict.png" end
           local side = (exclusion_range_values[name] - math.ceil(distribution_range)) * 2
@@ -1154,7 +1154,7 @@ end
 
 -- adds extended stats for most beacon items & entities
 if startup["ab-show-extended-stats"].value then
-  local no_stats = {} -- stats aren't shown for the naturally-generated beacons from the Power Crystals mod or the inner part of KI cores
+  local no_stats = {} -- stats aren't shown for the naturally-generated beacons from the Power Crystals mod or entities which don't act like beacons
   for tier=1,3,1 do
     no_stats["model-power-crystal-productivity-" .. tier] = true
     no_stats["model-power-crystal-effectivity-" .. tier] = true

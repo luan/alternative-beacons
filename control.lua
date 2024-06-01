@@ -4,7 +4,7 @@
 local exclusion_ranges = {}     -- beacon prototype name -> range for affected beacons
 local distribution_ranges = {}  -- beacon prototype name -> range for affected crafting machines
 local search_ranges = {}        -- beacon prototype name -> maximum range that other beacons could be interacted with
-local strict_beacons = {}       -- beacon prototype names for those with "strict" exclusion ranges
+local types = {}                -- beacon prototype name -> "strict", "hub", or "conflux" for beacons with distinct behaviors
 local repeating_beacons = {}    -- beacon prototype name -> list of beacons which won't be disabled
 local offline_beacons = {}      -- beacon unit number -> attached warning sprite, entity reference (for disabled beacons)
 local update_rate               -- integer; if above zero, how many seconds elapse between updating all beacons (beacons are only updated via triggered events by default)
@@ -13,7 +13,7 @@ local persistent_alerts         -- boolean; whether or not alerts are refreshed 
 --- Mod Initialization - called on first startup after the mod is installed; available objects: global, game, rendering, settings
 script.on_init(
   function()
-    global = { exclusion_ranges = {}, distribution_ranges = {}, search_ranges = {}, strict_beacons = {}, repeating_beacons = {}, offline_beacons = {} }
+    global = { exclusion_ranges = {}, distribution_ranges = {}, search_ranges = {}, strict_beacons = {}, repeating_beacons = {}, offline_beacons = {} } -- TODO: refactor/migrate "strict_beacons" as "types" instead
     populate_beacon_data()
   end
 )
@@ -27,7 +27,7 @@ script.on_load(
     exclusion_ranges = global.exclusion_ranges
     distribution_ranges = global.distribution_ranges
     search_ranges = global.search_ranges
-    strict_beacons = global.strict_beacons
+    types = global.strict_beacons
     repeating_beacons = global.repeating_beacons
     offline_beacons = global.offline_beacons
     update_rate = settings.global["ab-update-rate"].value
@@ -137,8 +137,12 @@ end
 --  creates and updates exclusion ranges for all beacons - beacons from other mods will use their distribution range as their exclusion range unless otherwise noted
 function populate_beacon_data()
   local updated_distribution_ranges = {}
-  local updated_strict_beacons = {}
   local updated_exclusion_ranges = {}
+  local updated_types = {
+    ["ab-hub-beacon"] = {hub=true},
+    ["ab-conflux-beacon"] = {conflux=true}
+    -- entries are added below for all strict beacons
+  }
 
   local custom_exclusion_ranges = { -- these beacons are given custom exclusion ranges: "strict" ranges disable beacons whose distribution areas overlap them, "solo" means the smallest range for "strict" beacons which is large enough to prevent synergy with other beacons
     ["ab-focused-beacon"] = {add=1},
@@ -217,8 +221,9 @@ function populate_beacon_data()
 
   -- populate reference tables with repetitive and conditional info
   local repeaters_all = {}
-  for _, beacon in pairs(beacon_prototypes) do
+  for name, beacon in pairs(beacon_prototypes) do
     table.insert(repeaters_all, beacon.name)
+    if updated_types[name] == nil then updated_types[name] = {} end
   end
   if mods["Advanced_Modules"] or mods["Advanced_Sky_Modules"] or mods["Advanced_beacons"] then ------------------------------------------------------------------------------------------------------------
     if settings.startup["ab-balance-other-beacons"].value then
@@ -439,6 +444,50 @@ function populate_beacon_data()
       end
     end
   end
+  if mods["modular-beacon-power"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    for urbname,urb in pairs(updated_repeating_beacons) do
+      local urb_addons = {}
+      for _,repname in pairs(urb) do
+        local variants = {}
+        for name,_ in pairs(beacon_prototypes) do
+          if base_name(name) == repname and name ~= repname then table.insert(variants, name) end
+        end
+        for _,variant in pairs(variants) do
+          table.insert(urb_addons, variant)
+        end
+      end
+      for _,addon in pairs(urb_addons) do
+        table.insert(urb, addon) -- adds variants of each beacon in the ordered lists to those lists
+      end
+      local variants = {}
+      for name,_ in pairs(beacon_prototypes) do
+        if base_name(name) == urbname and name ~= urbname then table.insert(variants, name) end
+      end
+      for _,variant in pairs(variants) do
+        updated_repeating_beacons[variant] = urb -- variants have the same lists
+      end
+    end
+    for cername,cer in pairs(custom_exclusion_ranges) do
+      local variants = {}
+      for name,_ in pairs(beacon_prototypes) do
+        if base_name(name) == cername and name ~= cername then table.insert(variants, name) end
+      end
+      for _,variant in pairs(variants) do
+        custom_exclusion_ranges[variant] = cer -- variants have the same exclusion ranges
+      end
+    end
+    for typename,type in pairs(updated_types) do
+      if type.conflux or type.hub then
+        local variants = {}
+        for name,_ in pairs(beacon_prototypes) do
+          if base_name(name) == typename and name ~= typename then table.insert(variants, name) end
+        end
+        for _,variant in pairs(variants) do
+          updated_types[variant] = type -- variant conflux/hub beacons behave the same
+        end
+      end
+    end
+  end
 
   -- set distribution/exclusion ranges
   for _, beacon in pairs(beacon_prototypes) do
@@ -458,7 +507,7 @@ function populate_beacon_data()
         else
           exclusion_range = range.value
         end
-        if range.mode and range.mode == "strict" then updated_strict_beacons[beacon.name] = true end
+        if range.mode and range.mode == "strict" then updated_types[beacon.name].strict = true end
       end
       updated_exclusion_ranges[beacon.name] = exclusion_range
     end
@@ -489,11 +538,11 @@ function populate_beacon_data()
       if not ((global.repeating_beacons[name1] and global.repeating_beacons[name1][name2]) or (global.repeating_beacons[name2] and global.repeating_beacons[name2][name1])) then
         if updated_exclusion_ranges[name2] > highest_exclusion_range then highest_exclusion_range = updated_exclusion_ranges[name2] end
         if updated_distribution_ranges[name2] > highest_distribution_range then highest_distribution_range = updated_distribution_ranges[name2] end
-        if updated_strict_beacons[name2] and updated_exclusion_ranges[name2] > highest_strict_range then highest_strict_range = updated_exclusion_ranges[name2] end
+        if updated_types[name2].strict and updated_exclusion_ranges[name2] > highest_strict_range then highest_strict_range = updated_exclusion_ranges[name2] end
       end
     end
     local range = math.max(updated_exclusion_ranges[name1], highest_exclusion_range)
-    if updated_strict_beacons[name1] then range = math.max(range, updated_exclusion_ranges[name1] + highest_distribution_range) end
+    if updated_types[name1].strict then range = math.max(range, updated_exclusion_ranges[name1] + highest_distribution_range) end
     range = math.max(range, updated_distribution_ranges[name1] + highest_strict_range)
     updated_search_ranges[name1] = range
   end
@@ -501,11 +550,11 @@ function populate_beacon_data()
   global.exclusion_ranges = updated_exclusion_ranges
   global.distribution_ranges = updated_distribution_ranges
   global.search_ranges = updated_search_ranges
-  global.strict_beacons = updated_strict_beacons
+  global.strict_beacons = updated_types
   exclusion_ranges = updated_exclusion_ranges
   distribution_ranges = updated_distribution_ranges
   search_ranges = updated_search_ranges
-  strict_beacons = updated_strict_beacons
+  types = updated_types
   repeating_beacons = global.repeating_beacons
   offline_beacons = global.offline_beacons
   update_rate = settings.global["ab-update-rate"].value
@@ -565,7 +614,7 @@ function check_nearby(entity, behavior)
   local exclusion_mode = "normal"
   local exclusion_range = exclusion_ranges[entity.name]
   local search_range = search_ranges[entity.name]
-  if strict_beacons[entity.name] ~= nil then exclusion_mode = "strict" end
+  if types[entity.name].strict ~= nil then exclusion_mode = "strict" end
   local search_area = {
     {entity.selection_box.left_top.x - search_range, entity.selection_box.left_top.y - search_range},
     {entity.selection_box.right_bottom.x + search_range, entity.selection_box.right_bottom.y + search_range}
@@ -574,10 +623,10 @@ function check_nearby(entity, behavior)
   local hubCount = 0
   local hubIDs = {}
   local nearby_entities = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
-  if entity.name ~= "ab-hub-beacon" and entity.name ~= "ll-oxygen-diffuser" then
+  if types[entity.name].hub == nil and entity.name ~= "ll-oxygen-diffuser" then
     for _, nearby_entity in pairs(nearby_entities) do
-      if nearby_entity.name == "ab-hub-beacon" then
-        if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges["ab-hub-beacon"] then
+      if types[nearby_entity.name].hub then
+        if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges[nearby_entity.name] then
           hubCount = hubCount + 1
           table.insert(hubIDs, nearby_entity.unit_number)
         end
@@ -594,7 +643,7 @@ function check_nearby(entity, behavior)
       end
       if exclusion_mode == "strict" then disabling_range = math.max(disabling_range, exclusion_range + distribution_ranges[nearby_entity.name]) end
       if exclusion_mode == "super" then disabling_range = math.max(disabling_range, exclusion_range + exclusion_ranges[nearby_entity.name]) end
-      if nearby_entity.name == "ab-conflux-beacon" then
+      if types[nearby_entity.name].conflux then
         local nearby_distribution_width = 2*distribution_ranges[nearby_entity.name] + nearby_entity.selection_box.right_bottom.x - nearby_entity.selection_box.left_top.x
         local distribution_width = 2*distribution_ranges[entity.name] + entity.selection_box.right_bottom.x - entity.selection_box.left_top.x
         if distribution_width >= nearby_distribution_width then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end -- semi-strict
@@ -635,10 +684,10 @@ function check_self(entity, removed_id, wasEnabled)
   local hubID = -1
   local hubIDs = {}
   local nearby_entities = entity.surface.find_entities_filtered({area = search_area, type = "beacon"})
-  if entity.name ~= "ab-hub-beacon" and entity.name ~= "ll-oxygen-diffuser" then
+  if types[entity.name].hub == nil and entity.name ~= "ll-oxygen-diffuser" then
     for _, nearby_entity in pairs(nearby_entities) do
-      if nearby_entity.name == "ab-hub-beacon" and nearby_entity.unit_number ~= removed_id then
-        if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges["ab-hub-beacon"] then
+      if types[nearby_entity.name].hub and nearby_entity.unit_number ~= removed_id then
+        if get_distance(entity.selection_box, nearby_entity.selection_box) < exclusion_ranges[nearby_entity.name] then
           hubCount = hubCount + 1
           if hubCount == 1 then hubID = nearby_entity.unit_number end
           table.insert(hubIDs, nearby_entity.unit_number)
@@ -655,25 +704,25 @@ function check_self(entity, removed_id, wasEnabled)
       local exclusion_mode = "normal"
       local nearby_distance = get_distance(entity.selection_box, nearby_entity.selection_box)
       local disabling_range = exclusion_ranges[nearby_entity.name]
-      if strict_beacons[nearby_entity.name] ~= nil then exclusion_mode = "strict" end
-      if hubCount > 0 and nearby_entity.name ~= "ab-hub-beacon" then
+      if types[nearby_entity.name].strict ~= nil then exclusion_mode = "strict" end
+      if hubCount > 0 and types[nearby_entity.name].hub == nil then
         if check_influence(nearby_entity, hubIDs) then exclusion_mode = "super" end -- beacons within a single hub's area affect each other differently
       end
       if exclusion_mode == "strict" then disabling_range = math.max(disabling_range, exclusion_ranges[nearby_entity.name] + distribution_ranges[entity.name]) end
       if exclusion_mode == "super" then disabling_range = math.max(disabling_range, exclusion_ranges[nearby_entity.name] + exclusion_ranges[entity.name]) end
-      if entity.name == "ab-conflux-beacon" then
+      if types[entity.name].conflux then
         local nearby_distribution_width = 2*distribution_ranges[nearby_entity.name] + nearby_entity.selection_box.right_bottom.x - nearby_entity.selection_box.left_top.x
         local distribution_width = 2*distribution_ranges[entity.name] + entity.selection_box.right_bottom.x - entity.selection_box.left_top.x
         if nearby_distribution_width >= distribution_width then disabling_range = math.max(disabling_range, distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]) end -- semi-strict
       end
-      if nearby_entity.name ~= "ab-hub-beacon" then
+      if types[nearby_entity.name].hub == nil then
         if nearby_distance < disabling_range then
           if exclusion_mode == "super" or use_repeating_behavior(nearby_entity, entity) == false then isEnabled = false end -- some beacons don't affect each other
         end
-      elseif (nearby_entity.name == "ab-hub-beacon" and entity.name == "ab-conflux-beacon") then
+      elseif (types[nearby_entity.name].hub and types[entity.name].conflux) then
         disabling_range = distribution_ranges[entity.name] + distribution_ranges[nearby_entity.name]
         if nearby_distance < disabling_range then isEnabled = false end
-      elseif (nearby_entity.name == "ab-hub-beacon" and entity.name == "ab-hub-beacon") then
+      elseif (types[nearby_entity.name].hub and types[entity.name].hub) then
         disabling_range = exclusion_ranges[nearby_entity.name]
         if nearby_distance < disabling_range then isEnabled = false end
       end
@@ -764,10 +813,12 @@ function check_influence(entity, hubIDs)
       {entity.selection_box.left_top.x - exclusion_range, entity.selection_box.left_top.y - exclusion_range},
       {entity.selection_box.right_bottom.x + exclusion_range, entity.selection_box.right_bottom.y + exclusion_range}
     }
-    local nearby_beacons = entity.surface.find_entities_filtered({area = exclusion_area, type = "beacon", name = "ab-hub-beacon"})
+    local nearby_beacons = entity.surface.find_entities_filtered({area = exclusion_area, type = "beacon"})
     for _, beacon in pairs(nearby_beacons) do
-      for _, hub_number in pairs(hubIDs) do
-        if beacon.unit_number == hub_number then isInfluenced = true end
+      if types[beacon.name].hub then
+        for _, hub_number in pairs(hubIDs) do
+          if beacon.unit_number == hub_number then isInfluenced = true end
+        end
       end
     end
   end
@@ -817,3 +868,13 @@ function refresh_beacon_alerts()
   end
 end
 
+--- Returns the "base" part of a beacon name to the left of the separator for the modular-beacon-power mod
+--- @param name string
+--- @return string
+function base_name(name)
+  local t = {}
+  for s in string.gmatch(name, "([^__MBP]+)") do
+    table.insert(t,s)
+  end
+  return t[1]
+end
