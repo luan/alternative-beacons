@@ -33,7 +33,7 @@ local beacons = { -- list of beacons available without other mods
 override_descriptions = {}
 exclusion_range_values = {}
 se_technologies = false
-ab_technologies = false
+ab_technologies = 0
 
 if startup["ab-override-vanilla-beacons"].value and cancel_override then beacons[1] = "ab-standard-beacon" end
 if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
@@ -44,7 +44,9 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   table.insert(beacons, "se-wide-beacon-2")
 end
 if data.raw.technology["se-compact-beacon"] and data.raw.technology["se-wide-beacon"] and data.raw.technology["se-compact-beacon-2"] and data.raw.technology["se-wide-beacon-2"] then se_technologies = true end
-if data.raw.technology["ab-novel-effect-transmission"] then ab_technologies = true end
+if data.raw.technology["ab-novel-effect-transmission"] then ab_technologies = 1 end
+if data.raw.technology["ab-medium-effect-transmission"] or data.raw.technology["ab-medium-effect-transmission"] then ab_technologies = 2 end
+if data.raw.technology["ab-focused-beacon"] or data.raw.technology["ab-node-beacon"] or data.raw.technology["ab-conflux-beacon"] or data.raw.technology["ab-hub-beacon"] or data.raw.technology["ab-isolation-beacon"] then ab_technologies = 3 end
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -313,7 +315,9 @@ if mods["Krastorio2"] then -----------------------------------------------------
       table.insert(data.raw.technology["se-wide-beacon-2"].prerequisites, "kr-singularity-tech-card")
       data.raw.technology["se-wide-beacon-2"].unit.ingredients = data.raw.technology["se-compact-beacon-2"].unit.ingredients
     end
-    if ab_technologies then data.raw.technology["ab-novel-effect-transmission"].unit.count = 500 end
+    for _,v in pairs(possible_techs) do
+      if data.raw.technology[v] then data.raw.technology[v].unit.count = 500 end
+    end
   end
 
   -- enables singularity beacons while Space Exploration is enabled
@@ -345,7 +349,15 @@ if mods["space-exploration"] then ----------------------------------------------
   for _, beacon in pairs(data.raw.beacon) do
     if not beacon["se_allow_in_space"] then beacon["se_allow_in_space"] = true end
   end
-  if ab_technologies then data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"effect-transmission", "effectivity-module-3", "speed-module-3"} end
+  --if ab_technologies == 1 then data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"effect-transmission", "effectivity-module-3", "speed-module-3"} end
+  for _,v in pairs(possible_techs) do
+    if data.raw.technology[v] then
+      for index,prerequisite in pairs(data.raw.technology[v].prerequisites) do
+        if prerequisite == "effectivity-module-2" then data.raw.technology[v].prerequisites[index] = "effectivity-module-3" end
+        if prerequisite == "speed-module-2" then data.raw.technology[v].prerequisites[index] = "speed-module-3" end
+      end
+    end
+  end
   data.raw.recipe.beacon.order = "z-a[beacon]-a"
   data.raw.item.beacon.order = "z-a[beacon]-a"
   custom_exclusion_ranges["beacon"] = {value="solo", mode="strict"}
@@ -381,7 +393,7 @@ end
 if mods["exotic-industries"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   for i=1,#beacons,1 do
     if data.raw.item[ beacons[i] ] then
-      if beacons[i] == "beacon" or beacons[i] == "ab-standard-beacon" or beacons[i] == "ab-focused-beacon" or beacons[i] == "ab-node-beacon" or beacons[i] == "se-basic-beacon" or (ab_technologies == false and (beacons[i] == "ab-conflux-beacon" or beacons[i] == "ab-hub-beacon" or beacons[i] == "ab-isolation-beacon")) then
+      if beacons[i] == "beacon" or beacons[i] == "ab-standard-beacon" or beacons[i] == "se-basic-beacon" or (ab_technologies < 3 and beacons[i] == "ab-focused-beacon") or (ab_technologies < 2 and beacons[i] == "ab-node-beacon") or (ab_technologies == 0 and (beacons[i] == "ab-conflux-beacon" or beacons[i] == "ab-hub-beacon" or beacons[i] == "ab-isolation-beacon")) then
         table.insert( data.raw.technology["ei_copper-beacon"].effects, { type = "unlock-recipe", recipe = beacons[i] } )
       end
     end
@@ -459,9 +471,13 @@ if mods["pycoalprocessing"] then -----------------------------------------------
   -- replacement standard beacon may be enabled in data.lua
   -- beacon recipe unlocks are added to "diet-beacon" instead of "effect-transmission" in data.lua
   order_beacons("beacon", 2, "a[beacon]x", "a[beacon]x")
-  if ab_technologies then
-    data.raw.technology["ab-novel-effect-transmission"].unit = data.raw.technology["diet-beacon"].unit
-    data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"diet-beacon"}
+  for _,v in pairs(possible_techs) do
+    if data.raw.technology[v] then
+      data.raw.technology[v].unit = data.raw.technology["diet-beacon"].unit
+      for index,prerequisite in pairs(data.raw.technology[v].prerequisites) do
+        if prerequisite == "effect-transmission" then data.raw.technology[v].prerequisites[index] = "diet-beacon" end
+      end
+    end
   end
   table.insert(data.raw.technology["effect-transmission"].prerequisites, "diet-beacon")
   if se_technologies then
@@ -969,12 +985,17 @@ end
 
 if mods["FreightForwarding"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
   if se_technologies then
-    table.insert(data.raw.technology["se-compact-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
-    table.insert(data.raw.technology["se-wide-beacon"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
-    table.insert(data.raw.technology["se-compact-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
-    table.insert(data.raw.technology["se-wide-beacon-2"].unit.ingredients, {name="ff-transport-science-pack", amount=1})
+    local possible_se_techs = {"se-compact-beacon", "se-wide-beacon", "se-compact-beacon-2", "se-wide-beacon-2"}
+    for _,v in pairs(possible_se_techs) do
+      local is_updated = false
+      for _,ingredient in pairs(data.raw.technology[v].unit.ingredients) do
+        if ingredient.name == "ff-transport-science-pack" and ingredient.amount > 0 then is_updated = true end
+      end
+      if not is_updated then
+        table.insert(data.raw.technology[v].unit.ingredients, {name="ff-transport-science-pack", amount=1})
+      end
+    end
   end
-  if ab_technologies then table.insert(data.raw.technology["ab-novel-effect-transmission"].unit.ingredients, {name="ff-transport-science-pack", amount=1}) end
 end
 
 if mods["mini"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1031,8 +1052,8 @@ for name, tech in pairs(beacon_techs) do
 end
 
 -- adjusts technologies to have higher count & time properties if their prerequisites do
-techs = {"ab-novel-effect-transmission", "se-compact-beacon", "se-wide-beacon", "se-compact-beacon-2", "se-wide-beacon-2"}
-for _, tech_name in pairs(techs) do
+techs = {"ab-novel-effect-transmission", "ab-medium-effect-transmission", "ab-long-effect-transmission", "ab-focused-beacon", "ab-node-beacon", "ab-conflux-beacon", "ab-hub-beacon", "ab-isolation-beacon", "se-compact-beacon", "se-wide-beacon", "se-compact-beacon-2", "se-wide-beacon-2"}
+for i, tech_name in pairs(techs) do
   tech = data.raw.technology[tech_name]
   if tech then
     for _, prerequisite in pairs(tech.prerequisites) do
@@ -1040,7 +1061,7 @@ for _, tech_name in pairs(techs) do
         if tech.unit.count < data.raw.technology[prerequisite].unit.count then tech.unit.count = data.raw.technology[prerequisite].unit.count end
         if tech.unit.time < data.raw.technology[prerequisite].unit.time then tech.unit.time = data.raw.technology[prerequisite].unit.time end
       end
-      if data.raw.technology[prerequisite] and prerequisite == "effect-transmission" and tech_name == "ab-novel-effect-transmission" then
+      if data.raw.technology[prerequisite] and prerequisite == "effect-transmission" and i < 9 then
         tech.unit.ingredients = data.raw.technology[prerequisite].unit.ingredients
       end
     end

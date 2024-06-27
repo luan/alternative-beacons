@@ -1,5 +1,27 @@
 -- hub-beacon.lua
 
+local item = {
+  type = "item",
+  name = "ab-hub-beacon",
+  place_result = "ab-hub-beacon",
+  icon = "__alternative-beacons__/graphics/icon-hub.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]e"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "ab-hub-beacon",
+  result = "ab-hub-beacon",
+  enabled = false,
+  energy_required = 50,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}},
+  normal = { result = "ab-hub-beacon", enabled = false, energy_required = 50, ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}} },
+  expensive = { result = "ab-hub-beacon", enabled = false, energy_required = 50, ingredients = {{type = "item", name = "advanced-circuit", amount = 300}, {type = "item", name = "electronic-circuit", amount = 300}, {type = "item", name = "copper-cable", amount = 150}, {type = "item", name = "steel-plate", amount = 150}} }
+}
+
 -- Most common settings for the animations (deepcopied multiple times to keep the code short)
 local animationTemplate = {
   animation = {
@@ -130,4 +152,11 @@ local beacon = {
   corpse = "big-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-hub.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

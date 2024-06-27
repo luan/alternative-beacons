@@ -1,5 +1,27 @@
 -- standard-beacon.lua
--- this entity is practically the same as the vanilla entity and is only necessary for compatibility reasons when using other mods that alter vanilla beacons
+-- this prototype is practically the same as the vanilla prototype and is only necessary for compatibility reasons when using other mods that alter vanilla beacons
+
+item = {
+  type = "item",
+  name = "ab-standard-beacon",
+  place_result = "ab-standard-beacon",
+  icon = "__base__/graphics/icons/beacon.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]a"
+}
+
+recipe = {
+  type = "recipe",
+  name = "ab-standard-beacon",
+  result = "ab-standard-beacon",
+  enabled = false,
+  energy_required = 15,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}},
+  normal = { result = "ab-standard-beacon", enabled = false, energy_required = 15, ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}} },
+  expensive = { result = "ab-standard-beacon", enabled = false, energy_required = 15, ingredients = {{type = "item", name = "advanced-circuit", amount = 20}, {type = "item", name = "electronic-circuit", amount = 20}, {type = "item", name = "copper-cable", amount = 10}, {type = "item", name = "steel-plate", amount = 10}} }
+}
 
 -- copied from \base\prototypes\entity\entities.lua with minor changes
 local beacon = {
@@ -90,4 +112,4 @@ local beacon = {
   }
 }
 
-return beacon
+return {item = item, entity = beacon, recipe = recipe}

@@ -3,18 +3,11 @@
 data:extend ({
     {
         type = "bool-setting",
-        name = "ab-disable-exclusion-areas",
+        name = "ab-disable-exclusion-areas", -- other mods can force this to be true in order to disable scripting from this mod and implement their own
         setting_type = "startup",
         default_value = false,
         hidden = true,
         order = "1"
-    },
-    {
-        type = "bool-setting",
-        name = "ab-balance-other-beacons",
-        setting_type = "startup",
-        default_value = true,
-        order = "9"
     },
     {
         type = "bool-setting",
@@ -59,27 +52,28 @@ data:extend ({
         order = "f"
     },
     {
+        type = "string-setting",
+        name = "ab-technology-layout",
+        setting_type = "startup",
+        allowed_values = {"tech-1", "tech-2", "tech-3", "tech-4"},
+        default_value = "tech-1",
+        order = "g"
+    },
+    {
         type = "bool-setting",
         name = "ab-enable-se-beacons",
         setting_type = "startup",
-        hidden = true,
+        hidden = true, -- only shown if Space Exploration is not active
         default_value = false,
-        order = "g"
+        order = "hb"
     },
     {
         type = "bool-setting",
         name = "ab-enable-k2-beacons",
         setting_type = "startup",
-        hidden = true,
+        hidden = true, -- only shown if both Space Exploration and Krastorio 2 are active
         default_value = false,
-        order = "f"
-    },
-    {
-        type = "bool-setting",
-        name = "ab-additional-technologies",
-        setting_type = "startup",
-        default_value = false,
-        order = "xa"
+        order = "hc"
     },
     {
         type = "bool-setting",
@@ -94,6 +88,13 @@ data:extend ({
         setting_type = "startup",
         default_value = true,
         order = "xc"
+    },
+    {
+        type = "bool-setting",
+        name = "ab-balance-other-beacons",
+        setting_type = "startup",
+        default_value = true,
+        order = "xd"
     },
     {
         type = "int-setting",

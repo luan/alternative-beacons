@@ -1,5 +1,25 @@
 -- compact-beacon.lua
 
+local item = {
+  type = "item",
+  name = "se-compact-beacon",
+  place_result = "se-compact-beacon",
+  icon = "__alternative-beacons__/graphics/icon-compact-1.png",
+  icon_size = 64,
+  stack_size = 25,
+  subgroup = "module",
+  order = "a[beacon]i2"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "se-compact-beacon",
+  result = "se-compact-beacon",
+  enabled = false,
+  energy_required = 10,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}}
+}
+
 local beacon_graphics = {
   module_icons_suppressed = false,
   animation_list = {
@@ -164,4 +184,11 @@ local beacon = {
   corpse = "medium-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-compact-1.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

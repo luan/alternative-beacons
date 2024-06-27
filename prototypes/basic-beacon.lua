@@ -1,5 +1,25 @@
 -- basic-beacon.lua
 
+local item = {
+  type = "item",
+  name = "se-basic-beacon",
+  place_result = "se-basic-beacon",
+  icon = "__base__/graphics/icons/beacon.png",
+  icon_size = 64,
+  stack_size = 25,
+  subgroup = "module",
+  order = "a[beacon]i1"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "se-basic-beacon",
+  result = "se-basic-beacon",
+  enabled = false,
+  energy_required = 10,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 60}, {type = "item", name = "electronic-circuit", amount = 60}, {type = "item", name = "copper-cable", amount = 30}, {type = "item", name = "steel-plate", amount = 30}},
+}
+
 local beacon = {
   type = "beacon",
   name = "se-basic-beacon",
@@ -79,4 +99,4 @@ local beacon = {
   }
 }
 
-return beacon
+return {item = item, entity = beacon, recipe = recipe}

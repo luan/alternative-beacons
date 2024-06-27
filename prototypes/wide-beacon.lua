@@ -1,5 +1,25 @@
 -- wide-beacon.lua
 
+local item = {
+  type = "item",
+  name = "se-wide-beacon",
+  place_result = "se-wide-beacon",
+  icon = "__alternative-beacons__/graphics/icon-wide-1.png",
+  icon_size = 64,
+  stack_size = 25,
+  subgroup = "module",
+  order = "a[beacon]i3"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "se-wide-beacon",
+  result = "se-wide-beacon",
+  enabled = false,
+  energy_required = 10,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}}
+}
+
 local animationTemplate = {
   animation = {
       width = 191,
@@ -104,4 +124,11 @@ local beacon = {
   corpse = "big-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-wide-1.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

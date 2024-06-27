@@ -1,5 +1,27 @@
 -- conflux-beacon.lua
 
+local item = {
+  type = "item",
+  name = "ab-conflux-beacon",
+  place_result = "ab-conflux-beacon",
+  icon = "__alternative-beacons__/graphics/icon-conflux.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]d"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "ab-conflux-beacon",
+  result = "ab-conflux-beacon",
+  enabled = false,
+  energy_required = 40,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}},
+  normal = { result = "ab-conflux-beacon", enabled = false, energy_required = 40, ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}} },
+  expensive = { result = "ab-conflux-beacon", enabled = false, energy_required = 40, ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}} }
+}
+
 local beacon_graphics = {
   module_icons_suppressed = false,
   animation_list = {
@@ -129,4 +151,11 @@ local beacon = {
   corpse = "medium-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-conflux.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

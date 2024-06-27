@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.10
+Date: 2024.06.26
+  Changes:
+    - Startup settings now have more options for how many technologies should be created for the new beacons
+    - New technologies which unlock a single beacon will use that beacon's art
+---------------------------------------------------------------------------------------------------
 Version: 0.6.9
 Date: 2024.05.31
   Changes:

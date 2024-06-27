@@ -1,5 +1,27 @@
 -- isolation-beacon.lua
 
+local item = {
+  type = "item",
+  name = "ab-isolation-beacon",
+  place_result = "ab-isolation-beacon",
+  icon = "__alternative-beacons__/graphics/icon-isolation.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]f"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "ab-isolation-beacon",
+  result = "ab-isolation-beacon",
+  enabled = false,
+  energy_required = 60,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}},
+  normal = { result = "ab-isolation-beacon", enabled = false, energy_required = 60, ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}} },
+  expensive = { result = "ab-isolation-beacon", enabled = false, energy_required = 60, ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}} }
+}
+
 local animationTemplate = {
   animation = {
       width = 191,
@@ -61,7 +83,7 @@ local beacon = {
   },
   distribution_effectivity = 0.5,
   supply_area_distance = 30.05, -- extends from edge of collision box (65x65)
-  -- exclusion_area_distance = 38 (81x81; strict; hardcoded in control.lua)
+  -- exclusion_area_distance = 38 (81x81 strict; hardcoded in control.lua)
   collision_box = { { -2.2, -2.2 }, { 2.2, 2.2 } },
   drawing_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
   selection_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
@@ -105,4 +127,11 @@ local beacon = {
   corpse = "big-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-isolation.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

@@ -1,5 +1,27 @@
 -- node-beacon.lua
 
+local item = {
+  type = "item",
+  name = "ab-node-beacon",
+  place_result = "ab-node-beacon",
+  icon = "__alternative-beacons__/graphics/icon-node.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]c"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "ab-node-beacon",
+  result = "ab-node-beacon",
+  enabled = false,
+  energy_required = 30,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 80}, {type = "item", name = "electronic-circuit", amount = 80}, {type = "item", name = "copper-cable", amount = 40}, {type = "item", name = "steel-plate", amount = 40}},
+  normal = { result = "ab-node-beacon", enabled = false, energy_required = 30, ingredients = {{type = "item", name = "advanced-circuit", amount = 80}, {type = "item", name = "electronic-circuit", amount = 80}, {type = "item", name = "copper-cable", amount = 40}, {type = "item", name = "steel-plate", amount = 40}} },
+  expensive = { result = "ab-node-beacon", enabled = false, energy_required = 30, ingredients = {{type = "item", name = "advanced-circuit", amount = 80}, {type = "item", name = "electronic-circuit", amount = 80}, {type = "item", name = "copper-cable", amount = 40}, {type = "item", name = "steel-plate", amount = 40}} }
+}
+
 local beacon_graphics = {
   module_icons_suppressed = false,
   animation_list = {
@@ -116,7 +138,7 @@ local beacon = {
   },
   distribution_effectivity = 0.5,
   supply_area_distance = 8.05, -- extends from edge of collision box (19x19)
-  -- exclusion_area_distance = 8 (19x19; hardcoded in control.lua)
+  -- exclusion_area_distance = 8 (19x19; coded in control.lua)
   collision_box = { { -1.2, -1.2 }, { 1.2, 1.2 } },
   drawing_box = { { -1.5, -2.025 }, { 1.5, 1.5 } },
   selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } },
@@ -160,4 +182,11 @@ local beacon = {
   corpse = "medium-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-node.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}

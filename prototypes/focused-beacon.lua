@@ -1,5 +1,27 @@
 -- focused-beacon.lua
 
+local item = {
+  type = "item",
+  name = "ab-focused-beacon",
+  place_result = "ab-focused-beacon",
+  icon = "__alternative-beacons__/graphics/icon-focused.png",
+  icon_size = 64,
+  stack_size = 20,
+  subgroup = "module",
+  order = "a[beacon]b"
+}
+
+local recipe = {
+  type = "recipe",
+  name = "ab-focused-beacon",
+  result = "ab-focused-beacon",
+  enabled = false,
+  energy_required = 20,
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 40}, {type = "item", name = "electronic-circuit", amount = 40}, {type = "item", name = "copper-cable", amount = 20}, {type = "item", name = "steel-plate", amount = 20}},
+  normal = { result = "ab-focused-beacon", enabled = false, energy_required = 20, ingredients = {{type = "item", name = "advanced-circuit", amount = 40}, {type = "item", name = "electronic-circuit", amount = 40}, {type = "item", name = "copper-cable", amount = 20}, {type = "item", name = "steel-plate", amount = 20}} },
+  expensive = { result = "ab-focused-beacon", enabled = false, energy_required = 20, ingredients = {{type = "item", name = "advanced-circuit", amount = 40}, {type = "item", name = "electronic-circuit", amount = 40}, {type = "item", name = "copper-cable", amount = 20}, {type = "item", name = "steel-plate", amount = 20}} }
+}
+
 local beacon_graphics = {
   module_icons_suppressed = false,
   animation_list = {
@@ -164,4 +186,11 @@ local beacon = {
   corpse = "medium-remnants"
 }
 
-return beacon
+local technology = {
+  {
+    icon = "__alternative-beacons__/graphics/tech-focused.png",
+    icon_size = 256
+  },
+}
+
+return {item = item, entity = beacon, recipe = recipe, technology = technology}
