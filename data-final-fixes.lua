@@ -90,6 +90,9 @@ if data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil and data.raw.re
     data.raw.item.beacon.order = "a[beacon]-1"
     data.raw.recipe.beacon.order = "a[beacon]-1"
   end
+  if mods["SeaBlockMetaPack"] then
+    localise("beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_standard_23_addon"}} })
+  end
   if (mods["exotic-industries"]) then
     local do_technology = false
     if data.raw.technology["effect-transmission"] ~= nil then do_technology = true end

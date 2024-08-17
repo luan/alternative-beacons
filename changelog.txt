@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.11
+Date: 2024.08.17
+  Changes:
+    - Fixed an issue where beacon recipes could remain locked when the technology which unlocks them was already researched prior to
+      loading the mod
+    - Added balance changes for Bob's when Seablock is active (it has different starting balance than default Bob's)
+    - Improved code readability slightly by moving compatibility code to separate files
+---------------------------------------------------------------------------------------------------
 Version: 0.6.10
 Date: 2024.06.26
   Changes:

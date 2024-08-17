@@ -1,3 +1,7 @@
 This mod currently uses graphics from:
+  - Classic Beacon by Kirazy, https://mods.factorio.com/mod/classic-beacon (used for focused/node/conflux beacons and SE-like compact beacons)
   - FFF339 Beacon Graphics by Tedium_0xFF, https://mods.factorio.com/mod/FFF339BeaconGraphics (used for hub beacons)
-  - Classic Beacon by Kirazy, https://mods.factorio.com/mod/classic-beacon (used for focused/node/conflux beacons)
+  - Prototype graphics by Albert, https://factorio.com/blog/post/fff-339 (used for isolation beacons and SE-like wide-area beacons)
+
+Additional thanks:
+  - Russian translations by Kupidon, https://discord.com/users/398106908612886548/
