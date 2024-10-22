@@ -14,7 +14,7 @@ local item = {
 local recipe = {
   type = "recipe",
   name = "se-basic-beacon",
-  result = "se-basic-beacon",
+  results = {{type="item", name="se-basic-beacon", amount=1}},
   enabled = false,
   energy_required = 10,
   ingredients = {{type = "item", name = "advanced-circuit", amount = 60}, {type = "item", name = "electronic-circuit", amount = 60}, {type = "item", name = "copper-cable", amount = 30}, {type = "item", name = "steel-plate", amount = 30}},
@@ -30,7 +30,7 @@ local beacon = {
   max_health = 200,
   corpse = "beacon-remnants",
   dying_explosion = "beacon-explosion",
-  collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
+  collision_box = {{-1.25, -1.25}, {1.25, 1.25}},
   selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
   damaged_trigger_effect = {
     entity_name = "spark-explosion",
@@ -47,7 +47,7 @@ local beacon = {
     priority = "extra-high-no-scale",
     size = {10, 10}
   },
-  supply_area_distance = 3.05,
+  supply_area_distance = 3,
   energy_source =
   {
     type = "electric",
@@ -75,13 +75,16 @@ local beacon = {
   },
   energy_usage = "100kW",
   distribution_effectivity = 0.5,
-  module_specification =  {
-    module_slots = 8, -- 
-    module_info_icon_shift = {0, 0.5},
-    module_info_multi_row_initial_height_modifier = -0.3,
-    module_info_max_icons_per_row = 4, -- 
-    module_info_max_icon_rows = 2 -- 
-  },
+  distribution_effectivity_bonus_per_quality_level = 0.2,
+  profile = {1,0},
+  module_slots = 8,
+  icons_positioning = {{
+    inventory_index = defines.inventory.beacon_modules,
+    shift = { 0, 0.5 },
+    max_icons_per_row = 4,
+    max_icon_rows = 2,
+    multi_row_initial_height_modifier = -0.3,
+  }},
   water_reflection =
   {
     pictures =

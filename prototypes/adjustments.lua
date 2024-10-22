@@ -36,7 +36,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       -- TODO: Add separate technology for singularity beacons?
       data.raw.beacon["kr-singularity-beacon"].selection_box = {{-1,-1}, {1, 1}}
       data.raw.beacon["kr-singularity-beacon"].drawing_box = {{-1,-1.5}, {1, 1}}
-      data.raw.beacon["kr-singularity-beacon"].module_specification.module_slots = 2
+      data.raw.beacon["kr-singularity-beacon"].module_slots = 2
       data.raw.beacon["kr-singularity-beacon"].supply_area_distance = 2
       data.raw.item["kr-singularity-beacon"].place_result = "kr-singularity-beacon"
       data.raw.recipe["k2-singularity-beacon"].localised_name = {"name.kr_singularity"}
@@ -50,11 +50,11 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     for _, beacon in pairs(data.raw.beacon) do
       if not beacon["se_allow_in_space"] then beacon["se_allow_in_space"] = true end
     end
-    --if ab_technologies == 1 then data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"effect-transmission", "effectivity-module-3", "speed-module-3"} end
+    --if ab_technologies == 1 then data.raw.technology["ab-novel-effect-transmission"].prerequisites = {"effect-transmission", "efficiency-module-3", "speed-module-3"} end
     for _,v in pairs(possible_techs) do
       if data.raw.technology[v] then
         for index,prerequisite in pairs(data.raw.technology[v].prerequisites) do
-          if prerequisite == "effectivity-module-2" then data.raw.technology[v].prerequisites[index] = "effectivity-module-3" end
+          if prerequisite == "efficiency-module-2" then data.raw.technology[v].prerequisites[index] = "efficiency-module-3" end
           if prerequisite == "speed-module-2" then data.raw.technology[v].prerequisites[index] = "speed-module-3" end
         end
       end
@@ -119,14 +119,14 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       -- beacons cannot be returned to their original stats here or in data-final-fixes.lua (the relevant changes are overridden) so they are instead made into "solo" beacons and disable each other to mimic the same functionality they have with beacon overloading
       -- stats just match the new expected values so the descriptions will be correct (the actual stats will be overridden)
       data.raw.beacon["el_ki_beacon_entity"].supply_area_distance = 5
-      data.raw.beacon["el_ki_beacon_entity"].module_specification.module_slots = 10
+      data.raw.beacon["el_ki_beacon_entity"].module_slots = 10
       data.raw.beacon["fi_ki_beacon_entity"].supply_area_distance = 9
-      data.raw.beacon["fi_ki_beacon_entity"].module_specification.module_slots = 15
+      data.raw.beacon["fi_ki_beacon_entity"].module_slots = 15
       data.raw.beacon["fu_ki_beacon_entity"].supply_area_distance = 18
-      data.raw.beacon["fu_ki_beacon_entity"].module_specification.module_slots = 45
-      data.raw.beacon["el_ki_core_slave_entity"].module_specification.module_slots = 5
-      data.raw.beacon["fi_ki_core_slave_entity"].module_specification.module_slots = 5
-      data.raw.beacon["fu_ki_core_slave_entity"].module_specification.module_slots = 5
+      data.raw.beacon["fu_ki_beacon_entity"].module_slots = 45
+      data.raw.beacon["el_ki_core_slave_entity"].module_slots = 5
+      data.raw.beacon["fi_ki_core_slave_entity"].module_slots = 5
+      data.raw.beacon["fu_ki_core_slave_entity"].module_slots = 5
       modules = {"5", "15", "15"}
     else
       -- the usual normalization somehow prevents 248k's beacons from interacting with machines at the correct range even though the visualization appears correct; the KI1 and KI3 beacons have a lower apparent range so those can be increased for a better approximation
@@ -182,13 +182,13 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     end
     table.insert(data.raw.technology["effect-transmission"].prerequisites, "diet-beacon")
     if se_technologies then
-      data.raw.technology["se-compact-beacon"].prerequisites = {"diet-beacon", "effectivity-module-2", "speed-module-2"}
+      data.raw.technology["se-compact-beacon"].prerequisites = {"diet-beacon", "efficiency-module-2", "speed-module-2"}
       data.raw.technology["se-compact-beacon"].unit = data.raw.technology["diet-beacon"].unit
-      data.raw.technology["se-wide-beacon"].prerequisites = {"diet-beacon", "effectivity-module-2", "speed-module-2"}
+      data.raw.technology["se-wide-beacon"].prerequisites = {"diet-beacon", "efficiency-module-2", "speed-module-2"}
       data.raw.technology["se-wide-beacon"].unit = data.raw.technology["diet-beacon"].unit
-      data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "effect-transmission", "effectivity-module-3", "speed-module-3"}
+      data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "effect-transmission", "efficiency-module-3", "speed-module-3"}
       data.raw.technology["se-compact-beacon-2"].unit = data.raw.technology["effect-transmission"].unit
-      data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "effect-transmission", "effectivity-module-3", "speed-module-3"}
+      data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "effect-transmission", "efficiency-module-3", "speed-module-3"}
       data.raw.technology["se-wide-beacon-2"].unit = data.raw.technology["se-compact-beacon-2"].unit
     end
     data.raw.item["beacon"].localised_description = {"description.py_AM_FM"}
@@ -248,37 +248,37 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     if startup["ab-balance-other-beacons"].value then
       data.raw.beacon["5d-beacon-02"].energy_usage = "960kW"
       data.raw.beacon["5d-beacon-02"].distribution_effectivity = 0.6
-      data.raw.beacon["5d-beacon-02"].module_specification.module_slots = 2
+      data.raw.beacon["5d-beacon-02"].module_slots = 2
       data.raw.beacon["5d-beacon-03"].energy_usage = "1440kW"
       data.raw.beacon["5d-beacon-03"].distribution_effectivity = 0.4667
-      data.raw.beacon["5d-beacon-03"].module_specification.module_slots = 3
+      data.raw.beacon["5d-beacon-03"].module_slots = 3
       data.raw.beacon["5d-beacon-04"].energy_usage = "2000kW"
       data.raw.beacon["5d-beacon-04"].distribution_effectivity = 0.4
-      data.raw.beacon["5d-beacon-04"].module_specification.module_slots = 4
+      data.raw.beacon["5d-beacon-04"].module_slots = 4
       data.raw.beacon["5d-beacon-05"].energy_usage = "2500kW"
       data.raw.beacon["5d-beacon-05"].distribution_effectivity = 0.36
-      data.raw.beacon["5d-beacon-05"].module_specification.module_slots = 5
-      data.raw.beacon["5d-beacon-05"].module_specification.module_info_max_icons_per_row = 3
+      data.raw.beacon["5d-beacon-05"].module_slots = 5
+      data.raw.beacon["5d-beacon-05"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-06"].energy_usage = "3000kW"
       data.raw.beacon["5d-beacon-06"].distribution_effectivity = 0.4
-      data.raw.beacon["5d-beacon-06"].module_specification.module_slots = 5
-      data.raw.beacon["5d-beacon-06"].module_specification.module_info_max_icons_per_row = 3
+      data.raw.beacon["5d-beacon-06"].module_slots = 5
+      data.raw.beacon["5d-beacon-06"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-07"].energy_usage = "3500kW"
       data.raw.beacon["5d-beacon-07"].distribution_effectivity = 0.3667
-      data.raw.beacon["5d-beacon-07"].module_specification.module_slots = 6
-      data.raw.beacon["5d-beacon-07"].module_specification.module_info_max_icons_per_row = 3
+      data.raw.beacon["5d-beacon-07"].module_slots = 6
+      data.raw.beacon["5d-beacon-07"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-08"].energy_usage = "4000kW"
       data.raw.beacon["5d-beacon-08"].distribution_effectivity = 0.4
-      data.raw.beacon["5d-beacon-08"].module_specification.module_slots = 6
-      data.raw.beacon["5d-beacon-08"].module_specification.module_info_max_icons_per_row = 3
+      data.raw.beacon["5d-beacon-08"].module_slots = 6
+      data.raw.beacon["5d-beacon-08"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-09"].energy_usage = "4500kW"
       data.raw.beacon["5d-beacon-09"].distribution_effectivity = 0.3715
-      data.raw.beacon["5d-beacon-09"].module_specification.module_slots = 7
-      data.raw.beacon["5d-beacon-09"].module_specification.module_info_max_icons_per_row = 4
+      data.raw.beacon["5d-beacon-09"].module_slots = 7
+      data.raw.beacon["5d-beacon-09"].icons_positioning[1].max_icons_per_row = 4
       data.raw.beacon["5d-beacon-10"].energy_usage = "5000kW"
       data.raw.beacon["5d-beacon-10"].distribution_effectivity = 0.4
-      data.raw.beacon["5d-beacon-10"].module_specification.module_slots = 7
-      data.raw.beacon["5d-beacon-10"].module_specification.module_info_max_icons_per_row = 4
+      data.raw.beacon["5d-beacon-10"].module_slots = 7
+      data.raw.beacon["5d-beacon-10"].icons_positioning[1].max_icons_per_row = 4
     end
   end
 
@@ -314,12 +314,12 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       data.raw.beacon["speed-beacon-1"].supply_area_distance = 6
       data.raw.beacon["speed-beacon-2"].energy_usage = "2500kW"
       data.raw.beacon["speed-beacon-2"].distribution_effectivity = 0.5
-      data.raw.beacon["speed-beacon-2"].module_specification.module_slots = 4
+      data.raw.beacon["speed-beacon-2"].module_slots = 4
       data.raw.beacon["speed-beacon-2"].supply_area_distance = 6
       custom_exclusion_ranges["speed-beacon-2"] = {add=2}
       data.raw.beacon["speed-beacon-3"].energy_usage = "6000kW"
       data.raw.beacon["speed-beacon-3"].distribution_effectivity = 0.5
-      data.raw.beacon["speed-beacon-3"].module_specification.module_slots = 6
+      data.raw.beacon["speed-beacon-3"].module_slots = 6
       data.raw.beacon["speed-beacon-3"].supply_area_distance = 6
       custom_exclusion_ranges["speed-beacon-3"] = {add=5}
       localise("productivity-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_same"}, ' ', {"description.productivity_1_2_3_addon"}}})
@@ -373,18 +373,17 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       data.raw.beacon["beacon-2"].energy_usage = "3000kW"
       data.raw.beacon["beacon-2"].max_health = 300
       data.raw.beacon["beacon-2"].distribution_effectivity = 0.5
-      data.raw.beacon["beacon-2"].module_specification.module_slots = 4
+      data.raw.beacon["beacon-2"].module_slots = 4
       data.raw.beacon["beacon-3"].energy_usage = "6000kW"
       data.raw.beacon["beacon-3"].max_health = 400
       data.raw.beacon["beacon-3"].distribution_effectivity = 0.5
-      data.raw.beacon["beacon-3"].module_specification.module_slots = 6
+      data.raw.beacon["beacon-3"].module_slots = 6
       data.raw.beacon["beacon-3"].supply_area_distance = 9
       custom_exclusion_ranges["beacon-3"] = {add=2}
       custom_exclusion_ranges["productivity-beacon"] = {add=3}
       localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
       localise("productivity-beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_different"}, ' ', {"description.productivity_addon"}}})
     end
-    -- TODO: fix crash with Nullius?
   end
 
   if mods["Beacon2"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -477,28 +476,28 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
         local fewer_modules = 0
         if startup["mini-balance-module"].value == true then fewer_modules = 1 end
         if data.raw.beacon["ab-standard-beacon"] then
-          generate_new_beacon("ab-standard-beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, nil, math.max(1, data.raw.beacon["ab-standard-beacon"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("ab-standard-beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, nil, math.max(1, data.raw.beacon["ab-standard-beacon"].module_slots-fewer_modules))
         else
-          generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, nil, math.max(1, data.raw.beacon["beacon"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, nil, math.max(1, data.raw.beacon["beacon"].module_slots-fewer_modules))
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-2"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-3"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-2"].module_slots-fewer_modules))
+          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-3"].module_slots-fewer_modules))
         elseif mods["FactorioExtended-Plus-Module"] then
-          generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk2"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("beacon-mk3", "mini-beacon-3", "Mini beacon Mk3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk3"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk2"].module_slots-fewer_modules))
+          generate_new_beacon("beacon-mk3", "mini-beacon-3", "Mini beacon Mk3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk3"].module_slots-fewer_modules))
         elseif mods["5dim_module"] then
-          generate_new_beacon("5d-beacon-02", "mini-beacon-2", "Mini beacon MK2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-02"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-03", "mini-beacon-3", "Mini beacon MK3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-03"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-02", "mini-beacon-2", "Mini beacon MK2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-02"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-03", "mini-beacon-3", "Mini beacon MK3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-03"].module_slots-fewer_modules))
         end
         if mods["5dim_module"] then
-          generate_new_beacon("5d-beacon-04", "mini-beacon-4", "Mini beacon MK4", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-04"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-05", "mini-beacon-5", "Mini beacon MK5", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-05"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-06", "mini-beacon-6", "Mini beacon MK6", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-06"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-07", "mini-beacon-7", "Mini beacon MK7", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-07"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-08", "mini-beacon-8", "Mini beacon MK8", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-08"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-09", "mini-beacon-9", "Mini beacon MK9", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-09"].module_specification.module_slots-fewer_modules))
-          generate_new_beacon("5d-beacon-10", "mini-beacon-10", "Mini beacon MK10", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-10"].module_specification.module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-04", "mini-beacon-4", "Mini beacon MK4", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-04"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-05", "mini-beacon-5", "Mini beacon MK5", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-05"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-06", "mini-beacon-6", "Mini beacon MK6", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-06"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-07", "mini-beacon-7", "Mini beacon MK7", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-07"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-08", "mini-beacon-8", "Mini beacon MK8", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-08"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-09", "mini-beacon-9", "Mini beacon MK9", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-09"].module_slots-fewer_modules))
+          generate_new_beacon("5d-beacon-10", "mini-beacon-10", "Mini beacon MK10", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["5d-beacon-10"].module_slots-fewer_modules))
         end
       end
       data.raw.item["mini-beacon-1"].order = "a[beacon]-1-z"
@@ -574,7 +573,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     if startup["ab-balance-other-beacons"].value then
       for tier=1,7,1 do
         if startup["tarawind-reloaded-reducerange"] and startup["tarawind-reloaded-reducerange"].value == false then
-          data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].module_specification.module_slots
+          data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].module_slots
           data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.3
         else
           data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.5
@@ -720,7 +719,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       local factor = startup["more-module-slots_factor"].value
       local multiply = startup["more-module-slots_multiplicative-module-slots"].value
       for name, beacon in pairs(data.raw.beacon) do
-        local new_slots = beacon.module_specification.module_slots
+        local new_slots = beacon.module_slots
         if multiply then
           new_slots = new_slots * factor
         else
@@ -735,7 +734,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     -- The startup setting which adjusts beacon range is disabled (supporting it would require somehow passing info between the data and control stages)
     if startup["ab-show-extended-stats"].value then
       for name, beacon in pairs(data.raw.beacon) do
-        local new_slots = beacon.module_specification.module_slots + startup["more_slots_unm"].value
+        local new_slots = beacon.module_slots + startup["more_slots_unm"].value
         local new_efficiency = beacon.distribution_effectivity * startup["beacon_de"].value
         override_descriptions[name] = {slots=new_slots, efficiency=new_efficiency}
       end
@@ -799,8 +798,6 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   new_beacon_item.place_result = name
   new_beacon_recipe.name = name
   new_beacon_recipe.result = name
-  if new_beacon_recipe.normal then new_beacon_recipe.normal.result = name end
-  if new_beacon_recipe.expensive then new_beacon_recipe.expensive.result = name end
   new_beacon.next_upgrade = nil
   local original_size = new_beacon.selection_box[2][1] - new_beacon.selection_box[1][1] -- selection box assumed to be in full tiles
   size = math.ceil(size)
@@ -829,7 +826,7 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   local brv = { layers = {{filename = "__alternative-beacons__/graphics/visualization/brv-dist.png", size = {10, 10}, scale = 1, priority = "extra-high-no-scale"}} }
   new_beacon.radius_visualisation_picture = brv
   if range ~= nil then new_beacon.supply_area_distance = range end
-  if modules ~= nil then new_beacon.module_specification.module_slots = modules end
+  if modules ~= nil then new_beacon.module_slots = modules end
   if efficiency ~= nil then new_beacon.distribution_effectivity = efficiency end
   if power ~= nil then new_beacon.energy_usage = power end
   if effects ~= nil then new_beacon.allowed_effects = effects end

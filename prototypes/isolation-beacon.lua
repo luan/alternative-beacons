@@ -14,12 +14,10 @@ local item = {
 local recipe = {
   type = "recipe",
   name = "ab-isolation-beacon",
-  result = "ab-isolation-beacon",
+  results = {{type="item", name="ab-isolation-beacon", amount=1}},
   enabled = false,
   energy_required = 60,
-  ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}},
-  normal = { result = "ab-isolation-beacon", enabled = false, energy_required = 60, ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}} },
-  expensive = { result = "ab-isolation-beacon", enabled = false, energy_required = 60, ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}} }
+  ingredients = {{type = "item", name = "advanced-circuit", amount = 400}, {type = "item", name = "electronic-circuit", amount = 400}, {type = "item", name = "copper-cable", amount = 200}, {type = "item", name = "steel-plate", amount = 200}}
 }
 
 local animationTemplate = {
@@ -74,17 +72,20 @@ local beacon = {
   },
   energy_usage = "40000kW",
   max_health = 600,
-  module_specification = {
-    module_info_icon_shift = { 0, 0.5 },
-    module_info_max_icons_per_row = 5,
-    module_info_max_icon_rows = 2,
-    module_info_multi_row_initial_height_modifier = -0.3,
-    module_slots = 10
-  },
+  module_slots = 10,
+  icons_positioning = {{
+    inventory_index = defines.inventory.beacon_modules,
+    shift = { 0, 0.5 },
+    max_icons_per_row = 5,
+    max_icon_rows = 2,
+    multi_row_initial_height_modifier = -0.3,
+  }},
   distribution_effectivity = 0.5,
-  supply_area_distance = 30.05, -- extends from edge of collision box (65x65)
+  distribution_effectivity_bonus_per_quality_level = 0.2,
+  profile = {1,0},
+  supply_area_distance = 30, -- extends from edge of collision box (65x65)
   -- exclusion_area_distance = 38 (81x81 strict; hardcoded in control.lua)
-  collision_box = { { -2.2, -2.2 }, { 2.2, 2.2 } },
+  collision_box = { { -2.25, -2.25 }, { 2.25, 2.25 } },
   drawing_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
   selection_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
   graphics_set = beacon_graphics,

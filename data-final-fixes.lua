@@ -59,14 +59,8 @@ if data.raw.recipe.beacon ~= nil then
     for beacon_name, multiplier in pairs(ingredient_multipliers) do
       if data.raw.recipe[beacon_name] ~= nil then
         local new_ingredients = {}
-        local new_ingredients_normal = {}
-        local new_ingredients_expensive = {}
         if data.raw.recipe[common].ingredients ~= nil then new_ingredients = match_ingredients(data.raw.recipe[common].ingredients, new_ingredients, multiplier) end
-        if data.raw.recipe[common].normal ~= nil and data.raw.recipe[common].normal.ingredients ~= nil then new_ingredients_normal = match_ingredients(data.raw.recipe[common].normal.ingredients, new_ingredients_normal, multiplier) end
-        if data.raw.recipe[common].expensive ~= nil and data.raw.recipe[common].expensive.ingredients ~= nil then new_ingredients_expensive = match_ingredients(data.raw.recipe[common].expensive.ingredients, new_ingredients_expensive, multiplier) end
         if #new_ingredients > 0 then data.raw.recipe[beacon_name].ingredients = new_ingredients else data.raw.recipe[beacon_name].ingredients = nil end
-        if #new_ingredients_normal > 0 then data.raw.recipe[beacon_name].normal.ingredients = new_ingredients_normal else data.raw.recipe[beacon_name].normal = nil end
-        if #new_ingredients_expensive > 0 then data.raw.recipe[beacon_name].expensive.ingredients = new_ingredients_expensive else data.raw.recipe[beacon_name].expensive = nil end
       end
     end
     --if mods["mini-machines"] or mods["micro-machines"] then
@@ -109,8 +103,8 @@ end
 if mods["bobmodules"] and mods["exotic-industries"] and startup["ab-balance-other-beacons"].value then
   data.raw.beacon["beacon"].next_upgrade = nil
   data.raw.beacon["beacon-2"].next_upgrade = nil
-  data.raw.item["beacon-2"].flags = nil -- removes "hidden" flag
-  data.raw.item["beacon-3"].flags = nil
+  data.raw.item["beacon-2"].hidden = false
+  data.raw.item["beacon-3"].hidden = false
 end
 
 if mods["minno-beacon-rebalance-mod"] then

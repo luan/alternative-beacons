@@ -410,7 +410,7 @@ function globals.setup(beacon_prototypes)
         end
         if is_valid == true then affected_beacons[ updated_repeating_beacons[beacon.name][i] ] = true end
       end
-      global.repeating_beacons[beacon.name] = affected_beacons
+      storage.repeating_beacons[beacon.name] = affected_beacons
     end
   end
 
@@ -421,7 +421,7 @@ function globals.setup(beacon_prototypes)
     local highest_distribution_range = 0
     local highest_strict_range = 0
     for name2, beacon2 in pairs(beacon_prototypes) do
-      if not ((global.repeating_beacons[name1] and global.repeating_beacons[name1][name2]) or (global.repeating_beacons[name2] and global.repeating_beacons[name2][name1])) then
+      if not ((storage.repeating_beacons[name1] and storage.repeating_beacons[name1][name2]) or (storage.repeating_beacons[name2] and storage.repeating_beacons[name2][name1])) then
         if updated_exclusion_ranges[name2] > highest_exclusion_range then highest_exclusion_range = updated_exclusion_ranges[name2] end
         if updated_distribution_ranges[name2] > highest_distribution_range then highest_distribution_range = updated_distribution_ranges[name2] end
         if updated_types[name2].strict and updated_exclusion_ranges[name2] > highest_strict_range then highest_strict_range = updated_exclusion_ranges[name2] end
@@ -433,20 +433,20 @@ function globals.setup(beacon_prototypes)
     updated_search_ranges[name1] = range
   end
 
-  global.exclusion_ranges = updated_exclusion_ranges
-  global.distribution_ranges = updated_distribution_ranges
-  global.search_ranges = updated_search_ranges
-  global.strict_beacons = updated_types
+  storage.exclusion_ranges = updated_exclusion_ranges
+  storage.distribution_ranges = updated_distribution_ranges
+  storage.search_ranges = updated_search_ranges
+  storage.strict_beacons = updated_types
 
-  return global
+  return storage
 end
 
 -- returns the distribution range for the given beacon (from the edge of selection rather than edge of collision)
 function get_distribution_range(beacon)
   local collision_radius = (beacon.collision_box.right_bottom.x - beacon.collision_box.left_top.x) / 2 -- beacon's collision is assumed to be centered on its origin; standard format assumed (leftTop, rightBottom)
   local selection_radius = (beacon.selection_box.right_bottom.x - beacon.selection_box.left_top.x) / 2 -- selection box is assumed to be in full tiles
-  local range = beacon.supply_area_distance - (selection_radius - collision_radius)
-  if selection_radius < collision_radius then range = beacon.supply_area_distance end
+  local range = beacon.get_supply_area_distance() - (selection_radius - collision_radius)
+  if selection_radius < collision_radius then range = beacon.get_supply_area_distance() end
   do return range end -- note: use ceil() on the returned range to get the total tiles affected
 end
 

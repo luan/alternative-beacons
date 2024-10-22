@@ -49,7 +49,7 @@ function rename_beacon(item, beacon, recipe, name)
   beacon.name = name
   beacon.minable.result = name
   recipe.name = name
-  recipe.result = name
+  recipe.results = {{type="item", name=name, amount=1}}
 end
 
 if (mods["pycoalprocessing"] or mods["space-exploration"] or mods["mini"] or mods["Custom-Mods"]) then cancel_override = true end
@@ -141,9 +141,9 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   data:extend({beacon_wide_2})
   data:extend({recipe_wide_2})
   localise_new_beacon("se-wide-beacon-2", "ab_strict", nil)
-  data.raw.beacon["se-wide-beacon-2"].module_specification.module_slots = 20
-  data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_max_icon_rows = 4
-  data.raw.beacon["se-wide-beacon-2"].module_specification.module_info_multi_row_initial_height_modifier = -0.9
+  data.raw.beacon["se-wide-beacon-2"].module_slots = 20
+  data.raw.beacon["se-wide-beacon-2"].icons_positioning[1].max_icon_rows = 4
+  data.raw.beacon["se-wide-beacon-2"].icons_positioning[1].multi_row_initial_height_modifier = -0.9
   data.raw.recipe["se-wide-beacon-2"].ingredients = {{type = "item", name = "advanced-circuit", amount = 600}, {type = "item", name = "electronic-circuit", amount = 600}, {type = "item", name = "copper-cable", amount = 300}, {type = "item", name = "steel-plate", amount = 300}}
   data.raw.item["se-wide-beacon-2"].order = "a[beacon]i5"
   data.raw.beacon["se-wide-beacon-2"].fast_replaceable_group = "wide-beacon"
@@ -155,8 +155,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     },
   }
 
-  -- sets technologies for SE-like beacons
-  do_se_technologies = true
+  -- sets technologies for SE-like beacons_count
   if data.raw.technology["effect-transmission"] == nil or mods["Ultracube"] or mods["Satisfactorio"] then do_se_technologies = false end
   if do_se_technologies and data.raw.technology["effect-transmission"] then
     local tech_compact_1 = table.deepcopy(data.raw.technology["effect-transmission"])
@@ -166,7 +165,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     tech_compact_1.name = "se-compact-beacon"
     tech_compact_1.localised_name = {"name.se-compact-beacon"}
     tech_compact_1.localised_description = {"technology-description.se_compact"}
-    tech_compact_1.order = tech_compact_1.order .. "y"
+    tech_compact_1.order = (tech_compact_1.order or "") .. "y"
     tech_compact_1.icons = beacon_compact.technology
 
     local tech_compact_2 = table.deepcopy(tech_compact_1)
@@ -175,7 +174,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     tech_compact_2.name = "se-compact-beacon-2"
     tech_compact_2.localised_name = {"name.se-compact-beacon-2"}
     tech_compact_2.localised_description = {"technology-description.se_compact_2"}
-    tech_compact_2.order = tech_compact_1.order .. "z"
+    tech_compact_2.order = (tech_compact_1.order or "") .. "z"
     tech_compact_2.icons = {{icon = "__alternative-beacons__/graphics/tech-compact-2.png", icon_size = 256}}
 
     local tech_wide_1 = table.deepcopy(tech_compact_1)
@@ -207,7 +206,7 @@ local function create_technology(source, id, prerequisites, count_multiplier, or
   new_tech.effects = {}
   new_tech.prerequisites = prerequisites
   new_tech.unit.count = new_tech.unit.count * count_multiplier
-  new_tech.order = new_tech.order .. order_addon
+  new_tech.order = (new_tech.order or "") .. order_addon
   new_tech.name = id
   if
     name == id then new_tech.localised_name = {"name." .. name}
@@ -222,7 +221,7 @@ end
 if data.raw.technology["effect-transmission"] then
   if startup["ab-technology-layout"].value == "tech-2" then
     if data.raw.beacon["ab-conflux-beacon"] or data.raw.beacon["ab-hub-beacon"] or data.raw.beacon["ab-isolation-beacon"] then
-      create_technology("effect-transmission", "ab-novel-effect-transmission", {"effect-transmission", "effectivity-module-2", "speed-module-2"}, 2, "x", "effect_transmission_novel", "effect_transmission_novel")
+      create_technology("effect-transmission", "ab-novel-effect-transmission", {"effect-transmission", "efficiency-module-2", "speed-module-2"}, 2, "x", "effect_transmission_novel", "effect_transmission_novel")
       beacon_techs["ab-conflux-beacon"] = "ab-novel-effect-transmission"
       beacon_techs["ab-hub-beacon"] = "ab-novel-effect-transmission"
       beacon_techs["ab-isolation-beacon"] = "ab-novel-effect-transmission"
@@ -236,7 +235,7 @@ if data.raw.technology["effect-transmission"] then
       beacon_techs["ab-conflux-beacon"] = "ab-medium-effect-transmission"
     end
     if data.raw.beacon["ab-hub-beacon"] or data.raw.beacon["ab-isolation-beacon"] then
-      create_technology("effect-transmission", "ab-long-effect-transmission", {long_prerequisite, "effectivity-module-2", "speed-module-2"}, 1, "x2", "effect_transmission_long_range", "effect_transmission_long_range")
+      create_technology("effect-transmission", "ab-long-effect-transmission", {long_prerequisite, "efficiency-module-2", "speed-module-2"}, 1, "x2", "effect_transmission_long_range", "effect_transmission_long_range")
       beacon_techs["ab-hub-beacon"] = "ab-long-effect-transmission"
       beacon_techs["ab-isolation-beacon"] = "ab-long-effect-transmission"
     end
@@ -252,7 +251,7 @@ if data.raw.technology["effect-transmission"] then
         if new_beacons[i] == "conflux" and data.raw.beacon["ab-node-beacon"] then prerequisites = {"ab-node-beacon"} end
         if new_beacons[i] == "hub" and data.raw.beacon["ab-focused-beacon"] then prerequisites = {"ab-focused-beacon"} end
         if i > 2 then
-          table.insert(prerequisites, "effectivity-module-2")
+          table.insert(prerequisites, "efficiency-module-2")
           table.insert(prerequisites, "speed-module-2")
         end
         create_technology("effect-transmission", name, prerequisites, mult, "x"..i, name, name)
@@ -288,8 +287,8 @@ if mods["exotic-industries"] then
     end
   end
   if do_se_technologies then
-    data.raw.technology["se-compact-beacon"].prerequisites = {"ei_copper-beacon", "effectivity-module-2", "speed-module-2"}
-    data.raw.technology["se-wide-beacon"].prerequisites = {"ei_copper-beacon", "effectivity-module-2", "speed-module-2"}
+    data.raw.technology["se-compact-beacon"].prerequisites = {"ei_copper-beacon", "efficiency-module-2", "speed-module-2"}
+    data.raw.technology["se-wide-beacon"].prerequisites = {"ei_copper-beacon", "efficiency-module-2", "speed-module-2"}
     data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "ei_iron-beacon"}
     data.raw.technology["se-wide-beacon-2"].prerequisites = {"se-wide-beacon", "ei_iron-beacon"}
     data.raw.technology["se-compact-beacon"].unit = data.raw.technology["rocket-silo"].unit -- in between copper/iron beacon technologies (they may not exist until data-updates.lua)
@@ -345,7 +344,7 @@ end
 if data.raw.technology["effect-transmission"] then data.raw.technology["effect-transmission"].localised_description = {"technology-description.effect_transmission_default"} end
 
 -- adjusts "standard" vanilla beacons
-if cancel_override == false and data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
+--if cancel_override == false and data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
 if cancel_override == false and data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
 if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
   local beacon_recipe = data.raw.recipe.beacon
@@ -353,7 +352,6 @@ if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
     beacon_recipe.normal = {
       ingredients = beacon_recipe.ingredients,
       results = beacon_recipe.results,
-      result = beacon_recipe.result,
       energy_required = beacon_recipe.energy_required,
       enabled = beacon_recipe.enabled
     }

@@ -14,7 +14,7 @@ local item = {
 local recipe = {
   type = "recipe",
   name = "se-compact-beacon",
-  result = "se-compact-beacon",
+  results = {{type="item", name="se-compact-beacon", amount=1}},
   enabled = false,
   energy_required = 10,
   ingredients = {{type = "item", name = "advanced-circuit", amount = 200}, {type = "item", name = "electronic-circuit", amount = 200}, {type = "item", name = "copper-cable", amount = 100}, {type = "item", name = "steel-plate", amount = 100}}
@@ -132,14 +132,17 @@ local beacon = {
   },
   energy_usage = "800kW",
   max_health = 400,
-  module_specification = {
-    module_info_icon_shift = { 0, 0.25 },
-    module_info_max_icons_per_row = 4,
-    module_info_max_icon_rows = 3,
-    module_info_multi_row_initial_height_modifier = -0.75,
-    module_slots = 10
-  },
+  module_slots = 10,
+  icons_positioning = {{
+    inventory_index = defines.inventory.beacon_modules,
+    shift = { 0, 0.25 },
+    max_icons_per_row = 4,
+    max_icon_rows = 3,
+    multi_row_initial_height_modifier = -0.75,
+  }},
   distribution_effectivity = 0.75,
+  distribution_effectivity_bonus_per_quality_level = 0.2,
+  profile = {1,0},
   supply_area_distance = 2,
   collision_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
   drawing_box = { { -1, -1.7 }, { 1, 1 } },

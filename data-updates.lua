@@ -20,7 +20,7 @@ local custom_exclusion_ranges = { -- these beacons are given custom exclusion ra
   ["fu_ki_beacon_entity"] = {value="solo", mode="strict"}
   -- entries are added below for: Pyanodons AM-FM beacons, Bob's "beacon-3" (and mini/micro versions), productivity/speed beacons from Advanced Modules, beacons from Fast Furnaces, "beacon3", and "productivity-beacon"
 }
-local distribution_range_indent = 0.25 -- how close distribution ranges are to the edge of their affected area in tiles (should be between 0 and 0.5; vanilla default is 0.3)
+local distribution_range_indent = 0 -- how close distribution ranges are to the edge of their affected area in tiles (should be between 0 and 0.5; vanilla default is 0.3)
 local max_moduled_building_size = 9 -- by default, rocket silo (9x9) is the largest building which can use modules
 
 local override_localisation = true
@@ -61,12 +61,17 @@ if data.raw.technology["ab-focused-beacon"] or data.raw.technology["ab-node-beac
 function normalize_distribution_ranges(indent)
   for _, beacon in pairs(data.raw.beacon) do
     if (beacon.collision_box ~= nil and beacon.selection_box ~= nil and exclusion_range_values[beacon.name] == nil and not (beacon.minable == nil and beacon.next_upgrade ~= nil)) then -- Note: the minable/next_upgrade case is related to an error with "PowerCrystals" and visual mods like "walkable-beacons" or "classic-beacon" (included so this mod doesn't get implicated as well)
+    --[[
         local collision_radius = (beacon.collision_box[2][1] - beacon.collision_box[1][1]) / 2 -- beacon's collision is assumed to be centered on its origin; standard format assumed (leftTop, rightBottom)
         local selection_radius = (beacon.selection_box[2][1] - beacon.selection_box[1][1]) / 2 -- selection box is assumed to be in full tiles
         local offset = selection_radius - collision_radius
         local new_range = math.min(64, math.ceil(beacon.supply_area_distance - offset) - indent + offset) -- may not be aligned with other beacons if the range is too close to the limit of 64
         if selection_radius < collision_radius then new_range = data.raw.beacon[beacon.name].supply_area_distance end
-        data.raw.beacon[beacon.name].supply_area_distance = new_range
+        data.raw.beacon[beacon.name].supply_area_distance = math.ceil(new_range)
+      ]]
+      local collision_radius = (beacon.collision_box[2][1] - beacon.collision_box[1][1]) / 2
+      local new_collision = math.ceil(collision_radius*2)/2 - 0.25
+      data.raw.beacon[beacon.name].collision_box = {{-new_collision,-new_collision}, {new_collision,new_collision}}
     end
   end
 end
@@ -85,18 +90,21 @@ end
 function override_vanilla_beacon(do_localisation, do_technology)
   local beacon = data.raw.beacon.beacon
   beacon.energy_usage = "480kW"
-  beacon.module_specification = {
-    module_info_icon_shift = { 0, 0.25 },
-    module_info_max_icons_per_row = 2,
-    module_info_max_icon_rows = 1,
-    module_slots = 2
-  }
+  beacon.module_slots = 2
+  --beacon.profile = {1, 0.7071, 0.5773, 0.5, 0.4472, 0.4082, 0.3779, 0.3535, 0.3333, 0.3162, 0.3015, 0.2887, 0.2773, 0.2672, 0.2582, 0.25, 0.2425, 0.2357, 0.2294, 0.2236, 0.2182, 0.2132, 0.2085, 0.2041, 0.2, 0.1961, 0.1924, 0.189, 0.1857, 0.1825, 0.1796, 0.1768, 0.1741, 0.1715, 0.169, 0.1666, 0.1644, 0.1622, 0.1601, 0.1581, 0.1561, 0.1543, 0.1525, 0.1507, 0.149, 0.1474, 0.1458, 0.1443, 0.1428, 0.1414, 0.14, 0.1387, 0.1373, 0.1361, 0.1348, 0.1336, 0.1324, 0.1313, 0.1302, 0.1291, 0.128, 0.127, 0.126, 0.125, 0.124, 0.1231, 0.1221, 0.1212, 0.1204, 0.1195, 0.1187, 0.1178, 0.117, 0.1162, 0.1154, 0.1147, 0.1139, 0.1132, 0.1125, 0.1118, 0.1111, 0.1104, 0.1097, 0.1091, 0.1084, 0.1078, 0.1072, 0.1066, 0.106, 0.1054, 0.1048, 0.1042, 0.1037, 0.1031, 0.1026, 0.102, 0.1015, 0.101, 0.1005, 0.1}
+  beacon.profile = {3, 2.1213, 1.7319, 1.5, 1.3416, 1.2246, 1.1337, 1.0605, 0.9999, 0.9486, 0.9045, 0.8661, 0.8319, 0.8016, 0.7746, 0.75, 0.7275, 0.7071, 0.6882, 0.6708, 0.6546, 0.6396, 0.6255, 0.6123, 0.6, 0.5883, 0.5772, 0.567, 0.5571, 0.5475, 0.5388, 0.5304, 0.5223, 0.5145, 0.507, 0.4998, 0.4932, 0.4866, 0.4803, 0.4743, 0.4683, 0.4629, 0.4575, 0.4521, 0.447, 0.4422, 0.4374, 0.4329, 0.4284, 0.4242, 0.42, 0.4161, 0.4119, 0.4083, 0.4044, 0.4008, 0.3972, 0.3939, 0.3906, 0.3873, 0.384, 0.381, 0.378, 0.375, 0.372, 0.3693, 0.3663, 0.3636, 0.3612, 0.3585, 0.3561, 0.3534, 0.351, 0.3486, 0.3462, 0.3441, 0.3417, 0.3396, 0.3375, 0.3354, 0.3333, 0.3312, 0.3291, 0.3273, 0.3252, 0.3234, 0.3216, 0.3198, 0.318, 0.3162, 0.3144, 0.3126, 0.3111, 0.3093, 0.3078, 0.306, 0.3045, 0.303, 0.3015, 0.3}
+  beacon.icons_positioning = {{
+    inventory_index = defines.inventory.beacon_modules,
+    shift = { 0, 0.25 },
+    max_icons_per_row = 2,
+    max_icon_rows = 1,
+  }}
   beacon.distribution_effectivity = 0.5
-  if beacon.collision_box[2][1] + beacon.supply_area_distance ~= 4.25 then
+  if beacon.collision_box[2][1] + beacon.supply_area_distance ~= 4.3 then
     beacon.selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } }
-    beacon.collision_box = { { -1.2, -1.2 }, { 1.2, 1.2 } }
+    beacon.collision_box = { { -1.25, -1.25 }, { 1.25, 1.25 } }
     beacon.drawing_box = { {-1.5, -2.2}, {1.5, 1.3} }
-    beacon.supply_area_distance = 3.05 -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
+    beacon.supply_area_distance = 3 -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
   end
   data.raw.item.beacon.order = "a[beacon]"
   data.raw.recipe.beacon.order = "a[beacon]"
@@ -158,7 +166,7 @@ function add_extended_description(name, pair, exclusion_range, strict)
   local distribution_range = math.ceil(get_distribution_range(beacon))
   if exclusion_range == nil then exclusion_range = distribution_range end
   local stats = {
-    slots = {"description.ab_module_slots", tostring(beacon.module_specification.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_specification.module_slots)/100)},
+    slots = {"description.ab_module_slots", tostring(beacon.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_slots)/100)},
     efficiency = {"description.ab_distribution_efficiency", tostring(beacon.distribution_effectivity)},
     d_range = {"description.ab_distribution_range", tostring(distribution_range)},
     e_range = {"description.ab_exclusion_range", tostring(exclusion_range)},
@@ -260,7 +268,7 @@ if startup["ab-override-vanilla-beacons"].value and cancel_override == false the
   end
 end
 
-normalize_distribution_ranges(distribution_range_indent)
+--normalize_distribution_ranges(distribution_range_indent)
 
 if ordered == false then
   local anchor = "beacon"
@@ -270,6 +278,7 @@ end
 
 -- add visualizations for exclusion ranges
 if startup["ab-disable-exclusion-areas"].value == false then
+  -- TODO: 2.0 forces ranges to be integers
   for name, range in pairs(custom_exclusion_ranges) do
     local beacon = data.raw.beacon[name]
     if beacon ~= nil and beacon.collision_box ~= nil and beacon.selection_box ~= nil then
