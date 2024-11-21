@@ -148,20 +148,14 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   data.raw.item["se-wide-beacon-2"].order = "a[beacon]i5"
   data.raw.beacon["se-wide-beacon-2"].fast_replaceable_group = "wide-beacon"
 
-  local technology = {
-    {
-      icon = "__alternative-beacons__/graphics/tech-compact-1.png",
-      icon_size = 256
-    },
-  }
-
-  -- sets technologies for SE-like beacons_count
+  -- sets technologies for SE-like beacons
+  do_se_technologies = true
   if data.raw.technology["effect-transmission"] == nil or mods["Ultracube"] or mods["Satisfactorio"] then do_se_technologies = false end
   if do_se_technologies and data.raw.technology["effect-transmission"] then
     local tech_compact_1 = table.deepcopy(data.raw.technology["effect-transmission"])
     tech_compact_1.effects = {}
     tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack"}
-    tech_compact_1.unit = {count=500, time=60, ingredients={{name="automation-science-pack", amount=1}, {name="logistic-science-pack", amount=1}, {name="chemical-science-pack", amount=1}, {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}}}
+    tech_compact_1.unit = {count=500, time=60, ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}}}
     tech_compact_1.name = "se-compact-beacon"
     tech_compact_1.localised_name = {"name.se-compact-beacon"}
     tech_compact_1.localised_description = {"technology-description.se_compact"}
@@ -170,7 +164,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
 
     local tech_compact_2 = table.deepcopy(tech_compact_1)
     tech_compact_2.prerequisites = {"se-compact-beacon", "space-science-pack"}
-    tech_compact_2.unit = {count=1000, time=60, ingredients={{name="automation-science-pack", amount=1}, {name="logistic-science-pack", amount=1}, {name="chemical-science-pack", amount=1}, {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}, {name="space-science-pack", amount=1}}}
+    tech_compact_2.unit = {count=1000, time=60, ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}}}
     tech_compact_2.name = "se-compact-beacon-2"
     tech_compact_2.localised_name = {"name.se-compact-beacon-2"}
     tech_compact_2.localised_description = {"technology-description.se_compact_2"}
@@ -190,6 +184,17 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     tech_wide_2.localised_name = {"name.se-wide-beacon-2"}
     tech_wide_2.localised_description = {"technology-description.se_wide_2"}
     tech_wide_2.icons = {{icon = "__alternative-beacons__/graphics/tech-wide-2.png", icon_size = 256}}
+
+    if mods["space-age"] then
+      tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack", "space-science-pack"}
+      tech_compact_1.unit.ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}}
+      tech_wide_1.prerequisites = {"effect-transmission", "utility-science-pack", "space-science-pack"}
+      tech_wide_1.unit.ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}}
+      tech_compact_2.prerequisites = {"se-compact-beacon", "cryogenic-science-pack"}
+      tech_compact_2.unit.ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}, {"metallurgic-science-pack", 1}, {"electromagnetic-science-pack", 1}, {"agricultural-science-pack", 1}, {"cryogenic-science-pack", 1}}
+      tech_wide_2.prerequisites = {"se-wide-beacon", "cryogenic-science-pack"}
+      tech_wide_2.unit.ingredients={{"automation-science-pack", 1}, {"logistic-science-pack", 1}, {"chemical-science-pack", 1}, {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}, {"metallurgic-science-pack", 1}, {"electromagnetic-science-pack", 1}, {"agricultural-science-pack", 1}, {"cryogenic-science-pack", 1}}
+    end
 
     data:extend({tech_compact_1})
     data:extend({tech_wide_1})
@@ -309,7 +314,7 @@ if mods["nullius"] and data.raw.technology["effect-transmission"] then
   local base_tech = data.raw.technology["effect-transmission"]
   base_tech.effects = {}
   base_tech.prerequisites = {"nullius-physics", "nullius-broadcasting-2"}
-  base_tech.unit = {count=1200, time=40, ingredients={{name="nullius-climatology-pack", amount=1}, {name="nullius-electrical-pack", amount=1}, {name="nullius-physics-pack", amount=1}}}
+  base_tech.unit = {count=1200, time=40, ingredients={{"nullius-climatology-pack", 1}, {"nullius-electrical-pack", 1}, {"nullius-physics-pack", 1}}}
   local separate_techs = false
   for _,v in pairs(possible_techs) do
     if data.raw.technology[v] then
@@ -328,10 +333,10 @@ if mods["nullius"] and data.raw.technology["effect-transmission"] then
   end
   if do_se_technologies then
     base_tech.order = "nullius-" .. base_tech.order
-    data.raw.technology["se-compact-beacon"].unit = {count=2500, time=50, ingredients={{name="nullius-climatology-pack", amount=1}, {name="nullius-electrical-pack", amount=1}, {name="nullius-physics-pack", amount=1}}}
-    data.raw.technology["se-wide-beacon"].unit = {count=2500, time=50, ingredients={{name="nullius-climatology-pack", amount=1}, {name="nullius-electrical-pack", amount=1}, {name="nullius-physics-pack", amount=1}}}
-    data.raw.technology["se-compact-beacon-2"].unit = {count=15000, time=60, ingredients={{name="nullius-climatology-pack", amount=1}, {name="nullius-electrical-pack", amount=1}, {name="nullius-physics-pack", amount=1}}}
-    data.raw.technology["se-wide-beacon-2"].unit = {count=15000, time=60, ingredients={{name="nullius-climatology-pack", amount=1}, {name="nullius-electrical-pack", amount=1}, {name="nullius-physics-pack", amount=1}}}
+    data.raw.technology["se-compact-beacon"].unit = {count=2500, time=50, ingredients={{"nullius-climatology-pack", 1}, {"nullius-electrical-pack", 1}, {"nullius-physics-pack", 1}}}
+    data.raw.technology["se-wide-beacon"].unit = {count=2500, time=50, ingredients={{"nullius-climatology-pack", 1}, {"nullius-electrical-pack", 1}, {"nullius-physics-pack", 1}}}
+    data.raw.technology["se-compact-beacon-2"].unit = {count=15000, time=60, ingredients={{"nullius-climatology-pack", 1}, {"nullius-electrical-pack", 1}, {"nullius-physics-pack", 1}}}
+    data.raw.technology["se-wide-beacon-2"].unit = {count=15000, time=60, ingredients={{"nullius-climatology-pack", 1}, {"nullius-electrical-pack", 1}, {"nullius-physics-pack", 1}}}
     data.raw.technology["se-compact-beacon"].prerequisites = {"effect-transmission", "nullius-optimization-5"}
     data.raw.technology["se-wide-beacon"].prerequisites = {"effect-transmission", "nullius-optimization-5"}
     data.raw.technology["se-compact-beacon-2"].prerequisites = {"se-compact-beacon", "nullius-optimization-7"}
@@ -345,16 +350,11 @@ if data.raw.technology["effect-transmission"] then data.raw.technology["effect-t
 
 -- adjusts "standard" vanilla beacons
 --if cancel_override == false and data.raw.beacon.beacon.collision_box[2][1] == 1.2 and data.raw.beacon.beacon.supply_area_distance == 3 then data.raw.beacon.beacon.supply_area_distance = 3.05 end -- extends from edge of collision box (9x9) but visualized area is 0.25 tiles shorter in each direction
-if cancel_override == false and data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
-if mods["aai-industry"] then -- fixes a potential crash with Exotic Industries
-  local beacon_recipe = data.raw.recipe.beacon
-  if beacon_recipe and beacon_recipe.normal == nil then
-    beacon_recipe.normal = {
-      ingredients = beacon_recipe.ingredients,
-      results = beacon_recipe.results,
-      energy_required = beacon_recipe.energy_required,
-      enabled = beacon_recipe.enabled
-    }
+--if cancel_override == false and data.raw.item.beacon.stack_size < 20 then data.raw.item.beacon.stack_size = 20 end
+if startup["ab-override-vanilla-beacons"].value and cancel_override == false then
+  if data.raw.recipe.beacon ~= nil and data.raw.item.beacon ~= nil and data.raw.beacon.beacon ~= nil and data.raw.technology["effect-transmission"] ~= nil then
+    data.raw.beacon.beacon.selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } }
+    data.raw.beacon.beacon.collision_box = { { -1.25, -1.25 }, { 1.25, 1.25 } }
   end
 end
 
@@ -364,14 +364,16 @@ data:extend({
     type = "sprite",
     name = "ab_beacon_offline",
     filename = "__alternative-beacons__/graphics/beacon-offline.png",
-    size = 64
+    size = 64,
   },
   {
     type = "virtual-signal",
     name = "ab_beacon_offline",
     icon = "__alternative-beacons__/graphics/beacon-offline.png",
     icon_size = 64,
-    localised_name = {"description.ab_beacon_deactivated"}
+    localised_name = {"description.ab_beacon_deactivated"},
+    subgroup = "virtual-signal",
+    order = "m"
   }
 })
 -- images for informatron

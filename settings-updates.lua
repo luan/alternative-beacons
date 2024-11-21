@@ -64,3 +64,12 @@ if mods["Li-Module-Fix"] then
         data.raw["int-setting"]["more_slots_unm"].minimum_value = 0
     end
 end
+--[[
+if mods["wret-beacon-rebalance-mod"] then
+    if data.raw["bool-setting"]["wret-overload-disable-overloaded"] ~= nil then
+        data.raw["bool-setting"]["wret-overload-disable-overloaded"].hidden = true
+        data.raw["bool-setting"]["wret-overload-disable-overloaded"].forced_value = false
+        -- TODO: integrate these beacons?
+    end
+end
+]]

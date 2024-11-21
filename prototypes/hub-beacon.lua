@@ -106,10 +106,8 @@ local beacon = {
     multi_row_initial_height_modifier = -0.3,
   }},
   distribution_effectivity = 0.5,
-  distribution_effectivity_bonus_per_quality_level = 0.2,
-  --profile = {1},
-  --profile = {1, 0.85, 0.75, 0.6667},
-  profile = {1.2, 1, 0.85, 0.75, 0.7},
+  distribution_effectivity_bonus_per_quality_level = 0.1,
+  profile = {1.2, 1, 0.85, 0.75, 0.7, 0},
   supply_area_distance = 14, -- extends from edge of collision box (32x32)
   -- exclusion_area_distance = 34 (72x72; hardcoded in control.lua)
   collision_box = { { -1.75, -1.75 }, { 1.75, 1.75 } },

@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2024.11.20
+  Changes:
+    - Added missing event handlers for beacon scripts on space platforms
+    - Added support for Stable Foundations
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2024.11.03
+  Changes:
+    - Fixed missing technologies for SE-like beacons
+    - Removed most extended description stats (module slots, stack size, efficiency, etc) since they're redundant now
+    - Standard beacons now use the new efficiency values and corresponding profile instead of a modified profile for the old values
+    - Decreased quality bonus of new beacons (0.2 -> 0.1) to better match the effective bonus of vanilla beacons
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2024.10.22
   Changes:

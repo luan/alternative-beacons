@@ -75,7 +75,7 @@ local beacon = {
   },
   energy_usage = "100kW",
   distribution_effectivity = 0.5,
-  distribution_effectivity_bonus_per_quality_level = 0.2,
+  distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1,0},
   module_slots = 8,
   icons_positioning = {{

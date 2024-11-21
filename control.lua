@@ -81,10 +81,12 @@ function enable_scripts(mods)
   script.on_event( defines.events.on_robot_built_entity,          function(event) check_nearby(event.entity, "added") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.script_raised_built,            function(event) check_nearby(event.entity, "added") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.script_raised_revive,           function(event) check_nearby(event.entity, "added") end, {{filter = "type", type = "beacon"}} )
+  script.on_event( defines.events.on_space_platform_built_entity, function(event) check_nearby(event.entity, "added") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.on_player_mined_entity,         function(event) check_nearby(event.entity, "removed") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.on_robot_mined_entity,          function(event) check_nearby(event.entity, "removed") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.on_entity_died,                 function(event) check_nearby(event.entity, "removed") end, {{filter = "type", type = "beacon"}} )
   script.on_event( defines.events.script_raised_destroy,          function(event) check_nearby(event.entity, "removed") end, {{filter = "type", type = "beacon"}} )
+  script.on_event( defines.events.on_space_platform_mined_entity, function(event) check_nearby(event.entity, "removed") end, {{filter = "type", type = "beacon"}} )
   --script.on_event( defines.events.on_entity_cloned,             function(event) check_nearby(event.destination, "added") end, {{filter = "type", type = "beacon"}} ) -- TODO: Test this. What clones entities?
   --script.on_event( defines.events.script_raised_teleported,     function(event) check_global_list() end, {{filter = "type", type = "beacon"}} ) --TODO: Find a reliable way to trigger this event so a check_moved() function can be tested instead of just checking all beacons
   script.on_event( defines.events.on_runtime_mod_setting_changed, function(event) on_settings_changed(event) end )
@@ -377,11 +379,11 @@ end
 -- removes flashing alerts for the given beacon (all players)
 function remove_beacon_alert(beacon_entity)
   for _, player in pairs(beacon_entity.force.players) do
-    --player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
-    player.remove_alert({entity=beacon_entity}) -- this applies to any of the filters rather than requiring all of them to match
+    player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
   end
   --if persistent_alerts == true and #offline_beacons == 0 then unregister_alert_refreshing() end
 end
+-- TODO: Hovering over the alert makes warning icons appear on beacons at a smaller scale than usual
 
 -- returns true if the given beacon (entity) is within the exclusion field of a specific hub (hubID)
 --   used to determine if the beacon's overlapping area should apply to another beacon near the specific hub (it only applies for beacons within the same hub's exclusion area)

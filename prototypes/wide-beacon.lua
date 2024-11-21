@@ -81,7 +81,7 @@ local beacon = {
     multi_row_initial_height_modifier = -0.3,
   }},
   distribution_effectivity = 0.5,
-  distribution_effectivity_bonus_per_quality_level = 0.2,
+  distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1,0},
   supply_area_distance = 14,
   collision_box = { { -1.75, -1.75 }, { 1.75, 1.75 } },

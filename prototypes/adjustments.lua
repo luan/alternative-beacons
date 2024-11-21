@@ -12,7 +12,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       override_localisation = false
       if se_technologies then
         table.insert(data.raw.technology["se-compact-beacon-2"].prerequisites, "kr-singularity-tech-card")
-        data.raw.technology["se-compact-beacon-2"].unit.ingredients = { {name="production-science-pack", amount=1}, {name="utility-science-pack", amount=1}, {name="space-science-pack", amount=1}, {name="matter-tech-card", amount=1}, {name="advanced-tech-card", amount=1}, {name="singularity-tech-card", amount=1} }
+        data.raw.technology["se-compact-beacon-2"].unit.ingredients = { {"production-science-pack", 1}, {"utility-science-pack", 1}, {"space-science-pack", 1}, {"matter-tech-card", 1}, {"advanced-tech-card", 1}, {"singularity-tech-card", 1} }
         table.insert(data.raw.technology["se-wide-beacon-2"].prerequisites, "kr-singularity-tech-card")
         data.raw.technology["se-wide-beacon-2"].unit.ingredients = data.raw.technology["se-compact-beacon-2"].unit.ingredients
       end
@@ -82,7 +82,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       localise("nullius-beacon-" .. tier, {"item", "beacon"}, "description", {"description.nullius"})
       if tier <= 2 then localise("nullius-large-beacon-" .. tier, {"item", "beacon"}, "description", {"description.nullius_large"}) end
       for count=1,4,1 do
-        data.raw.beacon["nullius-beacon-" .. tier .. "-" .. count].localised_description = {'?', {'', {"description.nullius"}, ' ', {"description.nullius_1_2_3_4_addon", count}} }
+        data.raw.beacon["nullius-beacon-" .. tier .. "-" .. count].localised_description = {'?', {'', {"description.nullius"}, ' ', {"description.nullius_1_2_3_4_addon", tostring(count)}} }
       end
     end
     data.raw.technology["nullius-broadcasting-2"].localised_description = {"technology-description.effect_transmission_default"}
@@ -138,7 +138,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       local entity = data.raw.beacon[name]
       entity.radius_visualisation_picture.filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png"
       entity.radius_visualisation_picture.size = {10, 10}
-      entity.drawing_box = entity.selection_box
+      --entity.drawing_box = entity.selection_box
       local min = 0.3
       if entity.collision_box[1][1] - min < entity.selection_box[1][1] then entity.collision_box[1][1] = entity.selection_box[1][1] + min end
       if entity.collision_box[1][2] - min < entity.selection_box[1][2] then entity.collision_box[1][2] = entity.selection_box[1][2] + min end
@@ -293,7 +293,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     end
     data.raw["item-group"]["a-modules"].localised_name = {"name.advanced-modules-group"} -- fixes item group spelling & scale
     data.raw["item-group"]["a-modules"].icon_size = 256
-    data.raw["item-group"]["a-modules"].icon_mipmaps = 4
+    --data.raw["item-group"]["a-modules"].icon_mipmaps = 4
     -- Beacons/modules only getting speed or productivity effects is not a downside (those are the most powerful effects) so these mods canot be balanced to the same level as others without also modifying module stats
     -- Balance: productivity beacons have lower range and are given +3/+4/+5 exclusion range, speed beacons are given +0/+2/+5 exclusion range
     if startup["ab-balance-other-beacons"].value then
@@ -442,6 +442,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
 
   if mods["mini-machines"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -- mini-beacon-1 and other mini beacons are 2x2
+    -- TODO: Rebalance for v2.0 (vanilla beacons have 1.5 efficiency instead of 0.5)
     if startup["mini-beacon"].value == true then
       if startup["ab-balance-other-beacons"].value == true then
         -- Balance: range scaled down to match size difference, efficiency (and module slots in some cases) adjusted so that the module power is roughly 3/4 of the full-size version ...mini-beacon-2 and mini-beacon-3 are based on the non-seablock versions, but still can be used if seablock is active
@@ -699,7 +700,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
           if ingredient.name == "ff-transport-science-pack" and ingredient.amount > 0 then is_updated = true end
         end
         if not is_updated then
-          table.insert(data.raw.technology[v].unit.ingredients, {name="ff-transport-science-pack", amount=1})
+          table.insert(data.raw.technology[v].unit.ingredients, {"ff-transport-science-pack", 1})
         end
       end
     end
@@ -715,7 +716,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
   --end
 
   if mods["more-module-slots"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if startup["more-module-slots_beacon"].value and startup["ab-show-extended-stats"].value then
+    if startup["more-module-slots_beacon"].value and startup["ab-show-extended-stats"].value and startup["more-module-slots_factor"] and startup["more-module-slots_multiplicative-module-slots"] then
       local factor = startup["more-module-slots_factor"].value
       local multiply = startup["more-module-slots_multiplicative-module-slots"].value
       for name, beacon in pairs(data.raw.beacon) do
@@ -732,7 +733,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
 
   if mods["Li-Module-Fix"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -- The startup setting which adjusts beacon range is disabled (supporting it would require somehow passing info between the data and control stages)
-    if startup["ab-show-extended-stats"].value then
+    if startup["ab-show-extended-stats"].value and startup["more_slots_unm"] and startup["beacon_de"] then
       for name, beacon in pairs(data.raw.beacon) do
         local new_slots = beacon.module_slots + startup["more_slots_unm"].value
         local new_efficiency = beacon.distribution_effectivity * startup["beacon_de"].value
@@ -797,7 +798,7 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   new_beacon_item.name = name
   new_beacon_item.place_result = name
   new_beacon_recipe.name = name
-  new_beacon_recipe.result = name
+  new_beacon_recipe.results = {{type="item", name=name, amount=1}}
   new_beacon.next_upgrade = nil
   local original_size = new_beacon.selection_box[2][1] - new_beacon.selection_box[1][1] -- selection box assumed to be in full tiles
   size = math.ceil(size)

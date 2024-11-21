@@ -312,6 +312,14 @@ function globals.setup(beacon_prototypes)
     custom_exclusion_ranges["creative-mod_super-beacon"] = {value=0}
     updated_repeating_beacons["creative-mod_super-beacon"] = repeaters_all
   end
+  if mods["StableFoundations"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      table.insert(updated_repeating_beacons[beacon.name], "sf-tile-bonus")
+    end
+    custom_exclusion_ranges["sf-tile-bonus"] = {value=0}
+    updated_repeating_beacons["sf-tile-bonus"] = repeaters_all
+  end
   if mods["janky-beacon-rebalance"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------
     local repeaters_janky = {"beacon", "ab-standard-beacon"}
     for count=1,24,1 do
