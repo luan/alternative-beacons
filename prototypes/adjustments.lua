@@ -246,37 +246,38 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     end
     -- Balance: rescaled linearly at +0.2 module power per tier; beacons with 3 range won't disable standard beacons and vice versa
     if startup["ab-balance-other-beacons"].value then
+      local eff = data.raw.beacon["beacon"].distribution_effectivity/0.5
       data.raw.beacon["5d-beacon-02"].energy_usage = "960kW"
-      data.raw.beacon["5d-beacon-02"].distribution_effectivity = 0.6
+      data.raw.beacon["5d-beacon-02"].distribution_effectivity = 0.6*eff
       data.raw.beacon["5d-beacon-02"].module_slots = 2
       data.raw.beacon["5d-beacon-03"].energy_usage = "1440kW"
-      data.raw.beacon["5d-beacon-03"].distribution_effectivity = 0.4667
+      data.raw.beacon["5d-beacon-03"].distribution_effectivity = 0.4667*eff
       data.raw.beacon["5d-beacon-03"].module_slots = 3
       data.raw.beacon["5d-beacon-04"].energy_usage = "2000kW"
-      data.raw.beacon["5d-beacon-04"].distribution_effectivity = 0.4
+      data.raw.beacon["5d-beacon-04"].distribution_effectivity = 0.4*eff
       data.raw.beacon["5d-beacon-04"].module_slots = 4
       data.raw.beacon["5d-beacon-05"].energy_usage = "2500kW"
-      data.raw.beacon["5d-beacon-05"].distribution_effectivity = 0.36
+      data.raw.beacon["5d-beacon-05"].distribution_effectivity = 0.36*eff
       data.raw.beacon["5d-beacon-05"].module_slots = 5
       data.raw.beacon["5d-beacon-05"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-06"].energy_usage = "3000kW"
-      data.raw.beacon["5d-beacon-06"].distribution_effectivity = 0.4
+      data.raw.beacon["5d-beacon-06"].distribution_effectivity = 0.4*eff
       data.raw.beacon["5d-beacon-06"].module_slots = 5
       data.raw.beacon["5d-beacon-06"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-07"].energy_usage = "3500kW"
-      data.raw.beacon["5d-beacon-07"].distribution_effectivity = 0.3667
+      data.raw.beacon["5d-beacon-07"].distribution_effectivity = 0.3667*eff
       data.raw.beacon["5d-beacon-07"].module_slots = 6
       data.raw.beacon["5d-beacon-07"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-08"].energy_usage = "4000kW"
-      data.raw.beacon["5d-beacon-08"].distribution_effectivity = 0.4
+      data.raw.beacon["5d-beacon-08"].distribution_effectivity = 0.4*eff
       data.raw.beacon["5d-beacon-08"].module_slots = 6
       data.raw.beacon["5d-beacon-08"].icons_positioning[1].max_icons_per_row = 3
       data.raw.beacon["5d-beacon-09"].energy_usage = "4500kW"
-      data.raw.beacon["5d-beacon-09"].distribution_effectivity = 0.3715
+      data.raw.beacon["5d-beacon-09"].distribution_effectivity = 0.3715*eff
       data.raw.beacon["5d-beacon-09"].module_slots = 7
       data.raw.beacon["5d-beacon-09"].icons_positioning[1].max_icons_per_row = 4
       data.raw.beacon["5d-beacon-10"].energy_usage = "5000kW"
-      data.raw.beacon["5d-beacon-10"].distribution_effectivity = 0.4
+      data.raw.beacon["5d-beacon-10"].distribution_effectivity = 0.4*eff
       data.raw.beacon["5d-beacon-10"].module_slots = 7
       data.raw.beacon["5d-beacon-10"].icons_positioning[1].max_icons_per_row = 4
     end
@@ -298,27 +299,27 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     -- Balance: productivity beacons have lower range and are given +3/+4/+5 exclusion range, speed beacons are given +0/+2/+5 exclusion range
     if startup["ab-balance-other-beacons"].value then
       data.raw.beacon["productivity-beacon-1"].energy_usage = "1000kW"
-      data.raw.beacon["productivity-beacon-1"].distribution_effectivity = 0.25
+      data.raw.beacon["productivity-beacon-1"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity/2 -- 0.25
       data.raw.beacon["productivity-beacon-1"].supply_area_distance = 2
       custom_exclusion_ranges["productivity-beacon-1"] = {add=3}
       data.raw.beacon["productivity-beacon-2"].energy_usage = "2500kW"
-      data.raw.beacon["productivity-beacon-2"].distribution_effectivity = 0.25
+      data.raw.beacon["productivity-beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity/2 -- 0.25
       data.raw.beacon["productivity-beacon-2"].supply_area_distance = 2
       custom_exclusion_ranges["productivity-beacon-2"] = {add=4}
       data.raw.beacon["productivity-beacon-3"].energy_usage = "6000kW"
-      data.raw.beacon["productivity-beacon-3"].distribution_effectivity = 0.25
+      data.raw.beacon["productivity-beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity/2 -- 0.25
       data.raw.beacon["productivity-beacon-3"].supply_area_distance = 2
       custom_exclusion_ranges["productivity-beacon-3"] = {add=5}
       data.raw.beacon["speed-beacon-1"].energy_usage = "1000kW"
-      data.raw.beacon["speed-beacon-1"].distribution_effectivity = 0.5
+      data.raw.beacon["speed-beacon-1"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["speed-beacon-1"].supply_area_distance = 6
       data.raw.beacon["speed-beacon-2"].energy_usage = "2500kW"
-      data.raw.beacon["speed-beacon-2"].distribution_effectivity = 0.5
+      data.raw.beacon["speed-beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["speed-beacon-2"].module_slots = 4
       data.raw.beacon["speed-beacon-2"].supply_area_distance = 6
       custom_exclusion_ranges["speed-beacon-2"] = {add=2}
       data.raw.beacon["speed-beacon-3"].energy_usage = "6000kW"
-      data.raw.beacon["speed-beacon-3"].distribution_effectivity = 0.5
+      data.raw.beacon["speed-beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["speed-beacon-3"].module_slots = 6
       data.raw.beacon["speed-beacon-3"].supply_area_distance = 6
       custom_exclusion_ranges["speed-beacon-3"] = {add=5}
@@ -349,10 +350,10 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     elseif startup["ab-balance-other-beacons"].value then
       -- Balance: power requirements adjusted upward, efficiencies reduced, reduced range of beacon-2, beacon-3 given +2 exclusion range; they are still superior to node/conflux beacons, although they are at least somewhat comparable now
       data.raw.beacon["beacon-2"].energy_usage = "3000kW"
-      data.raw.beacon["beacon-2"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["beacon-2"].supply_area_distance = 5
       data.raw.beacon["beacon-3"].energy_usage = "6000kW"
-      data.raw.beacon["beacon-3"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       custom_exclusion_ranges["beacon-3"] = {add=2}
       localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
     end
@@ -372,11 +373,11 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     if startup["ab-balance-other-beacons"].value then
       data.raw.beacon["beacon-2"].energy_usage = "3000kW"
       data.raw.beacon["beacon-2"].max_health = 300
-      data.raw.beacon["beacon-2"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["beacon-2"].module_slots = 4
       data.raw.beacon["beacon-3"].energy_usage = "6000kW"
       data.raw.beacon["beacon-3"].max_health = 400
-      data.raw.beacon["beacon-3"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["beacon-3"].module_slots = 6
       data.raw.beacon["beacon-3"].supply_area_distance = 9
       custom_exclusion_ranges["beacon-3"] = {add=2}
@@ -409,9 +410,10 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     localise("beacon", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_standard_tiers_addon"}} })
     -- Balance: rescaled to max out at 1 efficiency instead of 3 (similar to Factorio Extended); they don't disable standard beacons and vice versa
     if startup["ab-balance-other-beacons"].value then
-      data.raw.beacon["beacon-mk1"].distribution_effectivity = 0.65
-      data.raw.beacon["beacon-mk2"].distribution_effectivity = 0.8
-      data.raw.beacon["beacon-mk3"].distribution_effectivity = 1
+      local eff = data.raw.beacon["beacon"].distribution_effectivity/0.5
+      data.raw.beacon["beacon-mk1"].distribution_effectivity = 0.65*eff
+      data.raw.beacon["beacon-mk2"].distribution_effectivity = 0.8*eff
+      data.raw.beacon["beacon-mk3"].distribution_effectivity = 1*eff
     end
   end
 
@@ -431,47 +433,48 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     end
     -- Balance: reduced efficiency, increased range, beacon3 gains +2 exclusion range
     if startup["ab-balance-other-beacons"].value then
-      data.raw.beacon["beacon2"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["beacon2"].supply_area_distance = 5
-      data.raw.beacon["beacon3"].distribution_effectivity = 0.5
+      data.raw.beacon["beacon3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
       data.raw.beacon["beacon3"].supply_area_distance = 6
       custom_exclusion_ranges["beacon3"] = {add=2}
       localise("beacon3", {"item", "beacon"}, "description", {"description.ab_different"})
     end
   end
-
+--function generate_new_beacon(base_name, name, localised_name, localised_description, size, range, modules, efficiency, power, effects)
   if mods["mini-machines"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -- mini-beacon-1 and other mini beacons are 2x2
-    -- TODO: Rebalance for v2.0 (vanilla beacons have 1.5 efficiency instead of 0.5)
     if startup["mini-beacon"].value == true then
       if startup["ab-balance-other-beacons"].value == true then
+        local eff = data.raw.beacon["beacon"].distribution_effectivity/0.5
+        local profile = {1, 0.7071, 0.5773, 0.5, 0.4472, 0.4082, 0.3779, 0.3535, 0.3333, 0.3162, 0.3015, 0.2887, 0.2773, 0.2672, 0.2582, 0.25, 0.2425, 0.2357, 0.2294, 0.2236, 0.2182, 0.2132, 0.2085, 0.2041, 0.2, 0.1961, 0.1924, 0.189, 0.1857, 0.1825, 0.1796, 0.1768, 0.1741, 0.1715, 0.169, 0.1666, 0.1644, 0.1622, 0.1601, 0.1581, 0.1561, 0.1543, 0.1525, 0.1507, 0.149, 0.1474, 0.1458, 0.1443, 0.1428, 0.1414, 0.14, 0.1387, 0.1373, 0.1361, 0.1348, 0.1336, 0.1324, 0.1313, 0.1302, 0.1291, 0.128, 0.127, 0.126, 0.125, 0.124, 0.1231, 0.1221, 0.1212, 0.1204, 0.1195, 0.1187, 0.1178, 0.117, 0.1162, 0.1154, 0.1147, 0.1139, 0.1132, 0.1125, 0.1118, 0.1111, 0.1104, 0.1097, 0.1091, 0.1084, 0.1078, 0.1072, 0.1066, 0.106, 0.1054, 0.1048, 0.1042, 0.1037, 0.1031, 0.1026, 0.102, 0.1015, 0.101, 0.1005, 0.1}
         -- Balance: range scaled down to match size difference, efficiency (and module slots in some cases) adjusted so that the module power is roughly 3/4 of the full-size version ...mini-beacon-2 and mini-beacon-3 are based on the non-seablock versions, but still can be used if seablock is active
         if data.raw.beacon["ab-standard-beacon"] then
-          generate_new_beacon("ab-standard-beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.375, "360kW")
+          generate_new_beacon("ab-standard-beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.375*eff, "360kW")
         else
-          generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.375, "360kW")
+          generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.375*eff, "360kW")
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, 4, 3, 0.5, "2250kW")
-          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_different"}, 2, 6, 5, 0.5, "4500kW")
+          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, 4, 3, 0.5*eff, "2250kW")
+          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_different"}, 2, 6, 5, 0.5*eff, "4500kW")
           custom_exclusion_ranges["mini-beacon-3"] = {add = 2}
         elseif mods["FactorioExtended-Plus-Module"] then
           localise("mini-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_tiers_addon"}}})
-          generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.55, "450kW")
-          generate_new_beacon("beacon-mk3", "mini-beacon-3", "Mini beacon Mk3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.75, "540kW")
+          generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.55*eff, "450kW")
+          generate_new_beacon("beacon-mk3", "mini-beacon-3", "Mini beacon Mk3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.75*eff, "540kW")
         elseif mods["5dim_module"] then
           localise("mini-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_tiers_addon"}}})
-          generate_new_beacon("5d-beacon-02", "mini-beacon-2", "Mini beacon MK2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.45, "720kW")
-          generate_new_beacon("5d-beacon-03", "mini-beacon-3", "Mini beacon MK3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.5, "1080kW")
+          generate_new_beacon("5d-beacon-02", "mini-beacon-2", "Mini beacon MK2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.45*eff, "720kW")
+          generate_new_beacon("5d-beacon-03", "mini-beacon-3", "Mini beacon MK3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.5*eff, "1080kW")
         end
         if mods["5dim_module"] then
-          generate_new_beacon("5d-beacon-04", "mini-beacon-4", "Mini beacon MK4", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.55, "1500kW")
-          generate_new_beacon("5d-beacon-05", "mini-beacon-5", "Mini beacon MK5", {"description.ab_same"}, 2, 3, 3, 0.4, "1875kW")
-          generate_new_beacon("5d-beacon-06", "mini-beacon-6", "Mini beacon MK6", {"description.ab_same"}, 2, 3, 3, 0.4667, "2250kW")
-          generate_new_beacon("5d-beacon-07", "mini-beacon-7", "Mini beacon MK7", {"description.ab_same"}, 2, 4, 3, 0.5334, "2625kW")
-          generate_new_beacon("5d-beacon-08", "mini-beacon-8", "Mini beacon MK8", {"description.ab_same"}, 2, 4, 4, 0.45, "3000kW")
-          generate_new_beacon("5d-beacon-09", "mini-beacon-9", "Mini beacon MK9", {"description.ab_same"}, 2, 5, 4, 0.5, "3375kW")
-          generate_new_beacon("5d-beacon-10", "mini-beacon-10", "Mini beacon MK10", {"description.ab_same"}, 2, 5, 4, 0.55, "3750kW")
+          generate_new_beacon("5d-beacon-04", "mini-beacon-4", "Mini beacon MK4", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.55*eff, "1500kW")
+          generate_new_beacon("5d-beacon-05", "mini-beacon-5", "Mini beacon MK5", {"description.ab_same"}, 2, 3, 3, 0.4*eff, "1875kW")
+          generate_new_beacon("5d-beacon-06", "mini-beacon-6", "Mini beacon MK6", {"description.ab_same"}, 2, 3, 3, 0.4667*eff, "2250kW")
+          generate_new_beacon("5d-beacon-07", "mini-beacon-7", "Mini beacon MK7", {"description.ab_same"}, 2, 4, 3, 0.5334*eff, "2625kW")
+          generate_new_beacon("5d-beacon-08", "mini-beacon-8", "Mini beacon MK8", {"description.ab_same"}, 2, 4, 4, 0.45*eff, "3000kW")
+          generate_new_beacon("5d-beacon-09", "mini-beacon-9", "Mini beacon MK9", {"description.ab_same"}, 2, 5, 4, 0.5*eff, "3375kW")
+          generate_new_beacon("5d-beacon-10", "mini-beacon-10", "Mini beacon MK10", {"description.ab_same"}, 2, 5, 4, 0.55*eff, "3750kW")
         end
       else
         local fewer_modules = 0
@@ -510,33 +513,35 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     -- micro-beacon-1 and other micro beacons are 1x1
     if startup["micro-beacon"].value == true then
       if startup["ab-balance-other-beacons"].value == true then
+        local eff = data.raw.beacon["beacon"].distribution_effectivity/0.5
+        local profile = {1, 0.7071, 0.5773, 0.5, 0.4472, 0.4082, 0.3779, 0.3535, 0.3333, 0.3162, 0.3015, 0.2887, 0.2773, 0.2672, 0.2582, 0.25, 0.2425, 0.2357, 0.2294, 0.2236, 0.2182, 0.2132, 0.2085, 0.2041, 0.2, 0.1961, 0.1924, 0.189, 0.1857, 0.1825, 0.1796, 0.1768, 0.1741, 0.1715, 0.169, 0.1666, 0.1644, 0.1622, 0.1601, 0.1581, 0.1561, 0.1543, 0.1525, 0.1507, 0.149, 0.1474, 0.1458, 0.1443, 0.1428, 0.1414, 0.14, 0.1387, 0.1373, 0.1361, 0.1348, 0.1336, 0.1324, 0.1313, 0.1302, 0.1291, 0.128, 0.127, 0.126, 0.125, 0.124, 0.1231, 0.1221, 0.1212, 0.1204, 0.1195, 0.1187, 0.1178, 0.117, 0.1162, 0.1154, 0.1147, 0.1139, 0.1132, 0.1125, 0.1118, 0.1111, 0.1104, 0.1097, 0.1091, 0.1084, 0.1078, 0.1072, 0.1066, 0.106, 0.1054, 0.1048, 0.1042, 0.1037, 0.1031, 0.1026, 0.102, 0.1015, 0.101, 0.1005, 0.1}
         -- Balance: range scaled down to match size difference, most only have 1 module slot, efficiency adjusted so that the module power is roughly half of the full-size version ...micro-beacon-2 and micro-beacon-3 are based on the non-seablock versions, but still can be used if seablock is active
         if data.raw.beacon["ab-standard-beacon"] then
-          generate_new_beacon("ab-standard-beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.5, "240kW")
+          generate_new_beacon("ab-standard-beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.5*eff, "240kW")
         else
-          generate_new_beacon("beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.5, "240kW")
+          generate_new_beacon("beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.5*eff, "240kW")
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1, 2, 2, 0.5, "1500kW")
-          generate_new_beacon("beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_different"}, 1, 3, 4, 0.5, "3000kW")
+          generate_new_beacon("beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1, 2, 2, 0.5*eff, "1500kW")
+          generate_new_beacon("beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_different"}, 1, 3, 4, 0.5*eff, "3000kW")
           custom_exclusion_ranges["micro-beacon-3"] = {add = 2}
         elseif mods["FactorioExtended-Plus-Module"] then
           localise("micro-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_tiers_addon"}}})
-          generate_new_beacon("beacon-mk2", "micro-beacon-2", "Micro beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.75, "300kW")
-          generate_new_beacon("beacon-mk3", "micro-beacon-3", "Micro beacon Mk3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 1, "360kW")
+          generate_new_beacon("beacon-mk2", "micro-beacon-2", "Micro beacon Mk2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.75*eff, "300kW")
+          generate_new_beacon("beacon-mk3", "micro-beacon-3", "Micro beacon Mk3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 1*eff, "360kW")
         elseif mods["5dim_module"] then
           localise("micro-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_tiers_addon"}}})
-          generate_new_beacon("5d-beacon-02", "micro-beacon-2", "Micro beacon MK2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.6, "480kW")
-          generate_new_beacon("5d-beacon-03", "micro-beacon-3", "Micro beacon MK3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.7, "720kW")
+          generate_new_beacon("5d-beacon-02", "micro-beacon-2", "Micro beacon MK2", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.6*eff, "480kW")
+          generate_new_beacon("5d-beacon-03", "micro-beacon-3", "Micro beacon MK3", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.7*eff, "720kW")
         end
         if mods["5dim_module"] then
-          generate_new_beacon("5d-beacon-04", "micro-beacon-4", "Micro beacon MK4", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.8, "1000kW")
-          generate_new_beacon("5d-beacon-05", "micro-beacon-5", "Micro beacon MK5", {"description.ab_same"}, 1, 2, 1, 0.9, "1250kW")
-          generate_new_beacon("5d-beacon-06", "micro-beacon-6", "Micro beacon MK6", {"description.ab_same"}, 1, 2, 1, 1, "1500kW")
-          generate_new_beacon("5d-beacon-07", "micro-beacon-7", "Micro beacon MK7", {"description.ab_same"}, 1, 2, 1, 1.1, "1750kW")
-          generate_new_beacon("5d-beacon-08", "micro-beacon-8", "Micro beacon MK8", {"description.ab_same"}, 1, 3, 1, 1.2, "2000kW")
-          generate_new_beacon("5d-beacon-09", "micro-beacon-9", "Micro beacon MK9", {"description.ab_same"}, 1, 3, 1, 1.3, "2250kW")
-          generate_new_beacon("5d-beacon-10", "micro-beacon-10", "Micro beacon MK10", {"description.ab_same"}, 1, 3, 1, 1.4, "2500kW")
+          generate_new_beacon("5d-beacon-04", "micro-beacon-4", "Micro beacon MK4", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.8*eff, "1000kW")
+          generate_new_beacon("5d-beacon-05", "micro-beacon-5", "Micro beacon MK5", {"description.ab_same"}, 1, 2, 1, 0.9*eff, "1250kW")
+          generate_new_beacon("5d-beacon-06", "micro-beacon-6", "Micro beacon MK6", {"description.ab_same"}, 1, 2, 1, 1*eff, "1500kW")
+          generate_new_beacon("5d-beacon-07", "micro-beacon-7", "Micro beacon MK7", {"description.ab_same"}, 1, 2, 1, 1.1*eff, "1750kW")
+          generate_new_beacon("5d-beacon-08", "micro-beacon-8", "Micro beacon MK8", {"description.ab_same"}, 1, 3, 1, 1.2*eff, "2000kW")
+          generate_new_beacon("5d-beacon-09", "micro-beacon-9", "Micro beacon MK9", {"description.ab_same"}, 1, 3, 1, 1.3*eff, "2250kW")
+          generate_new_beacon("5d-beacon-10", "micro-beacon-10", "Micro beacon MK10", {"description.ab_same"}, 1, 3, 1, 1.4*eff, "2500kW")
         end
       else
         if data.raw.beacon["ab-standard-beacon"] then
@@ -575,9 +580,9 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
       for tier=1,7,1 do
         if startup["tarawind-reloaded-reducerange"] and startup["tarawind-reloaded-reducerange"].value == false then
           data.raw.beacon["twBeacon" .. tostring(tier)].supply_area_distance = data.raw.beacon["twBeacon" .. tostring(tier)].module_slots
-          data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.3
+          data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity*0.6 -- 0.3
         else
-          data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = 0.5
+          data.raw.beacon["twBeacon" .. tostring(tier)].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
         end
       end
     end
@@ -635,7 +640,7 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
     if startup["ab-balance-other-beacons"].value then
       data.raw.beacon["tiny-beacon"].supply_area_distance = 1
       data.raw.beacon["small-beacon"].supply_area_distance = 2
-      data.raw.beacon["small-beacon"].distribution_effectivity = 0.375
+      data.raw.beacon["small-beacon"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity*0.75 -- 0.375
       -- TODO: Reduce recipe costs for tiny/small beacons?
     end
   end
@@ -814,8 +819,8 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
   end
   if icon_indicator ~= nil then
     new_beacon_recipe.base_machine = base_name -- causes technologies to be handled by mini/micro mods
-    if not new_beacon_item.icons then new_beacon_item.icons = {} end
-    if not new_beacon_recipe.icons then new_beacon_recipe.icons = {} end
+    if not new_beacon_item.icons then new_beacon_item.icons = {{icon=data.raw.beacon[base_name].icon, icon_size=data.raw.beacon[base_name].icon_size or 64}} end
+    if not new_beacon_recipe.icons then new_beacon_recipe.icons = {{icon=data.raw.beacon[base_name].icon, icon_size=data.raw.beacon[base_name].icon_size or 64}} end
     if new_beacon_item.icons then
       table.insert(new_beacon_item.icons, {icon=icon_indicator, icon_size=64})
       table.insert(new_beacon_recipe.icons, {icon=icon_indicator, icon_size=64})

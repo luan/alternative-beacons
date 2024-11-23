@@ -94,7 +94,7 @@ function override_vanilla_beacon(do_localisation, do_technology)
   beacon.distribution_effectivity = 1.5                                             -- default (v2.0)
   --beacon.distribution_effectivity = 0.5                                           -- old (v1.1)
   beacon.profile = {1, 0.7071, 0.5773, 0.5, 0.4472, 0.4082, 0.3779, 0.3535, 0.3333, 0.3162, 0.3015, 0.2887, 0.2773, 0.2672, 0.2582, 0.25, 0.2425, 0.2357, 0.2294, 0.2236, 0.2182, 0.2132, 0.2085, 0.2041, 0.2, 0.1961, 0.1924, 0.189, 0.1857, 0.1825, 0.1796, 0.1768, 0.1741, 0.1715, 0.169, 0.1666, 0.1644, 0.1622, 0.1601, 0.1581, 0.1561, 0.1543, 0.1525, 0.1507, 0.149, 0.1474, 0.1458, 0.1443, 0.1428, 0.1414, 0.14, 0.1387, 0.1373, 0.1361, 0.1348, 0.1336, 0.1324, 0.1313, 0.1302, 0.1291, 0.128, 0.127, 0.126, 0.125, 0.124, 0.1231, 0.1221, 0.1212, 0.1204, 0.1195, 0.1187, 0.1178, 0.117, 0.1162, 0.1154, 0.1147, 0.1139, 0.1132, 0.1125, 0.1118, 0.1111, 0.1104, 0.1097, 0.1091, 0.1084, 0.1078, 0.1072, 0.1066, 0.106, 0.1054, 0.1048, 0.1042, 0.1037, 0.1031, 0.1026, 0.102, 0.1015, 0.101, 0.1005, 0.1}   -- default
-  --beacon.profile = {3, 2.1213, 1.7319, 1.5, 1.3416, 1.2246, 1.1337, 1.0605, 0.9999, 0.9486, 0.9045, 0.8661, 0.8319, 0.8016, 0.7746, 0.75, 0.7275, 0.7071, 0.6882, 0.6708, 0.6546, 0.6396, 0.6255, 0.6123, 0.6, 0.5883, 0.5772, 0.567, 0.5571, 0.5475, 0.5388, 0.5304, 0.5223, 0.5145, 0.507, 0.4998, 0.4932, 0.4866, 0.4803, 0.4743, 0.4683, 0.4629, 0.4575, 0.4521, 0.447, 0.4422, 0.4374, 0.4329, 0.4284, 0.4242, 0.42, 0.4161, 0.4119, 0.4083, 0.4044, 0.4008, 0.3972, 0.3939, 0.3906, 0.3873, 0.384, 0.381, 0.378, 0.375, 0.372, 0.3693, 0.3663, 0.3636, 0.3612, 0.3585, 0.3561, 0.3534, 0.351, 0.3486, 0.3462, 0.3441, 0.3417, 0.3396, 0.3375, 0.3354, 0.3333, 0.3312, 0.3291, 0.3273, 0.3252, 0.3234, 0.3216, 0.3198, 0.318, 0.3162, 0.3144, 0.3126, 0.3111, 0.3093, 0.3078, 0.306, 0.3045, 0.303, 0.3015, 0.3} -- default equivalent (if efficiency is 0.5)
+  --beacon.profile = {3, 2.1213, 1.7319, 1.5, 1.3416, 1.2246, 1.1337, 1.0605, 1, 0.9486, 0.9045, 0.8661, 0.8319, 0.8016, 0.7746, 0.75, 0.7275, 0.7071, 0.6882, 0.6708, 0.6546, 0.6396, 0.6255, 0.6123, 0.6, 0.5883, 0.5772, 0.567, 0.5571, 0.5475, 0.5388, 0.5304, 0.5223, 0.5145, 0.507, 0.4998, 0.4932, 0.4866, 0.4803, 0.4743, 0.4683, 0.4629, 0.4575, 0.4521, 0.447, 0.4422, 0.4374, 0.4329, 0.4284, 0.4242, 0.42, 0.4161, 0.4119, 0.4083, 0.4044, 0.4008, 0.3972, 0.3939, 0.3906, 0.3873, 0.384, 0.381, 0.378, 0.375, 0.372, 0.3693, 0.3663, 0.3636, 0.3612, 0.3585, 0.3561, 0.3534, 0.351, 0.3486, 0.3462, 0.3441, 0.3417, 0.3396, 0.3375, 0.3354, 0.3333, 0.3312, 0.3291, 0.3273, 0.3252, 0.3234, 0.3216, 0.3198, 0.318, 0.3162, 0.3144, 0.3126, 0.3111, 0.3093, 0.3078, 0.306, 0.3045, 0.303, 0.3015, 0.3} -- default equivalent (if efficiency is 0.5)
   beacon.distribution_effectivity_bonus_per_quality_level = 0.2                     -- default
   --beacon.distribution_effectivity_bonus_per_quality_level = 0.0666666666666666667 -- default equivalent (if efficiency is 0.5)
   beacon.icons_positioning = {{
@@ -162,18 +162,26 @@ function add_extended_description(name, pair, exclusion_range, strict)
   -- TODO: Re-implement module power so that it's on a separate line and accounts for quality differences (and also perhaps shows a range for diminishing returns?)
   local beacon = pair.beacon
   local stats_to_use = {
-    item = {slots=false, efficiency=false, d_range=true, e_range=true, stack_size=false},
-    beacon = {slots=false, d_range=true, e_range=true, dimensions=false},
+    item = {slots=false, strength=true, efficiency=false, d_range=true, e_range=true, stack_size=false},
+    beacon = {slots=true, strength=true, d_range=true, e_range=true, dimensions=false},
   }
   local distribution_range = math.ceil(get_distribution_range(beacon))
   if exclusion_range == nil then exclusion_range = distribution_range end
   local stats = {
-    slots = {"description.ab_module_slots", tostring(beacon.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_slots)/100)},
+    --slots = {"description.ab_module_slots", tostring(beacon.module_slots), tostring(math.floor(100*beacon.distribution_effectivity*beacon.module_slots)/100)},
+    slots = {"description.ab_module_slots", tostring(beacon.module_slots)},
     efficiency = {"description.ab_distribution_efficiency", tostring(beacon.distribution_effectivity)},
     d_range = {"description.ab_distribution_range", tostring(distribution_range)},
     e_range = {"description.ab_exclusion_range", tostring(exclusion_range)},
     dimensions = {"description.ab_dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1])), tostring(math.ceil(beacon.selection_box[2][2] - beacon.selection_box[1][2]))}
   }
+  if data.raw.beacon[name].profile[9] then
+    stats.strength = {"description.ab_module_strength_3", tostring(math.floor(100*(data.raw.beacon[name].profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[9]*9*1000))/(9*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+  elseif data.raw.beacon[name].profile[4] then
+    stats.strength = {"description.ab_module_strength_2", tostring(math.floor(100*(data.raw.beacon[name].profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+  else
+    stats.strength = {"description.ab_module_strength_1", tostring(math.floor(100*(data.raw.beacon[name].profile[1] or 1)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+  end
   if override_descriptions[name] then
     local new_efficiency = beacon.distribution_effectivity
     if override_descriptions[name].efficiency then

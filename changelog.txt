@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2024.11.23
+  Changes:
+    - Added module slots to extended descriptions for beacon entities
+    - Added module strength to extended descriptions with values for 1 beacon, 4 beacons, and 9 beacons
+    - Adjusted profile values for focused, node, conflux, and hub beacons to better match balance from v1.1
+    - Improved support for Mini Machines and Micro Machines (fixed icons)
+    - Improved support for several modded beacons (updated rebalance to use new efficiency/profile values)
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2024.11.20
   Changes:
