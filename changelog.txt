@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2024.11.23
+  Changes:
+    - Fixed error introduced in previous update involving beacons with undefined profile field
+---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2024.11.23
   Changes:

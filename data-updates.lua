@@ -175,12 +175,13 @@ function add_extended_description(name, pair, exclusion_range, strict)
     e_range = {"description.ab_exclusion_range", tostring(exclusion_range)},
     dimensions = {"description.ab_dimensions", tostring(math.ceil(beacon.selection_box[2][1] - beacon.selection_box[1][1])), tostring(math.ceil(beacon.selection_box[2][2] - beacon.selection_box[1][2]))}
   }
-  if data.raw.beacon[name].profile[9] then
-    stats.strength = {"description.ab_module_strength_3", tostring(math.floor(100*(data.raw.beacon[name].profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[9]*9*1000))/(9*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
-  elseif data.raw.beacon[name].profile[4] then
-    stats.strength = {"description.ab_module_strength_2", tostring(math.floor(100*(data.raw.beacon[name].profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(data.raw.beacon[name].profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+  local profile = beacon.profile or {1}
+  if profile[9] then
+    stats.strength = {"description.ab_module_strength_3", tostring(math.floor(100*(profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(profile[9]*9*1000))/(9*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+  elseif profile[4] then
+    stats.strength = {"description.ab_module_strength_2", tostring(math.floor(100*(profile[1])*beacon.distribution_effectivity*beacon.module_slots)/100), tostring(math.floor(100*(math.ceil(profile[4]*4*1000))/(4*1000)*beacon.distribution_effectivity*beacon.module_slots)/100)}
   else
-    stats.strength = {"description.ab_module_strength_1", tostring(math.floor(100*(data.raw.beacon[name].profile[1] or 1)*beacon.distribution_effectivity*beacon.module_slots)/100)}
+    stats.strength = {"description.ab_module_strength_1", tostring(math.floor(100*(profile[1] or 1)*beacon.distribution_effectivity*beacon.module_slots)/100)}
   end
   if override_descriptions[name] then
     local new_efficiency = beacon.distribution_effectivity

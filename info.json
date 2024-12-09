@@ -1,6 +1,6 @@
 {
 	"name": "alternative-beacons",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"title": "Alternative Beacons",
 	"author": "BetweenWalls",
 	"contact": "Discord: @between_walls",
@@ -10,7 +10,8 @@
 		"! beacon-interference",
 		"! beacon-interference-sonim",
 		"! beacon-overhaul",
-		"! wret-beacon-rebalance-mod"
+		"! wret-beacon-rebalance-mod",
+		"(?) configurable-beacons"
 	],
 	"description": "Overhauls beacons to use exclusion areas in addition to distribution areas. Integrates beacons from multiple mods into a single system. Adds (optional) new beacons while preserving the functionality and usefulness of vanilla beacons."
 }
