@@ -118,64 +118,59 @@ local beacon = {
   type = "beacon",
   name = "se-compact-beacon",
   icon = "__alternative-beacons__/graphics/icon-compact-1.png",
-  icon_mipmaps = 1,
   icon_size = 64,
-  flags = { "placeable-player", "player-creation" },
-  minable = {
-    mining_time = 0.2,
-    result = "se-compact-beacon"
-  },
-  allowed_effects = { "consumption", "speed", "pollution" },
-  energy_source = {
-    type = "electric",
-    usage_priority = "secondary-input"
-  },
+  icon_mipmaps = 1,
+  flags = {"placeable-player", "player-creation"},
+  minable = {mining_time = 0.2, result = "se-compact-beacon"},
+  energy_source = {type = "electric", usage_priority = "secondary-input"},
   energy_usage = "800kW",
+  heating_energy = "650kW",
   max_health = 400,
+  collision_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
+  drawing_box = { { -1, -1.7 }, { 1, 1 } },
+  selection_box = { { -1, -1 }, { 1, 1 } },
+  allowed_effects = {"consumption", "speed", "pollution"},
+  distribution_effectivity = 0.75,
+  distribution_effectivity_bonus_per_quality_level = 0.1,
+  profile = {1,0},
+  beacon_count = "same_type",
+  supply_area_distance = 2,
   module_slots = 10,
   icons_positioning = {{
     inventory_index = defines.inventory.beacon_modules,
-    shift = { 0, 0.25 },
+    shift = {0, 0.25},
     max_icons_per_row = 4,
     max_icon_rows = 3,
     multi_row_initial_height_modifier = -0.75,
   }},
-  distribution_effectivity = 0.75,
-  distribution_effectivity_bonus_per_quality_level = 0.1,
-  profile = {1,0},
-  supply_area_distance = 2,
-  collision_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
-  drawing_box = { { -1, -1.7 }, { 1, 1 } },
-  selection_box = { { -1, -1 }, { 1, 1 } },
   graphics_set = beacon_graphics,
-  radius_visualisation_picture =
-  {
+  radius_visualisation_picture = {
     filename = "__base__/graphics/entity/beacon/beacon-radius-visualization.png",
     priority = "extra-high-no-scale",
     size = {10, 10}
   },
   water_reflection = {
     pictures = {
-      filename = "__base__/graphics/entity/beacon/beacon-reflection.png",
+      filename = "__alternative-beacons__/graphics/reflection-classic.png",
       priority = "extra-high",
       width = 24,
       height = 28,
-      scale = 5,
-      shift = {0, 1.71875},
+      scale = 3.33,
+      shift = {0, 1.8},
       variation_count = 1
     },
     rotate = false,
     orientation_to_variation = false
   },
-  open_sound = data.raw.beacon.beacon.open_sound,
-  close_sound = data.raw.beacon.beacon.close_sound,
-  vehicle_impact_sound = {
-    {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-2.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-3.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-4.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-5.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-6.ogg", volume = 0.5}
+  open_sound = {filename = "__base__/sound/open-close/beacon-open.ogg", volume = 0.4},
+  close_sound = {filename = "__base__/sound/open-close/beacon-close.ogg", volume = 0.4},
+  working_sound = {
+    audible_distance_modifier = 0.33,
+    max_sounds_per_type = 3,
+    sound = {
+      {filename = "__base__/sound/beacon-1.ogg", volume = 0.2},
+      {filename = "__base__/sound/beacon-2.ogg", volume = 0.2}
+    }
   },
   damaged_trigger_effect = {
     entity_name = "spark-explosion",
@@ -187,11 +182,9 @@ local beacon = {
   corpse = "medium-remnants"
 }
 
-local technology = {
-  {
-    icon = "__alternative-beacons__/graphics/tech-compact-1.png",
-    icon_size = 256
-  },
-}
+local technology = {{
+  icon = "__alternative-beacons__/graphics/tech-compact-1.png",
+  icon_size = 256
+}}
 
 return {item = item, entity = beacon, recipe = recipe, technology = technology}

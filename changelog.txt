@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2025.01.30
+  Changes:
+    - Updated "solo" beacons to use "same_only" beacon count for better compatibility with some mods
+    - Updated standard beacons to use "total" beacon count to match other non-solo beacons - this only applies if
+      the "use standard beacons" setting is enabled
+    - Updated beacons to include a "heating energy" value (affects functionality on Aquilo)
+    - Disabled beacon tooltips now include "disabled by nearby beacon" instead of "disabled by script"
+    - Fixed error due to beacon reflection sprite changes in Factorio v2.0.33
+    - Support for Maraxsis conduit beacons - they don't disable each other or standard beacons and vice versa
+---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2024.11.23
   Changes:

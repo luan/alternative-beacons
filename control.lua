@@ -54,7 +54,7 @@ function startup()
   --offline_beacons = storage.offline_beacons
   update_rate = settings.global["ab-update-rate"].value
   persistent_alerts = settings.global["ab-persistent-alerts"].value
-  active_scripts = not settings.startup["ab-disable-exclusion-areas"].value -- TODO: invert setting so that true = active and false = inactive
+  active_scripts = not settings.startup["ab-disable-exclusion-areas"].value -- TODO: invert setting so that true = active and false = inactive?
   if active_scripts then enable_scripts(script.active_mods) end
 end
 
@@ -369,17 +369,22 @@ end
 
 -- adds a flashing alert to the bottom right of the GUI for a disabled beacon and player 
 function add_beacon_alert(entity, player)
-  player.add_custom_alert(entity,
-  {type="virtual", name="ab_beacon_offline"},
-  {"description.ab_beacon_offline_alert", "[img=entity/" .. entity.name .. "]"},
-  true)
+  if entity.valid then
+    player.add_custom_alert(entity,
+    {type="virtual", name="ab_beacon_offline"},
+    {"description.ab_beacon_offline_alert", "[img=entity/" .. entity.name .. "]"},
+    true)
+    entity.custom_status = {diode=defines.entity_status_diode.red, label={"description.ab_disabled_status"}}
+  end
   --if persistent_alerts == true and #offline_beacons > 0 then register_alert_refreshing() end -- TODO: Can persistent alerts be modified to have zero performance impact whenever there are no offline beacons?
 end
 
 -- removes flashing alerts for the given beacon (all players)
 function remove_beacon_alert(beacon_entity)
-  for _, player in pairs(beacon_entity.force.players) do
-    player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
+  if beacon_entity.valid then
+    for _, player in pairs(beacon_entity.force.players) do
+      player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
+    end
   end
   --if persistent_alerts == true and #offline_beacons == 0 then unregister_alert_refreshing() end
 end

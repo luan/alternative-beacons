@@ -312,7 +312,7 @@ function globals.setup(beacon_prototypes)
     custom_exclusion_ranges["creative-mod_super-beacon"] = {value=0}
     updated_repeating_beacons["creative-mod_super-beacon"] = repeaters_all
   end
-  if mods["StableFoundations"] then ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  if mods["StableFoundations"] then -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for _, beacon in pairs(beacon_prototypes) do
       if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
       table.insert(updated_repeating_beacons[beacon.name], "sf-tile-bonus")
@@ -337,6 +337,11 @@ function globals.setup(beacon_prototypes)
         updated_repeating_beacons["janky-beacon-" .. count .. "-quality-" .. quality] = repeaters_janky
       end
     end
+  end
+  if mods["maraxsis"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    updated_repeating_beacons["maraxsis-conduit"] = {"beacon", "ab-standard-beacon", "maraxsis-conduit"}
+    table.insert(updated_repeating_beacons["beacon"], "maraxsis-conduit")
+    table.insert(updated_repeating_beacons["ab-standard-beacon"], "maraxsis-conduit")
   end
   if mods["modular-beacon-power"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for urbname,urb in pairs(updated_repeating_beacons) do

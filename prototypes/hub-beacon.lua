@@ -83,36 +83,32 @@ local beacon = {
   type = "beacon",
   name = "ab-hub-beacon",
   icon = "__alternative-beacons__/graphics/icon-hub.png",
-  icon_mipmaps = 4,
   icon_size = 64,
-  flags = { "placeable-player", "player-creation" },
-  minable = {
-    mining_time = 0.5,
-    result = "ab-hub-beacon"
-  },
-  allowed_effects = { "consumption", "speed", "pollution" },
-  energy_source = {
-    type = "electric",
-    usage_priority = "secondary-input"
-  },
+  icon_mipmaps = 4,
+  flags = {"placeable-player", "player-creation"},
+  minable = {mining_time = 0.5, result = "ab-hub-beacon"},
+  energy_source = {type = "electric", usage_priority = "secondary-input"},
   energy_usage = "15000kW",
+  heating_energy = "12500kW",
   max_health = 500,
+  collision_box = { { -1.75, -1.75 }, { 1.75, 1.75 } },
+  drawing_box = { { -2, -2.7 }, { 2, 2 } },
+  selection_box = { { -2, -2 }, { 2, 2 } },
+  allowed_effects = {"consumption", "speed", "pollution"},
+  distribution_effectivity = 0.5,
+  distribution_effectivity_bonus_per_quality_level = 0.1,
+  profile = {1, 0.97, 0.95, 0.9334, 0.93, 0.9275, 0.925, 0.9225, 0.92, 0},
+  beacon_count = "total",
+  supply_area_distance = 14, -- extends from edge of collision box (32x32)
+  -- exclusion_area_distance = 34 (72x72; hardcoded in control.lua)
   module_slots = 9,
   icons_positioning = {{
     inventory_index = defines.inventory.beacon_modules,
-    shift = { 0, 0.1 },
+    shift = {0, 0.1},
     max_icons_per_row = 3,
     max_icon_rows = 3,
     multi_row_initial_height_modifier = -0.3,
   }},
-  distribution_effectivity = 0.5,
-  distribution_effectivity_bonus_per_quality_level = 0.1,
-  profile = {1, 0.97, 0.95, 0.9334, 0.93, 0},
-  supply_area_distance = 14, -- extends from edge of collision box (32x32)
-  -- exclusion_area_distance = 34 (72x72; hardcoded in control.lua)
-  collision_box = { { -1.75, -1.75 }, { 1.75, 1.75 } },
-  drawing_box = { { -2, -2.7 }, { 2, 2 } },
-  selection_box = { { -2, -2 }, { 2, 2 } },
   graphics_set = beacon_graphics,
   radius_visualisation_picture =
   {
@@ -122,27 +118,28 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__base__/graphics/entity/beacon/beacon-reflection.png",
+      filename = "__alternative-beacons__/graphics/reflection-hub.png",
       priority = "extra-high",
       width = 24,
-      height = 28,
-      scale = 5,
-      shift = { 0, 1.71875 },
+      height = 37,
+      scale = 6.66,
+      shift = {0, 3.2},
       variation_count = 1
     },
     rotate = false,
     orientation_to_variation = false
   },
-  open_sound = data.raw.beacon.beacon.open_sound,
-  close_sound = data.raw.beacon.beacon.close_sound,
-  vehicle_impact_sound = {
-    {filename = "__base__/sound/car-metal-impact.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-2.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-3.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-4.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-5.ogg", volume = 0.5},
-    {filename = "__base__/sound/car-metal-impact-6.ogg", volume = 0.5}
+  open_sound = {filename = "__base__/sound/open-close/beacon-open.ogg", volume = 0.4},
+  close_sound = {filename = "__base__/sound/open-close/beacon-close.ogg", volume = 0.4},
+  working_sound = {
+    audible_distance_modifier = 0.33,
+    max_sounds_per_type = 3,
+    sound = {
+      {filename = "__base__/sound/beacon-1.ogg", volume = 0.2},
+      {filename = "__base__/sound/beacon-2.ogg", volume = 0.2}
+    }
   },
+  impact_category = "metal",
   damaged_trigger_effect = {
     entity_name = "spark-explosion",
     offset_deviation = { { -0.5, -0.5 }, { 0.5, 0.5 } },
@@ -153,11 +150,9 @@ local beacon = {
   corpse = "big-remnants"
 }
 
-local technology = {
-  {
-    icon = "__alternative-beacons__/graphics/tech-hub.png",
-    icon_size = 256
-  },
-}
+local technology = {{
+  icon = "__alternative-beacons__/graphics/tech-hub.png",
+  icon_size = 256
+}}
 
 return {item = item, entity = beacon, recipe = recipe, technology = technology}

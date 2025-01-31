@@ -103,6 +103,7 @@ function override_vanilla_beacon(do_localisation, do_technology)
     max_icons_per_row = 2,
     max_icon_rows = 1,
   }}
+  beacon.beacon_counter = "total"
   if beacon.collision_box[2][1] + beacon.supply_area_distance ~= 4.3 then
     beacon.selection_box = { { -1.5, -1.5 }, { 1.5, 1.5 } }
     beacon.collision_box = { { -1.25, -1.25 }, { 1.25, 1.25 } }
