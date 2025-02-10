@@ -39,7 +39,7 @@ local beacon = {
   distribution_effectivity = 0.5,
   distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1,0},
-  beacon_count = "same_type",
+  beacon_counter = "same_type",
   supply_area_distance = 3,
   module_slots = 8,
   icons_positioning = {{
@@ -89,13 +89,18 @@ local beacon = {
   corpse = "beacon-remnants",
 }
 
-local frozen_patch = {
-  filename = "__space-age__/graphics/entity/frozen/beacon/beacon-frozen.png",
-  height = 192,
-  width = 212,
-  scale = 0.5,
-  shift = {0.015625, 0.03125}
-}
-beacon.graphics_set.frozen_patch = frozen_patch
+if mods["space-age"] then
+  local frozen_patch = {
+    filename = "__space-age__/graphics/entity/frozen/beacon/beacon-frozen.png",
+    height = 192,
+    width = 212,
+    scale = 0.5,
+    shift = {0.015625, 0.03125}
+  }
+  beacon.graphics_set.frozen_patch = frozen_patch
+end
+
+if not feature_flags["freezing"] then beacon.heating_energy = nil end
+if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 return {item = item, entity = beacon, recipe = recipe}

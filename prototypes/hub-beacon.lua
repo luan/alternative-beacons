@@ -98,7 +98,7 @@ local beacon = {
   distribution_effectivity = 0.5,
   distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1, 0.97, 0.95, 0.9334, 0.93, 0.9275, 0.925, 0.9225, 0.92, 0},
-  beacon_count = "total",
+  beacon_counter = "total",
   supply_area_distance = 14, -- extends from edge of collision box (32x32)
   -- exclusion_area_distance = 34 (72x72; hardcoded in control.lua)
   module_slots = 9,
@@ -149,6 +149,9 @@ local beacon = {
   dying_explosion = "beacon-explosion",
   corpse = "big-remnants"
 }
+
+if not feature_flags["freezing"] then beacon.heating_energy = nil end
+if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
   icon = "__alternative-beacons__/graphics/tech-hub.png",

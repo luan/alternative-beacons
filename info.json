@@ -1,15 +1,12 @@
 {
 	"name": "alternative-beacons",
-	"version": "1.0.5",
+	"version": "1.0.7",
 	"title": "Alternative Beacons",
 	"author": "BetweenWalls",
 	"contact": "Discord: @between_walls",
 	"factorio_version": "2.0",
 	"dependencies": [
 		"base",
-		"! beacon-interference",
-		"! beacon-interference-sonim",
-		"! beacon-overhaul",
 		"! wret-beacon-rebalance-mod",
 		"(?) configurable-beacons"
 	],

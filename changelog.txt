@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2025.02.09
+  Changes:
+    - Fixed syntax error for beacon_counter field so that "solo" beacons correctly use "same_only" behavior
+    - Removed conflicting dependencies for outdated and deprecated mods
+---------------------------------------------------------------------------------------------------
+Version: 1.0.6
+Date: 2025.02.06
+  Changes:
+    - Fixed error without space age due to lack of checks for "freezing" feature flag alongside "heating energy" values
+---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2025.01.30
   Changes:

@@ -73,7 +73,7 @@ local beacon = {
   distribution_effectivity = 0.5,
   distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1,0},
-  beacon_count = "same_type",
+  beacon_counter = "same_type",
   supply_area_distance = 14,
   module_slots = 15,
   icons_positioning = {{
@@ -121,6 +121,9 @@ local beacon = {
   dying_explosion = "beacon-explosion",
   corpse = "big-remnants"
 }
+
+if not feature_flags["freezing"] then beacon.heating_energy = nil end
+if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
   icon = "__alternative-beacons__/graphics/tech-wide-1.png",

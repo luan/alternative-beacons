@@ -97,7 +97,7 @@ local beacon = {
   distribution_effectivity = 0.5,
   distribution_effectivity_bonus_per_quality_level = 0.1,
   profile = {1.3334, 1.2, 1.08, 1, 0.9, 0.7978, 0.7042, 0.6258, 0.567, 0.5158, 0.4741, 0.438, 0.4052, 0.3786, 0.3534, 0.3313, 0.3118, 0.2945, 0.2789, 0.265},
-  beacon_count = "total",
+  beacon_counter = "total",
   supply_area_distance = 9, -- extends from edge of collision box (22x22)
   -- exclusion_area_distance = 12 (28x28; hardcoded in control.lua)
   module_slots = 6,
@@ -147,6 +147,9 @@ local beacon = {
   dying_explosion = "beacon-explosion",
   corpse = "medium-remnants"
 }
+
+if not feature_flags["freezing"] then beacon.heating_energy = nil end
+if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
   icon = "__alternative-beacons__/graphics/tech-conflux.png",
