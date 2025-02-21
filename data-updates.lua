@@ -160,7 +160,7 @@ end
 --  @exclusion_range: the beacon's exclusion range
 --  @strict: whether or not the beacon's exclusion range is strict
 function add_extended_description(name, pair, exclusion_range, strict)
-  -- TODO: Re-implement module power so that it's on a separate line and accounts for quality differences (and also perhaps shows a range for diminishing returns?)
+  -- TODO: Use 1, 4, and 8 for module strength instead of 1,4,9?
   local beacon = pair.beacon
   local stats_to_use = {
     item = {slots=false, strength=true, efficiency=false, d_range=true, e_range=true, stack_size=false},
@@ -292,7 +292,7 @@ end
 
 -- add visualizations for exclusion ranges
 if startup["ab-disable-exclusion-areas"].value == false then
-  -- TODO: 2.0 forces ranges to be integers
+  -- TODO: 2.0 forces ranges to be integers (may or may not be unforeseen issues due to this)
   for name, range in pairs(custom_exclusion_ranges) do
     local beacon = data.raw.beacon[name]
     if beacon ~= nil and beacon.collision_box ~= nil and beacon.selection_box ~= nil then
@@ -399,6 +399,8 @@ if startup["ab-show-extended-stats"].value then
   no_stats["fu_ki_core_slave_entity"] = true
   no_stats["bt-waste-electricity"] = true
   no_stats["ll-oxygen-diffuser"] = true
+  no_stats["beacon-interface--beacon-tile"] = true
+  no_stats["beacon-interface--beacon"] = true
 
   for name, pair in pairs(beacon_list) do
     if data.raw.beacon[name].selection_box then

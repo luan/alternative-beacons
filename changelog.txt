@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.8
+Date: 2025.02.21
+  Changes:
+    - Beacons with "disabled by nearby beacon" status now correctly update their status when the nearby beacon is removed
+    - Improved support for beacon-interface mod (its beacons won't interact with exclusion areas)
+---------------------------------------------------------------------------------------------------
 Version: 1.0.7
 Date: 2025.02.09
   Changes:

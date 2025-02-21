@@ -168,7 +168,7 @@ end
 
 -- checks all beacons
 function check_global_list()
-  -- TODO: Spread actions over many ticks instead of just letting it go as quickly as possible
+  -- TODO: Spread actions over many ticks instead of just letting it go as quickly as possible (or just remove the setting which triggers this since everything should be handled in events now?)
   if active_scripts then
     for _, surface in pairs(game.surfaces) do
       if surface ~= nil then
@@ -385,6 +385,7 @@ function remove_beacon_alert(beacon_entity)
     for _, player in pairs(beacon_entity.force.players) do
       player.remove_alert({entity=beacon_entity, type=defines.alert_type.custom, position=beacon_entity.position, surface=beacon_entity.surface, message={"description.ab_beacon_offline_alert"}, icon={type="virtual", name="ab_beacon_offline"}})
     end
+    beacon_entity.custom_status = nil
   end
   --if persistent_alerts == true and #offline_beacons == 0 then unregister_alert_refreshing() end
 end

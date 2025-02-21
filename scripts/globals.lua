@@ -343,6 +343,17 @@ function globals.setup(beacon_prototypes)
     table.insert(updated_repeating_beacons["beacon"], "maraxsis-conduit")
     table.insert(updated_repeating_beacons["ab-standard-beacon"], "maraxsis-conduit")
   end
+  if mods["beacon-interface"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    for _, beacon in pairs(beacon_prototypes) do
+      if updated_repeating_beacons[beacon.name] == nil then updated_repeating_beacons[beacon.name] = {} end
+      table.insert(updated_repeating_beacons[beacon.name], "beacon-interface--beacon-tile")
+      table.insert(updated_repeating_beacons[beacon.name], "beacon-interface--beacon")
+    end
+    custom_exclusion_ranges["beacon-interface--beacon-tile"] = {value=0}
+    updated_repeating_beacons["beacon-interface--beacon-tile"] = repeaters_all
+    custom_exclusion_ranges["beacon-interface--beacon"] = {value=0}
+    updated_repeating_beacons["beacon-interface--beacon"] = repeaters_all
+  end
   if mods["modular-beacon-power"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for urbname,urb in pairs(updated_repeating_beacons) do
       local urb_addons = {}
