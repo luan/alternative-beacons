@@ -124,3 +124,10 @@ if mods["minno-beacon-rebalance-mod"] then
     end
   end
 end
+
+-- ensures beacons which can be upgraded into each other share the same bounding box
+for _,beacon in pairs(data.raw.beacon) do
+  if beacon.next_upgrade then
+    beacon.collision_box = data.raw.beacon[beacon.next_upgrade].collision_box
+  end
+end
