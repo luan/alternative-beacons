@@ -333,29 +333,30 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
   end
 
   if mods["bobmodules"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    -- same names as Endgame Extension and Beacon 2; beacon-2 has 6 range, 4 modules, and 0.75 efficiency; beacon-3 has 9 range, 6 modules, and 1.0 efficiency (they both use 480 kW power, same as the vanilla beacon) ...assemblers could get 12000% speed instead of 600%
-    localise("beacon-2", {"item", "beacon"}, "description", {"description.ab_same"})
-    localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_same"})
+    -- v1.1: same names as Endgame Extension and Beacon 2; beacon-2 has 6 range, 4 modules, and 0.75 efficiency; beacon-3 has 9 range, 6 modules, and 1.0 efficiency (they both use 480 kW power, same as the vanilla beacon) ...assemblers could get 12000% speed instead of 600%
+    -- v2.0: bob-beacon-2 has 4 modules, bob-beacon-3 has 6 modules (other stats are the same as vanilla beacons)
+    localise("bob-beacon-2", {"item", "beacon"}, "description", {"description.ab_same"})
+    localise("bob-beacon-3", {"item", "beacon"}, "description", {"description.ab_same"})
     if mods["CoppermineBobModuleRebalancing"] and startup["coppermine-bob-module-nerfed-beacons"] and startup["coppermine-bob-module-nerfed-beacons"].value then -- let other mods handle balance if they're more specialised for it
       -- beacon-2 changed to 3 modules, 5 range, 1 MW power; beacon-3 changed to 4 modules, 7 range, 1.5 MW (both keep their previous efficiency: 0.75 and 1.0)
-      override_descriptions["beacon-2"] = {slots=3, d_range=5}
-      override_descriptions["beacon-3"] = {slots=4, d_range=7}
+      --override_descriptions["bob-beacon-2"] = {slots=3, d_range=5}
+      --override_descriptions["bob-beacon-3"] = {slots=4, d_range=7}
     elseif mods["SeaBlockMetaPack"] then
       -- beacons changed to 2 modules and 0.5 efficiency each, beacon-2 uses 960 KW, beacon-3 uses 1.92 MW, also adjusts module startup settings and hides them ...assemblers could get 3000% speed instead of 600%
       -- Balance: beacons have smaller exclusion areas than distribution areas and don't disable or get disabled by standard beacons
-      custom_exclusion_ranges["beacon-2"] = {add=-3}
-      custom_exclusion_ranges["beacon-3"] = {add=-6}
-      localise("beacon-2", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except_small"}, ' ', {"description.ab_standard_addon"}} })
-      localise("beacon-3", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except_small"}, ' ', {"description.ab_standard_addon"}} })
+      --custom_exclusion_ranges["bob-beacon-2"] = {add=-3}
+      --custom_exclusion_ranges["bob-beacon-3"] = {add=-6}
+      --localise("bob-beacon-2", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except_small"}, ' ', {"description.ab_standard_addon"}} })
+      --localise("bob-beacon-3", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except_small"}, ' ', {"description.ab_standard_addon"}} })
     elseif startup["ab-balance-other-beacons"].value then
       -- Balance: power requirements adjusted upward, efficiencies reduced, reduced range of beacon-2, beacon-3 given +2 exclusion range; they are still superior to node/conflux beacons, although they are at least somewhat comparable now
-      data.raw.beacon["beacon-2"].energy_usage = "3000kW"
-      data.raw.beacon["beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
-      data.raw.beacon["beacon-2"].supply_area_distance = 5
-      data.raw.beacon["beacon-3"].energy_usage = "6000kW"
-      data.raw.beacon["beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
-      custom_exclusion_ranges["beacon-3"] = {add=2}
-      localise("beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
+      --data.raw.beacon["bob-beacon-2"].energy_usage = "3000kW"
+      --data.raw.beacon["bob-beacon-2"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
+      --data.raw.beacon["bob-beacon-2"].supply_area_distance = 5
+      --data.raw.beacon["bob-beacon-3"].energy_usage = "6000kW"
+      --data.raw.beacon["bob-beacon-3"].distribution_effectivity = data.raw.beacon["beacon"].distribution_effectivity -- 0.5
+      --custom_exclusion_ranges["bob-beacon-3"] = {add=2}
+      --localise("bob-beacon-3", {"item", "beacon"}, "description", {"description.ab_different"})
     end
   end
 
@@ -454,8 +455,8 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
           generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, 2, 2, 0.375*eff, "360kW")
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, 4, 3, 0.5*eff, "2250kW")
-          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_different"}, 2, 6, 5, 0.5*eff, "4500kW")
+          generate_new_beacon("bob-beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, 4, 3, 0.5*eff, "2250kW")
+          generate_new_beacon("bob-beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_different"}, 2, 6, 5, 0.5*eff, "4500kW")
           custom_exclusion_ranges["mini-beacon-3"] = {add = 2}
         elseif mods["FactorioExtended-Plus-Module"] then
           localise("mini-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_tiers_addon"}}})
@@ -484,8 +485,8 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
           generate_new_beacon("beacon", "mini-beacon-1", "Mini standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_mini_addon"}}}, 2, nil, math.max(1, data.raw.beacon["beacon"].module_slots-fewer_modules))
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-2"].module_slots-fewer_modules))
-          generate_new_beacon("beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-3"].module_slots-fewer_modules))
+          generate_new_beacon("bob-beacon-2", "mini-beacon-2", "Mini beacon 2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-2"].module_slots-fewer_modules))
+          generate_new_beacon("bob-beacon-3", "mini-beacon-3", "Mini beacon 3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-3"].module_slots-fewer_modules))
         elseif mods["FactorioExtended-Plus-Module"] then
           generate_new_beacon("beacon-mk2", "mini-beacon-2", "Mini beacon Mk2", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk2"].module_slots-fewer_modules))
           generate_new_beacon("beacon-mk3", "mini-beacon-3", "Mini beacon Mk3", {"description.ab_same"}, 2, nil, math.max(1, data.raw.beacon["beacon-mk3"].module_slots-fewer_modules))
@@ -520,8 +521,8 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
           generate_new_beacon("beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1, 1, 1, 0.5*eff, "240kW")
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1, 2, 2, 0.5*eff, "1500kW")
-          generate_new_beacon("beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_different"}, 1, 3, 4, 0.5*eff, "3000kW")
+          generate_new_beacon("bob-beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1, 2, 2, 0.5*eff, "1500kW")
+          generate_new_beacon("bob-beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_different"}, 1, 3, 4, 0.5*eff, "3000kW")
           custom_exclusion_ranges["micro-beacon-3"] = {add = 2}
         elseif mods["FactorioExtended-Plus-Module"] then
           localise("micro-beacon-1", {"item", "beacon"}, "description", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_tiers_addon"}}})
@@ -548,8 +549,8 @@ function adjustments.adjust(beacons, custom_exclusion_ranges, max_moduled_buildi
           generate_new_beacon("beacon", "micro-beacon-1", "Micro standard beacon", {'?', {'', {"description.ab_except"}, ' ', {"description.ab_micro_addon"}}}, 1)
         end
         if mods["bobmodules"] then
-          generate_new_beacon("beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1)
-          generate_new_beacon("beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_same"}, 1)
+          generate_new_beacon("bob-beacon-2", "micro-beacon-2", "Micro beacon 2", {"description.ab_same"}, 1)
+          generate_new_beacon("bob-beacon-3", "micro-beacon-3", "Micro beacon 3", {"description.ab_same"}, 1)
         elseif mods["FactorioExtended-Plus-Module"] then
           generate_new_beacon("beacon-mk2", "micro-beacon-2", "Micro beacon Mk2", {"description.ab_same"}, 1)
           generate_new_beacon("beacon-mk3", "micro-beacon-3", "Micro beacon Mk3", {"description.ab_same"}, 1)

@@ -112,17 +112,18 @@ function globals.setup(beacon_prototypes)
     end
   end
   if mods["bobmodules"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -- v1.1 changes:
     if mods["SeaBlockMetaPack"] then
-      table.insert(updated_repeating_beacons["beacon"], "beacon-2")
-      table.insert(updated_repeating_beacons["beacon"], "beacon-3")
-      table.insert(updated_repeating_beacons["ab-standard-beacon"], "beacon-2")
-      table.insert(updated_repeating_beacons["ab-standard-beacon"], "beacon-3")
-      updated_repeating_beacons["beacon-2"] = {"beacon", "ab-standard-beacon"}
-      updated_repeating_beacons["beacon-3"] = {"beacon", "ab-standard-beacon"}
-      custom_exclusion_ranges["beacon-2"] = {add=-3}
-      custom_exclusion_ranges["beacon-3"] = {add=-6}
+      --table.insert(updated_repeating_beacons["beacon"], "bob-beacon-2")
+      --table.insert(updated_repeating_beacons["beacon"], "bob-beacon-3")
+      --table.insert(updated_repeating_beacons["ab-standard-beacon"], "bob-beacon-2")
+      --table.insert(updated_repeating_beacons["ab-standard-beacon"], "bob-beacon-3")
+      --updated_repeating_beacons["bob-beacon-2"] = {"beacon", "ab-standard-beacon"}
+      --updated_repeating_beacons["bob-beacon-3"] = {"beacon", "ab-standard-beacon"}
+      --custom_exclusion_ranges["bob-beacon-2"] = {add=-3}
+      --custom_exclusion_ranges["bob-beacon-3"] = {add=-6}
     elseif settings.startup["ab-balance-other-beacons"].value and not (mods["CoppermineBobModuleRebalancing"] and settings.startup["coppermine-bob-module-nerfed-beacons"] and settings.startup["coppermine-bob-module-nerfed-beacons"].value) then
-      custom_exclusion_ranges["beacon-3"] = {add=2}
+      --custom_exclusion_ranges["bob-beacon-3"] = {add=2}
     end
   end
   if mods["EndgameExtension"] then ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -237,7 +238,7 @@ function globals.setup(beacon_prototypes)
   if mods["mini-machines"] then ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if settings.startup["ab-balance-other-beacons"].value == true then
       if mods["bobmodules"] and not mods["SeaBlockMetaPack"] then
-        custom_exclusion_ranges["mini-beacon-3"] = {add=3} -- TODO test with/without seablock
+        --custom_exclusion_ranges["mini-bob-beacon-3"] = {add=3} -- TODO test with/without seablock
       elseif mods["FactorioExtended-Plus-Module"] then
         updated_repeating_beacons["mini-beacon-1"] = {"mini-beacon-1", "mini-beacon-2", "mini-beacon-3", "mini-beacon-4"}
         updated_repeating_beacons["mini-beacon-2"] = {"mini-beacon-1"}
@@ -253,7 +254,7 @@ function globals.setup(beacon_prototypes)
   if mods["micro-machines"] then --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if settings.startup["ab-balance-other-beacons"].value == true then
       if mods["bobmodules"] then
-        custom_exclusion_ranges["micro-beacon-3"] = {add=2}
+        --custom_exclusion_ranges["micro-bob-beacon-3"] = {add=2}
       elseif mods["FactorioExtended-Plus-Module"] then
         updated_repeating_beacons["micro-beacon-1"] = {"micro-beacon-1", "micro-beacon-2", "micro-beacon-3", "micro-beacon-4"}
         updated_repeating_beacons["micro-beacon-2"] = {"micro-beacon-1"}

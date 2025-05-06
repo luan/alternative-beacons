@@ -1,6 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.10
+Date: 2025.05.06
+  Changes:
+    - Added drawing_box_vertical_extension to beacons so their graphics don't get cutoff in tooltips
+    - Removed low-resolution graphics (all sprites are downscaled automatically in factorio v2.0)
+    - Fixed "balance other beacons" setting for bobmodules (it no longer affects them)
+---------------------------------------------------------------------------------------------------
 Version: 1.0.9
-Date: 2025.02.21
+Date: 2025.02.27
   Changes:
     - Fixed "next_upgrade" bounding box error which could occur with some mod combinations
 ---------------------------------------------------------------------------------------------------

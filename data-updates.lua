@@ -224,7 +224,9 @@ end
 
 function localise(name, groups, field, description)
   for _, group in pairs(groups) do
-    data.raw[group][name]["localised_" .. field] = description
+    if data.raw[group] and data.raw[group][name] then
+      data.raw[group][name]["localised_" .. field] = description
+    end
   end
 end
 
@@ -243,6 +245,8 @@ max_moduled_building_size = adjusted.max_moduled_building_size
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+-- TODO: Check speed of flying text when beacons are disabled/enabled
+-- TODO: Balance other beacons to use "total" instead of "same_type"
 -- TODO: experiment with adjusting draw area to include exclusion areas? (to prevent them from disappearing on the edge of the screen)
 
 -- adds beacon recipe unlocks to technologies that might not have existed in previous data stage

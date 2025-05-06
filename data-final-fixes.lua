@@ -102,9 +102,9 @@ end
 
 if mods["bobmodules"] and mods["exotic-industries"] and startup["ab-balance-other-beacons"].value then
   data.raw.beacon["beacon"].next_upgrade = nil
-  data.raw.beacon["beacon-2"].next_upgrade = nil
-  data.raw.item["beacon-2"].hidden = false
-  data.raw.item["beacon-3"].hidden = false
+  data.raw.beacon["bob-beacon-2"].next_upgrade = nil
+  data.raw.item["bob-beacon-2"].hidden = false
+  data.raw.item["bob-beacon-3"].hidden = false
 end
 
 if mods["minno-beacon-rebalance-mod"] then

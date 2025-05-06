@@ -37,6 +37,7 @@ local beacon = {
   collision_box = {{-1.25, -1.25}, {1.25, 1.25}},
   drawing_box = {{-1.5, -2.2}, {1.5, 1.3}},
   selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
+  drawing_box_vertical_extension = 0.2,
   allowed_effects = {"consumption", "speed", "pollution"},
   distribution_effectivity = 1.5,
   distribution_effectivity_bonus_per_quality_level = 0.2,

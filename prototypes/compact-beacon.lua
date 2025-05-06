@@ -29,34 +29,19 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/sr-compact-1-base.png",
-            width = 116,
-            height = 93,
+            filename = "__alternative-beacons__/graphics/hr-compact-1-base.png",
+            width = 232,
+            height = 186,
             shift = util.by_pixel(8, 1),
-            scale = 0.67,
-            hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-compact-1-base.png",
-              width = 232,
-              height = 186,
-              shift = util.by_pixel(8, 1),
-              scale = 0.335
-            }
+            scale = 0.335
           },
           {
-            filename = "__alternative-beacons__/graphics/sr-classic-base-shadow.png",
-            width = 116,
-            height = 93,
+            filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
+            width = 232,
+            height = 186,
             shift = util.by_pixel(8, 1),
             draw_as_shadow = true,
-            scale = 0.67,
-            hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
-              width = 232,
-              height = 186,
-              shift = util.by_pixel(8, 1),
-              draw_as_shadow = true,
-              scale = 0.335
-            }
+            scale = 0.335
           }
         }
       }
@@ -67,46 +52,25 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/sr-classic-antenna.png",
-            width = 54,
-            height = 50,
+            filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
+            width = 108,
+            height = 100,
             line_length = 8,
             frame_count = 32,
             animation_speed = 0.5,
             shift = util.by_pixel(-0.7, -36),
-            scale = 0.67,
-            hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
-              width = 108,
-              height = 100,
-              line_length = 8,
-              frame_count = 32,
-              animation_speed = 0.5,
-              shift = util.by_pixel(-0.7, -36),
-              scale = 0.335
-            }
+            scale = 0.335
           },
           {
-            filename = "__alternative-beacons__/graphics/sr-classic-antenna-shadow.png",
-            width = 63,
-            height = 49,
+            filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
+            width = 126,
+            height = 98,
             line_length = 8,
             frame_count = 32,
             animation_speed = 0.5,
             shift = util.by_pixel(67, 10.5),
             draw_as_shadow = true,
-            scale = 0.67,
-            hr_version = {
-              filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
-              width = 126,
-              height = 98,
-              line_length = 8,
-              frame_count = 32,
-              animation_speed = 0.5,
-              shift = util.by_pixel(67, 10.5),
-              draw_as_shadow = true,
-              scale = 0.335
-            }
+            scale = 0.335
           }
         }
       }
@@ -129,6 +93,7 @@ local beacon = {
   collision_box = { { -0.75, -0.75 }, { 0.75, 0.75 } },
   drawing_box = { { -1, -1.7 }, { 1, 1 } },
   selection_box = { { -1, -1 }, { 1, 1 } },
+  drawing_box_vertical_extension = 1,
   allowed_effects = {"consumption", "speed", "pollution"},
   distribution_effectivity = 0.75,
   distribution_effectivity_bonus_per_quality_level = 0.1,

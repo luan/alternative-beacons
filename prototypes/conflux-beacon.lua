@@ -93,6 +93,7 @@ local beacon = {
   collision_box = { { -1.75, -1.75 }, { 1.75, 1.75 } },
   drawing_box = { { -2, -2.7 }, { 2, 2 } },
   selection_box = { { -2, -2 }, { 2, 2 } },
+  drawing_box_vertical_extension = 1.3,
   allowed_effects = {"consumption", "speed", "pollution"},
   distribution_effectivity = 0.5,
   distribution_effectivity_bonus_per_quality_level = 0.1,

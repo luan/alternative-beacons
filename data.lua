@@ -113,8 +113,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   local recipe_compact_2 = table.deepcopy(data.raw.recipe["se-compact-beacon"])
   rename_beacon(item_compact_2, beacon_compact_2, recipe_compact_2, "se-compact-beacon-2")
   item_compact_2.icon = "__alternative-beacons__/graphics/icon-compact-2.png"
-  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].filename = "__alternative-beacons__/graphics/sr-compact-2-base.png"
-  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].hr_version.filename = "__alternative-beacons__/graphics/hr-compact-2-base.png"
+  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].filename = "__alternative-beacons__/graphics/hr-compact-2-base.png"
   data:extend({item_compact_2})
   data:extend({beacon_compact_2})
   data:extend({recipe_compact_2})
