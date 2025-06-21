@@ -1,14 +1,15 @@
 {
-	"name": "alternative-beacons",
-	"version": "1.0.10",
-	"title": "Alternative Beacons",
-	"author": "BetweenWalls",
-	"contact": "Discord: @between_walls",
-	"factorio_version": "2.0",
-	"dependencies": [
-		"base",
-		"! wret-beacon-rebalance-mod",
-		"(?) configurable-beacons"
-	],
-	"description": "Overhauls beacons to use exclusion areas in addition to distribution areas. Adds (optional) new beacons while preserving the functionality and usefulness of vanilla beacons."
+  "name": "alternative-beacons-ex",
+  "version": "1.0.10",
+  "title": "Alternative Beacons (more settings)",
+  "author": "luan",
+  "contact": "https://github.com/luan/alternative-beacons",
+  "homepage": "https://github.com/luan/alternative-beacons",
+  "factorio_version": "2.0",
+  "dependencies": [
+    "base",
+    "! wret-beacon-rebalance-mod",
+    "(?) configurable-beacons"
+  ],
+  "description": "Overhauls beacons to use exclusion areas in addition to distribution areas. Adds (optional) new beacons while preserving the functionality and usefulness of vanilla beacons. This is a fork of BetweenWalls's Alternative Beacons mod with more settings."
 }
