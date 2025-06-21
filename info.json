@@ -1,6 +1,6 @@
 {
   "name": "alternative-beacons-ex",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "title": "Alternative Beacons (more settings)",
   "author": "luan",
   "contact": "https://github.com/luan/alternative-beacons",
@@ -9,6 +9,7 @@
   "dependencies": [
     "base",
     "! wret-beacon-rebalance-mod",
+    "! alternative-beacons",
     "(?) configurable-beacons"
   ],
   "description": "Overhauls beacons to use exclusion areas in addition to distribution areas. Adds (optional) new beacons while preserving the functionality and usefulness of vanilla beacons. This is a fork of BetweenWalls's Alternative Beacons mod with more settings."
