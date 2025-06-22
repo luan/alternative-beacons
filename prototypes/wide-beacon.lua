@@ -4,7 +4,7 @@ local item = {
   type = "item",
   name = "se-wide-beacon",
   place_result = "se-wide-beacon",
-  icon = "__alternative-beacons__/graphics/icon-wide-1.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-wide-1.png",
   icon_size = 64,
   stack_size = 25,
   subgroup = "module",
@@ -39,17 +39,17 @@ local beacon_graphics = {
   }
 }
 -- Additional settings changes
-beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-wide-1-off.png"
+beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons-ex__/graphics/hr-wide-1-off.png"
 
 beacon_graphics.animation_list[2].always_draw = false
-beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-wide-1-animated.png"
+beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons-ex__/graphics/hr-wide-1-animated.png"
 beacon_graphics.animation_list[2].animation.line_length = 8
 beacon_graphics.animation_list[2].animation.frame_count = 32
 beacon_graphics.animation_list[2].animation.animation_speed = 0.5
 beacon_graphics.animation_list[2].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[3].animation.draw_as_shadow = true
-beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-isolation-shadow.png"
+beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons-ex__/graphics/hr-isolation-shadow.png"
 beacon_graphics.animation_list[3].animation.width = 366
 beacon_graphics.animation_list[3].animation.height = 204
 beacon_graphics.animation_list[3].animation.shift = {1.6125, 0}
@@ -57,7 +57,7 @@ beacon_graphics.animation_list[3].animation.shift = {1.6125, 0}
 local beacon = {
   type = "beacon",
   name = "se-wide-beacon",
-  icon = "__alternative-beacons__/graphics/icon-wide-1.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-wide-1.png",
   icon_size = 64,
   icon_mipmaps = 1,
   flags = {"placeable-player", "player-creation"},
@@ -92,7 +92,7 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__alternative-beacons__/graphics/reflection-isolation.png",
+      filename = "__alternative-beacons-ex__/graphics/reflection-isolation.png",
       priority = "extra-high",
       width = 24,
       height = 37,
@@ -127,7 +127,7 @@ if not feature_flags["freezing"] then beacon.heating_energy = nil end
 if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
-  icon = "__alternative-beacons__/graphics/tech-wide-1.png",
+  icon = "__alternative-beacons-ex__/graphics/tech-wide-1.png",
   icon_size = 256
 }}
 

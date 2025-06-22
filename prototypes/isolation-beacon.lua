@@ -4,7 +4,7 @@ local item = {
   type = "item",
   name = "ab-isolation-beacon",
   place_result = "ab-isolation-beacon",
-  icon = "__alternative-beacons__/graphics/icon-isolation.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-isolation.png",
   icon_size = 64,
   stack_size = 20,
   subgroup = "module",
@@ -39,17 +39,17 @@ local beacon_graphics = {
   }
 }
 -- Additional settings changes
-beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-isolation-off.png"
+beacon_graphics.animation_list[1].animation.filename = "__alternative-beacons-ex__/graphics/hr-isolation-off.png"
 
 beacon_graphics.animation_list[2].always_draw = false
-beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-isolation-animated.png"
+beacon_graphics.animation_list[2].animation.filename = "__alternative-beacons-ex__/graphics/hr-isolation-animated.png"
 beacon_graphics.animation_list[2].animation.line_length = 8
 beacon_graphics.animation_list[2].animation.frame_count = 32
 beacon_graphics.animation_list[2].animation.animation_speed = 0.5
 beacon_graphics.animation_list[2].animation.draw_as_glow = true
 
 beacon_graphics.animation_list[3].animation.draw_as_shadow = true
-beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons__/graphics/hr-isolation-shadow.png"
+beacon_graphics.animation_list[3].animation.filename = "__alternative-beacons-ex__/graphics/hr-isolation-shadow.png"
 beacon_graphics.animation_list[3].animation.width = 366
 beacon_graphics.animation_list[3].animation.height = 204
 beacon_graphics.animation_list[3].animation.shift = {2, 0}
@@ -57,7 +57,7 @@ beacon_graphics.animation_list[3].animation.shift = {2, 0}
 local beacon = {
   type = "beacon",
   name = "ab-isolation-beacon",
-  icon = "__alternative-beacons__/graphics/icon-isolation.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-isolation.png",
   icon_size = 64,
   icon_mipmaps = 1,
   flags = {"placeable-player", "player-creation"},
@@ -94,7 +94,7 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__alternative-beacons__/graphics/reflection-isolation.png",
+      filename = "__alternative-beacons-ex__/graphics/reflection-isolation.png",
       priority = "extra-high",
       width = 24,
       height = 37,
@@ -134,7 +134,7 @@ if settings.startup["ab-isolation-beacon-size-six"] then
 end
 
 local technology = {{
-  icon = "__alternative-beacons__/graphics/tech-isolation.png",
+  icon = "__alternative-beacons-ex__/graphics/tech-isolation.png",
   icon_size = 256
 }}
 

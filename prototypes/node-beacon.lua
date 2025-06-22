@@ -4,7 +4,7 @@ local item = {
   type = "item",
   name = "ab-node-beacon",
   place_result = "ab-node-beacon",
-  icon = "__alternative-beacons__/graphics/icon-node.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-node.png",
   icon_size = 64,
   stack_size = 20,
   subgroup = "module",
@@ -29,14 +29,14 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-node-base.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-node-base.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(11, 1.5),
             scale = 0.5
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-base-shadow.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(11, 1.5),
@@ -52,7 +52,7 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-antenna.png",
             width = 108,
             height = 100,
             line_length = 8,
@@ -62,7 +62,7 @@ local beacon_graphics = {
             scale = 0.5
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-antenna-shadow.png",
             width = 126,
             height = 98,
             line_length = 8,
@@ -81,7 +81,7 @@ local beacon_graphics = {
 local beacon = {
   type = "beacon",
   name = "ab-node-beacon",
-  icon = "__alternative-beacons__/graphics/icon-node.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-node.png",
   icon_size = 64,
   icon_mipmaps = 4,
   flags = {"placeable-player", "player-creation"},
@@ -116,7 +116,7 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__alternative-beacons__/graphics/reflection-classic.png",
+      filename = "__alternative-beacons-ex__/graphics/reflection-classic.png",
       priority = "extra-high",
       width = 24,
       height = 28,
@@ -152,7 +152,7 @@ if not feature_flags["freezing"] then beacon.heating_energy = nil end
 if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
-  icon = "__alternative-beacons__/graphics/tech-node.png",
+  icon = "__alternative-beacons-ex__/graphics/tech-node.png",
   icon_size = 256
 }}
 

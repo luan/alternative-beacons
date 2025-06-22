@@ -322,21 +322,21 @@ if startup["ab-disable-exclusion-areas"].value == false then
         if beacon.supply_area_distance == 64 then scale_exclude = scale_exclude + 0.2 end -- adjusts the visualization of the exclusion range if the distribution range is high enough to be artificially capped - this value is specific to the AM:FM beacon from Pyanodons but could also be decent for other beacons with the same issue
         local brv = {
           layers = {
-            {filename = "__alternative-beacons__/graphics/visualization/brv-dist.png", size = {10, 10}, scale = scale_distrib, priority = "extra-high-no-scale"},
-            {filename = "__alternative-beacons__/graphics/visualization/brv-full.png", size = {10, 10}, scale = scale_exclude, priority = "extra-high-no-scale"}
+            {filename = "__alternative-beacons-ex__/graphics/visualization/brv-dist.png", size = {10, 10}, scale = scale_distrib, priority = "extra-high-no-scale"},
+            {filename = "__alternative-beacons-ex__/graphics/visualization/brv-full.png", size = {10, 10}, scale = scale_exclude, priority = "extra-high-no-scale"}
           }
         }
         local image_size = 129
         local base = (2*distribution_range + width) * 2 -- may require the distribution_range_indent to be 0.25
         if base <= image_size and exclusion_range_values[name] > math.ceil(distribution_range) then
-          local image_exclusion = "__alternative-beacons__/graphics/visualization/exclude.png"
-          if custom_exclusion_ranges[name].mode == "strict" then image_exclusion = "__alternative-beacons__/graphics/visualization/exclude_strict.png" end
+          local image_exclusion = "__alternative-beacons-ex__/graphics/visualization/exclude.png"
+          if custom_exclusion_ranges[name].mode == "strict" then image_exclusion = "__alternative-beacons-ex__/graphics/visualization/exclude_strict.png" end
           local side = (exclusion_range_values[name] - math.ceil(distribution_range)) * 2
           local scalar = image_size/base
           local offset = ((0.5*base + 0.5*side) / base) * image_size/32
           brv = {
             layers = {
-              {filename="__alternative-beacons__/graphics/visualization/distrib.png", priority="extra-high-no-scale", size={base, base}, scale=scalar}, -- middle
+              {filename="__alternative-beacons-ex__/graphics/visualization/distrib.png", priority="extra-high-no-scale", size={base, base}, scale=scalar}, -- middle
               {filename=image_exclusion, priority="extra-high-no-scale", size={side, side}, scale=scalar, shift={-offset, -offset}}, -- top left
               {filename=image_exclusion, priority="extra-high-no-scale", size={base, side}, scale=scalar, shift={0, -offset}},       -- top mid
               {filename=image_exclusion, priority="extra-high-no-scale", size={side, side}, scale=scalar, shift={offset, -offset}},  -- top right

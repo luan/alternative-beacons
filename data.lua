@@ -112,8 +112,8 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   local beacon_compact_2 = table.deepcopy(data.raw.beacon["se-compact-beacon"])
   local recipe_compact_2 = table.deepcopy(data.raw.recipe["se-compact-beacon"])
   rename_beacon(item_compact_2, beacon_compact_2, recipe_compact_2, "se-compact-beacon-2")
-  item_compact_2.icon = "__alternative-beacons__/graphics/icon-compact-2.png"
-  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].filename = "__alternative-beacons__/graphics/hr-compact-2-base.png"
+  item_compact_2.icon = "__alternative-beacons-ex__/graphics/icon-compact-2.png"
+  beacon_compact_2.graphics_set.animation_list[1].animation.layers[1].filename = "__alternative-beacons-ex__/graphics/hr-compact-2-base.png"
   data:extend({item_compact_2})
   data:extend({beacon_compact_2})
   data:extend({recipe_compact_2})
@@ -133,9 +133,9 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
   local beacon_wide_2 = table.deepcopy(data.raw.beacon["se-wide-beacon"])
   local recipe_wide_2 = table.deepcopy(data.raw.recipe["se-wide-beacon"])
   rename_beacon(item_wide_2, beacon_wide_2, recipe_wide_2, "se-wide-beacon-2")
-  item_wide_2.icon = "__alternative-beacons__/graphics/icon-wide-2.png"
-  beacon_wide_2.graphics_set.animation_list[1].animation.filename = "__alternative-beacons__/graphics/hr-wide-2-off.png"
-  beacon_wide_2.graphics_set.animation_list[2].animation.filename = "__alternative-beacons__/graphics/hr-wide-2-animated.png"
+  item_wide_2.icon = "__alternative-beacons-ex__/graphics/icon-wide-2.png"
+  beacon_wide_2.graphics_set.animation_list[1].animation.filename = "__alternative-beacons-ex__/graphics/hr-wide-2-off.png"
+  beacon_wide_2.graphics_set.animation_list[2].animation.filename = "__alternative-beacons-ex__/graphics/hr-wide-2-animated.png"
   data:extend({item_wide_2})
   data:extend({beacon_wide_2})
   data:extend({recipe_wide_2})
@@ -168,7 +168,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     tech_compact_2.localised_name = {"name.se-compact-beacon-2"}
     tech_compact_2.localised_description = {"technology-description.se_compact_2"}
     tech_compact_2.order = (tech_compact_1.order or "") .. "z"
-    tech_compact_2.icons = {{icon = "__alternative-beacons__/graphics/tech-compact-2.png", icon_size = 256}}
+    tech_compact_2.icons = {{icon = "__alternative-beacons-ex__/graphics/tech-compact-2.png", icon_size = 256}}
 
     local tech_wide_1 = table.deepcopy(tech_compact_1)
     tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack"}
@@ -182,7 +182,7 @@ if startup["ab-enable-se-beacons"].value and not mods["space-exploration"] then
     tech_wide_2.name = "se-wide-beacon-2"
     tech_wide_2.localised_name = {"name.se-wide-beacon-2"}
     tech_wide_2.localised_description = {"technology-description.se_wide_2"}
-    tech_wide_2.icons = {{icon = "__alternative-beacons__/graphics/tech-wide-2.png", icon_size = 256}}
+    tech_wide_2.icons = {{icon = "__alternative-beacons-ex__/graphics/tech-wide-2.png", icon_size = 256}}
 
     if mods["space-age"] then
       tech_compact_1.prerequisites = {"effect-transmission", "utility-science-pack", "space-science-pack"}
@@ -362,13 +362,13 @@ data:extend({
   {
     type = "sprite",
     name = "ab_beacon_offline",
-    filename = "__alternative-beacons__/graphics/beacon-offline.png",
+    filename = "__alternative-beacons-ex__/graphics/beacon-offline.png",
     size = 64,
   },
   {
     type = "virtual-signal",
     name = "ab_beacon_offline",
-    icon = "__alternative-beacons__/graphics/beacon-offline.png",
+    icon = "__alternative-beacons-ex__/graphics/beacon-offline.png",
     icon_size = 64,
     localised_name = {"description.ab_beacon_deactivated"},
     subgroup = "virtual-signal",
@@ -381,7 +381,7 @@ if mods["informatron"] then
     {
       type = "sprite",
       name = "ab_informatron_1",
-      filename = "__alternative-beacons__/graphics/hr-wide-1-off.png",
+      filename = "__alternative-beacons-ex__/graphics/hr-wide-1-off.png",
       size = {191, 335},
       scale = 0.5
     }

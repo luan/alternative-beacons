@@ -828,7 +828,7 @@ function generate_new_beacon(base_name, name, localised_name, localised_descript
       new_beacon_recipe.icons = new_beacon_item.icons
     end
   end
-  local brv = { layers = {{filename = "__alternative-beacons__/graphics/visualization/brv-dist.png", size = {10, 10}, scale = 1, priority = "extra-high-no-scale"}} }
+  local brv = { layers = {{filename = "__alternative-beacons-ex__/graphics/visualization/brv-dist.png", size = {10, 10}, scale = 1, priority = "extra-high-no-scale"}} }
   new_beacon.radius_visualisation_picture = brv
   if range ~= nil then new_beacon.supply_area_distance = range end
   if modules ~= nil then new_beacon.module_slots = modules end

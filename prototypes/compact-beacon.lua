@@ -4,7 +4,7 @@ local item = {
   type = "item",
   name = "se-compact-beacon",
   place_result = "se-compact-beacon",
-  icon = "__alternative-beacons__/graphics/icon-compact-1.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-compact-1.png",
   icon_size = 64,
   stack_size = 25,
   subgroup = "module",
@@ -29,14 +29,14 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-compact-1-base.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-compact-1-base.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(8, 1),
             scale = 0.335
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-base-shadow.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-base-shadow.png",
             width = 232,
             height = 186,
             shift = util.by_pixel(8, 1),
@@ -52,7 +52,7 @@ local beacon_graphics = {
       animation = {
         layers = {
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-antenna.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-antenna.png",
             width = 108,
             height = 100,
             line_length = 8,
@@ -62,7 +62,7 @@ local beacon_graphics = {
             scale = 0.335
           },
           {
-            filename = "__alternative-beacons__/graphics/hr-classic-antenna-shadow.png",
+            filename = "__alternative-beacons-ex__/graphics/hr-classic-antenna-shadow.png",
             width = 126,
             height = 98,
             line_length = 8,
@@ -81,7 +81,7 @@ local beacon_graphics = {
 local beacon = {
   type = "beacon",
   name = "se-compact-beacon",
-  icon = "__alternative-beacons__/graphics/icon-compact-1.png",
+  icon = "__alternative-beacons-ex__/graphics/icon-compact-1.png",
   icon_size = 64,
   icon_mipmaps = 1,
   flags = {"placeable-player", "player-creation"},
@@ -116,7 +116,7 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__alternative-beacons__/graphics/reflection-classic.png",
+      filename = "__alternative-beacons-ex__/graphics/reflection-classic.png",
       priority = "extra-high",
       width = 24,
       height = 28,
@@ -151,7 +151,7 @@ if not feature_flags["freezing"] then beacon.heating_energy = nil end
 if not feature_flags["quality"] then beacon.distribution_effectivity_bonus_per_quality_level = nil end
 
 local technology = {{
-  icon = "__alternative-beacons__/graphics/tech-compact-1.png",
+  icon = "__alternative-beacons-ex__/graphics/tech-compact-1.png",
   icon_size = 256
 }}
 

@@ -58,7 +58,7 @@ local beacon = {
   },
   water_reflection = {
     pictures = {
-      filename = "__alternative-beacons__/graphics/reflection-standard.png",
+      filename = "__alternative-beacons-ex__/graphics/reflection-standard.png",
       priority = "extra-high",
       width = 18,
       height = 29,
